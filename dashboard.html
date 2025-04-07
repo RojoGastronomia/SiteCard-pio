@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Eventos</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#4F46E5',
+secondary: '#10B981'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+
+.dashboard-card {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-card .action-buttons {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.dashboard-card:hover .action-buttons {
+    opacity: 1;
+}
+
+.menu-card {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.menu-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.menu-card .action-buttons {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.menu-card:hover .action-buttons {
+    opacity: 1;
+}
+
+.chart-container {
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.chart-type-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.chart-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    background: transparent;
+    color: #0d6efd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chart-type-btn i {
+    font-size: 1.1em;
+}
+
+.chart-type-btn.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.chart-type-btn:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.user-dropdown-button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.user-dropdown-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    right: 0;
+    margin-top: 0.5rem;
+    min-width: 12rem;
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+}
+
+.user-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #4B5563;
+    transition: all 0.2s;
+}
+
+.user-dropdown-item:hover {
+    background-color: #F3F4F6;
+}
+
+.user-dropdown-item i {
+    margin-right: 0.5rem;
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<nav class="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center">
+<div class="font-['Pacifico'] text-2xl text-primary">logo</div>
+<div class="hidden md:ml-8 md:flex md:space-x-8">
+<a href="dashboard.html" class="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-primary text-sm font-medium">Inicio</a>
+<a href="#" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Eventos Gastronômicos</a>
+<a href="usuarios.html" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Usuários</a>
+<a href="cardapios.html" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Cardápio Clientes</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<input type="text" placeholder="Buscar eventos..." class="w-64 pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<button id="createNewEventBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+    <i class="fas fa-plus mr-2"></i> Criar Novo Evento
+</button>
+<!-- Usuário Logado -->
+<div class="flex items-center space-x-4">
+    <div class="user-dropdown">
+        <button class="user-dropdown-button" id="userDropdown">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-indigo-600"></i>
+                </div>
+                <span class="font-medium text-gray-900">Admin</span>
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </button>
+        <div class="user-dropdown-menu" id="userMenu">
+            <a href="index.html" class="user-dropdown-item">
+                <i class="fas fa-sign-out-alt"></i>
+                Sair
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+
+<!-- Espaçador para compensar a navbar fixa -->
+<div class="h-16"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<h1 class="text-2xl font-bold text-gray-900 mb-8">Dashboard</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-lg shadow-sm menu-card" onclick="showModal('totalEventosModal')">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-medium text-gray-900">Total de Eventos</h3>
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+<i class="ri-calendar-line text-primary"></i>
+</div>
+</div>
+<p class="mt-2 text-3xl font-semibold text-gray-900">156</p>
+<p class="text-sm text-gray-500">+12% desde o último mês</p>
+</div>
+    <div class="bg-white p-6 rounded-lg shadow-sm menu-card" onclick="showModal('participantesModal')">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-medium text-gray-900">Participantes Ativos</h3>
+<div class="w-10 h-10 flex items-center justify-center bg-secondary/10 rounded-full">
+<i class="ri-team-line text-secondary"></i>
+</div>
+</div>
+<p class="mt-2 text-3xl font-semibold text-gray-900">2.847</p>
+<p class="text-sm text-gray-500">+8% desde o último mês</p>
+</div>
+    <div class="bg-white p-6 rounded-lg shadow-sm menu-card" onclick="showModal('eventosMesModal')">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-medium text-gray-900">Eventos do Mês</h3>
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+<i class="ri-calendar-check-line text-primary"></i>
+</div>
+</div>
+<p class="mt-2 text-3xl font-semibold text-gray-900">42</p>
+<p class="text-sm text-gray-500">+15% desde o último mês</p>
+</div>
+    <div class="bg-white p-6 rounded-lg shadow-sm menu-card" onclick="showModal('faturamentoModal')">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-medium text-gray-900">Faturamento Mensal</h3>
+            <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+                <i class="ri-money-dollar-circle-line text-primary"></i>
+            </div>
+        </div>
+        <p class="mt-2 text-3xl font-semibold text-gray-900">R$ 45.678</p>
+<p class="text-sm text-gray-500">+15% desde o último mês</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-medium text-gray-900 mb-6">Eventos por Categoria</h3>
+<div id="categoryChart" class="chart-container"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-medium text-gray-900 mb-6">Distribuição de Eventos</h3>
+<div id="pieChart" class="chart-container"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-medium text-gray-900 mb-6">Próximos Eventos</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="showEventDetails('evento1')">
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+<span class="text-indigo-600 font-medium">15</span>
+</div>
+<div>
+<h4 class="font-medium text-gray-900">Casamento Maria & João</h4>
+<p class="text-sm text-gray-500">Sábado, 15 de Julho</p>
+</div>
+</div>
+<div class="text-sm text-gray-500">14:00</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="showEventDetails('evento2')">
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+<span class="text-green-600 font-medium">18</span>
+</div>
+<div>
+<h4 class="font-medium text-gray-900">Aniversário Pedro</h4>
+<p class="text-sm text-gray-500">Terça, 18 de Julho</p>
+</div>
+</div>
+<div class="text-sm text-gray-500">19:00</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="showEventDetails('evento3')">
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+<span class="text-yellow-600 font-medium">22</span>
+</div>
+<div>
+<h4 class="font-medium text-gray-900">Evento Corporativo Tech</h4>
+<p class="text-sm text-gray-500">Sexta, 22 de Julho</p>
+</div>
+</div>
+<div class="text-sm text-gray-500">09:00</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modais -->
+<div class="modal fade" id="totalEventosModal" tabindex="-1" aria-labelledby="totalEventosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="totalEventosModalLabel">Total de Eventos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="chart-type-buttons">
+                    <button type="button" class="chart-type-btn active" data-type="bar">
+                        <i class="fas fa-chart-bar"></i> Barras
+                    </button>
+                    <button type="button" class="chart-type-btn" data-type="line">
+                        <i class="fas fa-chart-line"></i> Linha
+                    </button>
+                    <button type="button" class="chart-type-btn" data-type="pie">
+                        <i class="fas fa-chart-pie"></i> Pizza
+                    </button>
+                </div>
+                <div id="totalEventosChart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="participantesModal" tabindex="-1" aria-labelledby="participantesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="participantesModalLabel">Participantes Ativos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="chart-type-buttons">
+                    <button type="button" class="chart-type-btn active" data-type="bar">
+                        <i class="fas fa-chart-bar"></i> Barras
+                    </button>
+                    <button type="button" class="chart-type-btn" data-type="line">
+                        <i class="fas fa-chart-line"></i> Linha
+                    </button>
+                    <button type="button" class="chart-type-btn" data-type="pie">
+                        <i class="fas fa-chart-pie"></i> Pizza
+                    </button>
+                </div>
+                <div id="participantesChart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="eventosMesModal" tabindex="-1" aria-labelledby="eventosMesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventosMesModalLabel">Eventos do Mês</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="chart-type-buttons">
+                    <button type="button" class="chart-type-btn active" data-type="bar">
+                        <i class="fas fa-chart-bar"></i> Barras
+                    </button>
+                    <button type="button" class="chart-type-btn" data-type="line">
+                        <i class="fas fa-chart-line"></i> Linha
+                    </button>
+                    <button type="button" class="chart-type-btn" data-type="pie">
+                        <i class="fas fa-chart-pie"></i> Pizza
+                    </button>
+                </div>
+                <div id="eventosMesChart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Evento -->
+<div class="modal fade" id="eventoDetailsModal" tabindex="-1" aria-labelledby="eventoDetailsModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="eventoDetailsModalLabel">Detalhes do Evento</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="space-y-4">
+<div class="flex items-center space-x-4">
+<div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+<span class="text-indigo-600 text-xl font-medium" id="eventoData">15</span>
+</div>
+<div>
+<h4 class="text-xl font-medium text-gray-900" id="eventoTitulo">Casamento Maria & João</h4>
+<p class="text-gray-500" id="eventoDataCompleta">Sábado, 15 de Julho</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-gray-50 p-4 rounded-lg">
+<h5 class="text-sm font-medium text-gray-500">Horário</h5>
+<p class="text-lg font-medium text-gray-900" id="eventoHorario">14:00</p>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg">
+<h5 class="text-sm font-medium text-gray-500">Local</h5>
+<p class="text-lg font-medium text-gray-900" id="eventoLocal">Salão de Festas</p>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg">
+<h5 class="text-sm font-medium text-gray-500">Convidados</h5>
+<p class="text-lg font-medium text-gray-900" id="eventoConvidados">150</p>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg">
+<h5 class="text-sm font-medium text-gray-500">Status</h5>
+<p class="text-lg font-medium text-gray-900" id="eventoStatus">Confirmado</p>
+</div>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg">
+<h5 class="text-sm font-medium text-gray-500">Descrição</h5>
+<p class="text-gray-900" id="eventoDescricao">Casamento tradicional com cerimônia religiosa seguida de recepção.</p>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+<button type="button" class="btn btn-primary" onclick="showEditEvent()">Editar Evento</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal de Edição do Evento -->
+<div class="modal fade" id="editEventoModal" tabindex="-1" aria-labelledby="editEventoModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="editEventoModalLabel">Editar Evento</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<form id="editEventoForm" onsubmit="saveEvento(event)">
+<div class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label for="editTitulo" class="block text-sm font-medium text-gray-700">Título do Evento</label>
+<input type="text" id="editTitulo" name="titulo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+</div>
+<div>
+<label for="editData" class="block text-sm font-medium text-gray-700">Data</label>
+<input type="date" id="editData" name="data" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+</div>
+<div>
+<label for="editHorario" class="block text-sm font-medium text-gray-700">Horário</label>
+<input type="time" id="editHorario" name="horario" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+</div>
+<div>
+<label for="editLocal" class="block text-sm font-medium text-gray-700">Local</label>
+<input type="text" id="editLocal" name="local" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+</div>
+<div>
+<label for="editConvidados" class="block text-sm font-medium text-gray-700">Número de Convidados</label>
+<input type="number" id="editConvidados" name="convidados" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+</div>
+<div>
+<label for="editStatus" class="block text-sm font-medium text-gray-700">Status</label>
+<select id="editStatus" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+<option value="Confirmado">Confirmado</option>
+<option value="Em Andamento">Em Andamento</option>
+<option value="Pendente">Pendente</option>
+<option value="Concluído">Concluído</option>
+</select>
+</div>
+</div>
+<div>
+<label for="editDescricao" class="block text-sm font-medium text-gray-700">Descrição</label>
+<textarea id="editDescricao" name="descricao" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required></textarea>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+<button type="submit" class="btn btn-primary">Salvar Alterações</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal de Faturamento Mensal -->
+<div class="modal fade" id="faturamentoModal" tabindex="-1" aria-labelledby="faturamentoModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="faturamentoModalLabel">Faturamento Mensal</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="chart-type-buttons">
+<button type="button" class="chart-type-btn active" data-type="bar">
+<i class="fas fa-chart-bar"></i> Barras
+</button>
+<button type="button" class="chart-type-btn" data-type="line">
+<i class="fas fa-chart-line"></i> Linha
+</button>
+<button type="button" class="chart-type-btn" data-type="pie">
+<i class="fas fa-chart-pie"></i> Pizza
+</button>
+</div>
+<div id="faturamentoChart" class="chart-container"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal Novo Evento -->
+<div class="modal fade" id="newEventoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Criar Novo Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newEventForm">
+                    <div class="mb-3">
+                        <label for="newTitulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="newTitulo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newData" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="newData" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newHorario" class="form-label">Horário</label>
+                        <input type="time" class="form-control" id="newHorario" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newLocal" class="form-label">Local</label>
+                        <input type="text" class="form-control" id="newLocal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newConvidados" class="form-label">Número de Convidados</label>
+                        <input type="number" class="form-control" id="newConvidados" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newStatus" class="form-label">Status</label>
+                        <select class="form-select" id="newStatus" required>
+                            <option value="Confirmado">Confirmado</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newDescricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="newDescricao" rows="3" required></textarea>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Criar Evento</button>
+                    </div>
+                </form>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+// Atualizar o JavaScript do dropdown
+document.getElementById('userDropdown').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('userMenu');
+    menu.classList.toggle('show');
+});
+
+document.addEventListener('click', function(e) {
+    const dropdown = document.querySelector('.user-dropdown');
+    const menu = document.getElementById('userMenu');
+    if (!dropdown.contains(e.target)) {
+        menu.classList.remove('show');
+    }
+});
+</script>
+</body>
+</html>
