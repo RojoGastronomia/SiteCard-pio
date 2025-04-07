@@ -1,0 +1,106 @@
+<header class="bg-white shadow-sm">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex items-center justify-between">
+      <a href="/" class="font-['Pacifico'] text-2xl text-primary">Rojo Gastronomia</a>
+      
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="/" class="nav-link">Início</a>
+        <a href="/eventos.html" class="nav-link">Eventos</a>
+        <a href="/cardapio.html" class="nav-link">Cardápio</a>
+        <a href="/contato.html" class="nav-link">Contato</a>
+        
+        <!-- Dynamic links based on user role -->
+        <div id="roleBasedLinks"></div>
+      </nav>
+
+      <!-- User menu -->
+      <div class="relative" id="userMenu">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+function updateNavigation() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const roleBasedLinks = document.getElementById('roleBasedLinks');
+  const userMenu = document.getElementById('userMenu');
+
+  if (user) {
+    // Role-based links
+    if (user.role === 'admin') {
+      roleBasedLinks.innerHTML = `
+        <a href="/admin/dashboard.html" class="nav-link">
+          <i class="ri-dashboard-line mr-1"></i>
+          Dashboard
+        </a>
+      `;
+    } else if (user.role === 'employee') {
+      roleBasedLinks.innerHTML = `
+        <a href="/dashboard.html" class="nav-link">
+          <i class="ri-dashboard-line mr-1"></i>
+          Área de Trabalho
+        </a>
+      `;
+    }
+
+    // User menu
+    userMenu.innerHTML = `
+      <button class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg" onclick="toggleUserMenu()">
+        <img src="${user.avatar || '/images/default-avatar.png'}" class="w-8 h-8 rounded-full">
+        <span>${user.name}</span>
+        <i class="ri-arrow-down-s-line"></i>
+      </button>
+      
+      <div id="userMenuDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+        <a href="/profile.html" class="block px-4 py-2 hover:bg-gray-50">
+          <i class="ri-user-line mr-2"></i>
+          Perfil
+        </a>
+        <a href="/settings.html" class="block px-4 py-2 hover:bg-gray-50">
+          <i class="ri-settings-line mr-2"></i>
+          Configurações
+        </a>
+        <hr class="my-2">
+        <button onclick="logout()" class="block w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600">
+          <i class="ri-logout-box-line mr-2"></i>
+          Sair
+        </button>
+      </div>
+    `;
+  } else {
+    userMenu.innerHTML = `
+      <button onclick="showLoginModal()" class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg">
+        <i class="ri-user-line"></i>
+        <span>Entrar</span>
+      </button>
+    `;
+  }
+}
+
+function toggleUserMenu() {
+  const dropdown = document.getElementById('userMenuDropdown');
+  dropdown.classList.toggle('hidden');
+}
+
+async function logout() {
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  }
+}
+
+// Update navigation when page loads
+document.addEventListener('DOMContentLoaded', updateNavigation);
+</script>

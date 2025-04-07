@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Rojo Gastronomia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.18.3/index.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            height: 64px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .page-wrapper {
+            display: flex;
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background-color: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .sidebar .nav-link {
+            color: #4b5563;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #f3f4f6;
+            color: #198754;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #e8f5e9;
+            color: #198754;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-link i {
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #9ca3af;
+            margin: 1.5rem 0 0.75rem 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            width: 100%;
+            background-color: #f9fafb;
+        }
+
+        /* Estilos para Timeline com Observações */
+        .timeline-item {
+            padding: 1rem 0;
+            border-left: 2px solid #e9ecef;
+            margin-left: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-observation {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            border: 1px solid #e9ecef;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .timeline-observation-edit {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            border: 1px solid #e9ecef;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .timeline-observation textarea {
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            min-height: 60px;
+        }
+
+        .timeline-actions {
+            margin-top: 0.5rem;
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .timeline-observation .text-muted {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-observation .mt-1 {
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        /* Estilos para Chat Flutuante */
+        .chat-wrapper {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1040;
+        }
+
+        .chat-toggle-btn {
+            background: #198754;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .chat-toggle-btn:hover {
+            background: #157347;
+            transform: translateY(-2px);
+        }
+
+        .chat-box {
+            position: absolute;
+            bottom: calc(100% + 1rem);
+            right: 0;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-box.active {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            background: #198754;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-header .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #198754;
+            font-size: 1.2rem;
+        }
+
+        .chat-header .user-details {
+            flex: 1;
+        }
+
+        .chat-header .user-name {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chat-header .user-status {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .chat-header .chat-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-header .chat-actions button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-header .chat-actions button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .chat-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f0f2f5;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.75rem;
+            border-radius: 1rem;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .chat-message.sent {
+            background: #dcf8c6;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-message.received {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-message .message-content {
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-message .message-time {
+            font-size: 0.7rem;
+            color: #667781;
+            text-align: right;
+        }
+
+        .chat-message .message-sender {
+            font-size: 0.8rem;
+            color: #667781;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-message .attachment-preview {
+            max-width: 200px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-message .attachment-preview img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .chat-message .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(0,0,0,0.05);
+            border-radius: 0.5rem;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: #f0f2f5;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .chat-input .input-group {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            border: none;
+            padding: 0.5rem;
+            flex: 1;
+            outline: none;
+        }
+
+        .chat-input .input-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input .input-actions button {
+            background: none;
+            border: none;
+            color: #198754;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-input .input-actions button:hover {
+            background: #f0f2f5;
+        }
+
+        .chat-input .file-input {
+            display: none;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #9ca3af;
+            margin: 1.5rem 0 0.75rem 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            width: 100%;
+            background-color: #f9fafb;
+        }
+
+        /* Estilos para Timeline com Observações */
+        .timeline-item {
+            padding: 1rem 0;
+            border-left: 2px solid #e9ecef;
+            margin-left: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-observation {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            border: 1px solid #e9ecef;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .timeline-observation-edit {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            border: 1px solid #e9ecef;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .timeline-observation textarea {
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            min-height: 60px;
+        }
+
+        .timeline-actions {
+            margin-top: 0.5rem;
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .timeline-observation .text-muted {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-observation .mt-1 {
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        /* Estilos para Chat Flutuante */
+        .chat-wrapper {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1040;
+        }
+
+        .chat-toggle-btn {
+            background: #198754;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-toggle-btn:hover {
+            background: #157347;
+        }
+
+        .chat-box {
+            position: absolute;
+            bottom: calc(100% + 1rem);
+            right: 0;
+            width: 320px;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .chat-box.active {
+            display: block;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-body {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Estilos para o Emoji Picker */
+        .emoji-picker-container {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 0;
+            margin-bottom: 0;
+            z-index: 1050;
+            display: none;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            transform: translateX(-50%);
+        }
+
+        .emoji-picker-container.active {
+            display: block;
+        }
+
+        .emoji-button {
+            position: relative;
+        }
+
+        .emoji-button.active .emoji-picker-container {
+            display: block;
+        }
+
+        emoji-picker {
+            width: 250px;
+            height: 300px;
+            --background: white;
+            --category-emoji-size: 1.1rem;
+            --emoji-size: 1.3rem;
+            --indicator-color: #198754;
+            --border-color: #e9ecef;
+            --category-font-color: #6c757d;
+            --hover-background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        .chat-input .input-actions {
+            position: relative;
+        }
+
+        /* Remover estilos do Emoji Picker */
+        .emoji-picker-container,
+        .emoji-button,
+        emoji-picker {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAMAAzAMBIgACEQEDEQH/xAAbAAEAAwADAQAAAAAAAAAAAAAABAUGAQIDB//EAD4QAAEDAwIEAwUFAw0BAAAAAAABAgMEBREGEiExQVETYXEUMpGxwQcigYShFTNCJDVDRVJTYmNygpKy0SP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AwoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdccVXnwNZaNFvfStuGoKyO1UC8W+J+8f6IvL5+SgZP4g3D6/QVrarae1VlzVqcXyu4KvoqonwQk3LUmm6WsdTyaSgf4aNRV3NTmiLjGPMD58DcftnQtYuKnT9XSKv8AFC5MJ8FQ6rp/SV0/mfUS0kq8oa1vDP6L8wMSC/vOj7zaWLM+nSppv7+mXe3Hn1T4FB1wAAAAAAAAAAAAAAAAAAAAAAAABrNHUtJRW+u1NdI0lhonNipoXcpJl7+mU/Uorzd6281jqm4TLI9V+63+FidkToX9Sm/7LqFYVykdzf43lwdjPxQyIHeKNZpmRNRVV7kYiJ1zwLzXbGxarro2oibFY1cdcMRPoNBUft2r7bE5Pusm8Z3oxN3zRCHqWqSt1DcqhvuvqH7fRFwnyArAABZ2e/3SzvRaCskYxOcTnZY7/apfpHbdZtcymhit2oEarmxpwhqlTiqJ2dgxpJtjpWXKkWmVyTJOzw9vPOUA8ZY3xSOilYrJGLtcx3Nq9lOhoNezQT6uuD6ZWq3eiPVvJXoibv1M+AAAAAAAAAAAAAAAAAAAAAAaXS876q0XyyK3xEnpvaYWdpY8LlPVP+pmkXPHuWmmbmtnvlJWozc1jsPb/aa7KL+intrChp7dqKrgo3IsG5JGIjs7d3HH4ZAufs4RKP8AbN4f7tFRO2r/AIl44/RPiYzLl95VV3VVNhbXpS/ZpdpPdWpq2Q57pwX6GWpqSqq3I2mpppV6bGKoHgDTM0xR0FN42oruyjeqZSlhb4sy+qJwT8ckGqrLLAiNtdtklXrLcZN2fRjVRPjkCHbrbVXGRW00X3Gpl8r/ALsbE7q7oSppae0T4tdT7RVIxUWqRuEjcvPw/Ppu6dMEa4XavuDGx1dU98TERrIkTaxre2D3tdZa6eguUddQunqpoVZTSov3YVxzx9QKsBVTmqoAABxuTugHIONyd0Ocp3QAAAAAAAAB0+pf3egWKhqVhpIIIadY1a9WO8SRFwmUfyXiuceRQHd0r1jbGsj1Y3k1VXCfgBfXyjpIbRHJDFEkuYkVYkVHMy3K7++emOynSttsULLlN4GyHwoVp35XCq5EVcd15lGjlTquOqdw573Rtjc9ysTk3PBPRALm5tt8NogYjI/a300cjEYxUcirlXK93VPJCVNQQNWqh9iY2hjp/EireauXGUdu65VcbeXThgzWVx6Jw8jusj1jSPe7w0XKMyuE/DIHXiim50noyiulpdd7hVz1DWorvZKNEWTh0XPXyTBhSXbrlXW2ZJrdVSQSd2Oxu9U5KB9E1DdKPTmmbZDbLQyNtS50rYq1Nzo/NUz73ExFdqa71qK2SrWKJeUcCeG1PwTBvNb36Kkdaqa62+nuMc1Kj5t/B6KuMq1ehnm0Gi7q3fS3SptUy84qlu5iL/q5YAzlhpKW4Xqnpq+qWnglf/8ASVflle59OjtdstV1Sim09SS2uVEWO4I9q7Exx8XcvfrwMVcdC3KCm9ptktPdaVE3K+jfud/x/wDMmYcjmqrJEeitXCtciorV80UDWahoNH/tKaSivUsMSr+5ho1la1fJcpwJ6WCxUWjX3ZPHllq3tgp5axiNSPc7G9Gp2TLuOeRgvJMrnghv/tGl9ksVhtEeEa2BJXJy44wmf1At6i2W+yS0jaGkoH2xWtWSvmljcru+/dxx22mV1FPoyoucs9E26Ixy8W00bGRuXu3dxTPoZTCZTJx6gaamv1ioE/kmmY5n9JKypWRfhjB7P1xL/Q2S0R/l8/UyYA0r9Y1bv6vtaflEPF+qZn+9bLS78ohQAC0rb0+rgdE6gt8SO/ihpka5PRSs+hwAAAAAAAAAAAAAAAAAAAAALTUF5lvdVFPKxGeFAyFrUXkjU5/iVa8U4gASaCuq7bUJPQVMlPIi5RY1x8e5Mvt9qL66GWtgp0qWIqPniZtdL23FUAPehTNdTJ/mt+Zsftdei6jp48+7TN5dOJiGOcx7XsXDmrlqp0Ul3W5VV2rn1ldIkk70RFVEwmETHICGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9k=" alt="Rojo Gastronomia" class="navbar-logo">
+                <a class="navbar-brand ms-2" href="../index.html">Rojo Gastronomia</a>
+            </div>
+            <div class="d-flex align-items-center">
+                <!-- Área do usuário (será atualizada via JavaScript) -->
+                <div id="userArea">
+                    <button class="btn btn-outline-success" onclick="openLoginModal()">Login</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-section">
+                <div class="nav-section-title">COMPANY</div>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="dashboard.html">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Geral</span>
+                    </a>
+                    <a class="nav-link" href="pedidos.html">
+                        <i class="bi bi-bag"></i>
+                        <span>Pedidos</span>
+                    </a>
+                    <a class="nav-link" href="cardapios.html">
+                        <i class="bi bi-menu-button-wide"></i>
+                        <span>Cardápios</span>
+                    </a>
+                    <a class="nav-link" href="eventos.html">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Eventos</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">CONFIGURAÇÕES</div>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="usuarios.html">
+                        <i class="bi bi-people"></i>
+                        <span>Usuários</span>
+                    </a>
+                    <a class="nav-link active" href="relatorios.html">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Relatórios</span>
+                    </a>
+                    <a class="nav-link" href="configuracoes.html">
+                        <i class="bi bi-gear"></i>
+                        <span>Configurações</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">CONTA</div>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="perfil.html">
+                        <i class="bi bi-person"></i>
+                        <span>Perfil</span>
+                    </a>
+                    <a class="nav-link" href="#" onclick="handleLogout()">
+                        <i class="bi bi-box-arrow-left"></i>
+                        <span>Sair</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Relatórios</h2>
+                <button class="btn btn-success" onclick="abrirModalExportar()">
+                    <i class="bi bi-download me-2"></i>Exportar Relatório
+                </button>
+            </div>
+
+            <!-- Cards de Estatísticas -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-bag text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">Pedidos Hoje</h6>
+                            <h3 class="card-title mb-0" id="pedidosHoje">32</h3>
+                            <div class="small text-success mt-2">
+                                <i class="bi bi-arrow-up"></i> +12.5% desde ontem
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-currency-dollar text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">Faturamento Hoje</h6>
+                            <h3 class="card-title mb-0" id="faturamentoHoje">R$ 3.250,00</h3>
+                            <div class="small text-success mt-2">
+                                <i class="bi bi-arrow-up"></i> +8.3% desde ontem
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-calendar-event text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">Eventos Agendados</h6>
+                            <h3 class="card-title mb-0" id="eventosAgendados">8</h3>
+                            <div class="small text-success mt-2">
+                                <i class="bi bi-arrow-up"></i> +2 esta semana
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-people text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">Total de Clientes</h6>
+                            <h3 class="card-title mb-0" id="totalClientes">156</h3>
+                            <div class="small text-success mt-2">
+                                <i class="bi bi-arrow-up"></i> +5 novos hoje
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filtros</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Categoria</label>
+                            <select class="form-select" id="categoriaRelatorio">
+                                <option value="">Todas as Categorias</option>
+                                <option value="pedidos">Pedidos</option>
+                                <option value="cardapios">Cardápios</option>
+                                <option value="eventos">Eventos</option>
+                                <option value="faturamento">Faturamento</option>
+                                <option value="clientes">Clientes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="statusRelatorio">
+                                <option value="">Todos os Status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="em_andamento">Em Andamento</option>
+                                <option value="concluido">Concluído</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Período</label>
+                            <select class="form-select" id="periodoRelatorio">
+                                <option value="hoje">Hoje</option>
+                                <option value="ontem">Ontem</option>
+                                <option value="7dias">Últimos 7 dias</option>
+                                <option value="30dias">Últimos 30 dias</option>
+                                <option value="personalizado">Período Personalizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Filtros Avançados -->
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-3">
+                            <label class="form-label">Data Inicial</label>
+                            <input type="date" class="form-control" id="dataInicial">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Data Final</label>
+                            <input type="date" class="form-control" id="dataFinal">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Valor Mínimo</label>
+                            <input type="number" class="form-control" id="valorMinimo" placeholder="R$ 0,00">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Valor Máximo</label>
+                            <input type="number" class="form-control" id="valorMaximo" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-3">
+                        <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                            <i class="bi bi-x-circle me-2"></i>Limpar Filtros
+                        </button>
+                        <button class="btn btn-success" onclick="aplicarFiltros()">
+                            <i class="bi bi-funnel me-2"></i>Aplicar Filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Resultados -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Resultados</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Categoria</th>
+                                    <th>Descrição</th>
+                                    <th>Cliente</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                    <th>Responsável</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaResultados">
+                                <!-- Dados serão inseridos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-muted small">
+                            Mostrando 1-10 de 50 resultados
+                        </div>
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atividades dos Usuários -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Atividades dos Usuários</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-success btn-sm" onclick="filtrarAtividades('hoje')">Hoje</button>
+                            <button class="btn btn-outline-success btn-sm" onclick="filtrarAtividades('semana')">Esta Semana</button>
+                            <button class="btn btn-outline-success btn-sm" onclick="filtrarAtividades('mes')">Este Mês</button>
+                        </div>
+                    </div>
+                    <div class="timeline" id="timelineAtividades">
+                        <!-- Exemplo de atividade -->
+                        <div class="timeline-item">
+                            <div class="timeline-date">Hoje 14:30</div>
+                            <div class="timeline-content">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-success bg-opacity-10 p-2 rounded-circle me-3">
+                                        <i class="bi bi-check-circle text-success"></i>
+                                    </div>
+                                    <div>
+                                        <strong>João Silva</strong> aceitou o pedido <a href="#">#1234</a>
+                                        <div class="text-muted small">Evento: Casamento - 150 pessoas</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Mais atividades serão inseridas via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat dos Líderes (Botão Flutuante) -->
+            <div class="chat-wrapper" id="chatWrapper">
+                <div class="chat-toggle-btn" onclick="toggleChat()">
+                    <i class="bi bi-chat-dots"></i>
+                    <span class="ms-2">Chat dos Líderes</span>
+                </div>
+                
+                <div class="chat-box" id="chatBox">
+                    <div class="chat-header">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name">Chat dos Líderes</div>
+                                <div class="user-status">Online</div>
+                            </div>
+                        </div>
+                        <div class="chat-actions">
+                            <button onclick="toggleChatSearch()">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <button onclick="toggleChatMenu()">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chat-body">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- As mensagens serão inseridas aqui via JavaScript -->
+                        </div>
+                        <div class="chat-input">
+                            <div class="input-group">
+                                <input type="text" id="chatInput" placeholder="Digite uma mensagem...">
+                                <div class="input-actions">
+                                    <label for="fileInput" class="mb-0">
+                                        <button type="button">
+                                            <i class="bi bi-paperclip"></i>
+                                        </button>
+                                    </label>
+                                    <input type="file" id="fileInput" class="file-input" onchange="handleFileSelect(event)">
+                                    <button onclick="enviarMensagem()">
+                                        <i class="bi bi-send"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Variáveis globais para controle de estado
+                let dadosRelatorios = [];
+                let dadosAtividades = [];
+                let mensagensChat = [];
+                let paginaAtual = 1;
+                const itensPorPagina = 10;
+
+                // Função para carregar dados dos relatórios
+                async function carregarDadosRelatorios(filtros = {}) {
+                    try {
+                        // Simulação de dados
+                        dadosRelatorios = [
+                            {
+                                id: '1234',
+                                data: '2024-02-20',
+                                categoria: 'Evento',
+                                descricao: 'Casamento - 150 pessoas',
+                                cliente: 'Maria Silva',
+                                valor: 15000.00,
+                                status: 'Confirmado',
+                                responsavel: 'João Silva'
+                            },
+                            {
+                                id: '1235',
+                                data: '2024-02-21',
+                                categoria: 'Pedido',
+                                descricao: 'Buffet Corporativo',
+                                cliente: 'Empresa XYZ',
+                                valor: 5000.00,
+                                status: 'Pendente',
+                                responsavel: 'Ana Santos'
+                            }
+                        ];
+
+                        // Aplicar filtros
+                        let dadosFiltrados = dadosRelatorios;
+                        if (filtros.categoria) {
+                            dadosFiltrados = dadosFiltrados.filter(item => item.categoria.toLowerCase() === filtros.categoria.toLowerCase());
+                        }
+                        if (filtros.status) {
+                            dadosFiltrados = dadosFiltrados.filter(item => item.status.toLowerCase() === filtros.status.toLowerCase());
+                        }
+                        if (filtros.valorMinimo) {
+                            dadosFiltrados = dadosFiltrados.filter(item => item.valor >= parseFloat(filtros.valorMinimo));
+                        }
+                        if (filtros.valorMaximo) {
+                            dadosFiltrados = dadosFiltrados.filter(item => item.valor <= parseFloat(filtros.valorMaximo));
+                        }
+
+                        // Aplicar filtro de data
+                        if (filtros.dataInicial && filtros.dataFinal) {
+                            const dataInicial = new Date(filtros.dataInicial);
+                            const dataFinal = new Date(filtros.dataFinal);
+                            dadosFiltrados = dadosFiltrados.filter(item => {
+                                const dataItem = new Date(item.data);
+                                return dataItem >= dataInicial && dataItem <= dataFinal;
+                            });
+                        }
+
+                        // Atualizar estatísticas
+                        atualizarEstatisticas(dadosFiltrados);
+
+                        // Atualizar tabela
+                        atualizarTabelaResultados(dadosFiltrados);
+
+                    } catch (error) {
+                        console.error('Erro ao carregar dados:', error);
+                        mostrarToast('Erro ao carregar dados. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para atualizar estatísticas
+                function atualizarEstatisticas(dados) {
+                    const hoje = new Date().toISOString().split('T')[0];
+                    
+                    // Pedidos hoje
+                    const pedidosHoje = dados.filter(item => item.data === hoje).length;
+                    document.getElementById('pedidosHoje').textContent = pedidosHoje;
+
+                    // Faturamento hoje
+                    const faturamentoHoje = dados
+                        .filter(item => item.data === hoje)
+                        .reduce((total, item) => total + item.valor, 0);
+                    document.getElementById('faturamentoHoje').textContent = 
+                        `R$ ${faturamentoHoje.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+                    // Eventos agendados
+                    const eventosAgendados = dados.filter(item => 
+                        item.categoria === 'Evento' && 
+                        new Date(item.data) >= new Date()
+                    ).length;
+                    document.getElementById('eventosAgendados').textContent = eventosAgendados;
+
+                    // Total de clientes únicos
+                    const clientesUnicos = new Set(dados.map(item => item.cliente)).size;
+                    document.getElementById('totalClientes').textContent = clientesUnicos;
+                }
+
+                // Função para filtrar atividades
+                function filtrarAtividades(periodo) {
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+
+                    const inicioSemana = new Date(hoje);
+                    inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+
+                    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+
+                    let atividadesFiltradas = dadosAtividades.filter(atividade => {
+                        const dataAtividade = new Date(atividade.data);
+                        dataAtividade.setHours(0, 0, 0, 0);
+
+                        switch (periodo) {
+                            case 'hoje':
+                                return dataAtividade.getTime() === hoje.getTime();
+                            case 'semana':
+                                return dataAtividade >= inicioSemana && dataAtividade <= hoje;
+                            case 'mes':
+                                return dataAtividade >= inicioMes && dataAtividade <= hoje;
+                            default:
+                                return true;
+                        }
+                    });
+
+                    // Atualizar botões ativos
+                    document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.textContent.trim().toLowerCase().includes(periodo)) {
+                            btn.classList.add('active');
+                        }
+                    });
+
+                    // Atualizar timeline com atividades filtradas
+                    atualizarTimelineAtividades(atividadesFiltradas);
+                }
+
+                // Função para atualizar timeline de atividades
+                function atualizarTimelineAtividades(atividades = dadosAtividades) {
+                    const timeline = document.getElementById('timelineAtividades');
+                    
+                    if (atividades.length === 0) {
+                        timeline.innerHTML = `
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-info-circle fs-4 mb-2"></i>
+                                <p class="mb-0">Nenhuma atividade encontrada para o período selecionado.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    timeline.innerHTML = atividades.map(atividade => `
+                        <div class="timeline-item" id="atividade-${atividade.id}">
+                            <div class="timeline-date">${formatarDataAtividade(atividade.data)} ${atividade.hora}</div>
+                            <div class="timeline-content">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-success bg-opacity-10 p-2 rounded-circle me-3">
+                                        <i class="bi bi-${getAtividadeIcone(atividade.acao)} text-success"></i>
+                                    </div>
+                                    <div>
+                                        <strong>${atividade.usuario}</strong> ${atividade.acao} ${atividade.tipo} <a href="#">#${atividade.id}</a>
+                                        <div class="text-muted small">${atividade.descricao}</div>
+                                    </div>
+                                </div>
+                                ${atividade.observacao ? `
+                                    <div class="timeline-observation mt-2">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <div class="text-muted small me-2">
+                                                <i class="bi bi-pencil-square me-1"></i>Observação por <strong>${atividade.observacaoUsuario}</strong>
+                                            </div>
+                                            <button class="btn btn-sm btn-link text-success p-0 ms-auto" onclick="toggleObservacao('${atividade.id}')">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                        </div>
+                                        <div>${atividade.observacao}</div>
+                                    </div>
+                                ` : ''}
+                                <div class="timeline-actions mt-2">
+                                    <button class="btn btn-sm btn-outline-success" onclick="toggleObservacao('${atividade.id}')">
+                                        <i class="bi bi-pencil-square"></i> ${atividade.observacao ? 'Nova Observação' : 'Adicionar Observação'}
+                                    </button>
+                                </div>
+                                <div class="timeline-observation-edit d-none" id="obs-${atividade.id}">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="text-muted small">
+                                            <i class="bi bi-pencil-square me-1"></i>Nova Observação
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control mb-2" rows="2" placeholder="Digite sua observação...">${atividade.observacao || ''}</textarea>
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="toggleObservacao('${atividade.id}')">
+                                            Cancelar
+                                        </button>
+                                        <button class="btn btn-sm btn-success" onclick="salvarObservacao('${atividade.id}')">
+                                            Salvar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Função para salvar observação
+                async function salvarObservacao(id) {
+                    try {
+                        const textarea = document.querySelector(`#obs-${id} textarea`);
+                        const observacao = textarea.value.trim();
+                        
+                        if (!observacao) {
+                            mostrarToast('Digite uma observação antes de salvar.', 'error');
+                            return;
+                        }
+
+                        // Atualizar dados locais
+                        const atividade = dadosAtividades.find(a => a.id === id);
+                        if (atividade) {
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            atividade.observacao = observacao;
+                            atividade.observacaoUsuario = user.name;
+                            atividade.observacaoData = new Date().toISOString();
+
+                            // Registrar nova atividade de observação
+                            registrarAtividade({
+                                tipo: 'observacao',
+                                itemId: id,
+                                descricao: `Adicionou uma observação: ${observacao}`
+                            });
+                        }
+
+                        // Feedback visual
+                        const obsDiv = document.getElementById(`obs-${id}`);
+                        obsDiv.classList.add('d-none');
+                        
+                        // Atualizar timeline
+                        atualizarTimelineAtividades();
+                        
+                        mostrarToast('Observação salva com sucesso!', 'success');
+
+                    } catch (error) {
+                        console.error('Erro ao salvar observação:', error);
+                        mostrarToast('Erro ao salvar observação. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para enviar mensagem no chat
+                async function enviarMensagem() {
+                    try {
+                        const input = document.getElementById('chatInput');
+                        const fileInput = document.getElementById('fileInput');
+                        const mensagem = input.value.trim();
+                        const arquivo = fileInput.files[0];
+                        
+                        if (!mensagem && !arquivo) return;
+
+                        const user = JSON.parse(localStorage.getItem('user'));
+                        const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                        
+                        // Adicionar mensagem localmente
+                        const novaMensagem = {
+                            id: Date.now(),
+                            texto: mensagem,
+                            usuario: user.name,
+                            hora: hora,
+                            tipo: 'sent',
+                            arquivo: arquivo ? {
+                                nome: arquivo.name,
+                                tipo: arquivo.type,
+                                tamanho: arquivo.size
+                            } : null
+                        };
+
+                        mensagensChat.push(novaMensagem);
+                        
+                        // Atualizar interface
+                        const chatMessages = document.getElementById('chatMessages');
+                        chatMessages.innerHTML += `
+                            <div class="chat-message ${novaMensagem.tipo}">
+                                <div class="message-sender">${novaMensagem.usuario}</div>
+                                ${novaMensagem.arquivo ? `
+                                    <div class="attachment-info">
+                                        <i class="bi bi-file-earmark"></i>
+                                        <span>${novaMensagem.arquivo.nome}</span>
+                                    </div>
+                                ` : ''}
+                                ${novaMensagem.texto ? `
+                                    <div class="message-content">${novaMensagem.texto}</div>
+                                ` : ''}
+                                <div class="message-time">${novaMensagem.hora}</div>
+                            </div>
+                        `;
+                        
+                        input.value = '';
+                        fileInput.value = '';
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    } catch (error) {
+                        console.error('Erro ao enviar mensagem:', error);
+                        mostrarToast('Erro ao enviar mensagem. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para alternar visibilidade do chat
+                function toggleChat() {
+                    const chatBox = document.getElementById('chatBox');
+                    chatBox.classList.toggle('active');
+                }
+
+                // Função para alternar observação
+                function toggleObservacao(id) {
+                    const obsDiv = document.getElementById(`obs-${id}`);
+                    obsDiv.classList.toggle('d-none');
+                }
+
+                // Funções utilitárias
+                function formatarData(data) {
+                    return new Date(data).toLocaleDateString('pt-BR');
+                }
+
+                function getBadgeColor(status) {
+                    switch (status.toLowerCase()) {
+                        case 'confirmado': return 'success';
+                        case 'pendente': return 'warning';
+                        case 'cancelado': return 'danger';
+                        default: return 'secondary';
+                    }
+                }
+
+                function getAtividadeIcone(acao) {
+                    switch (acao.toLowerCase()) {
+                        case 'aceitou': return 'check-circle';
+                        case 'criou': return 'plus-circle';
+                        case 'editou': return 'pencil';
+                        case 'cancelou': return 'x-circle';
+                        case 'observacao': return 'chat-dots';
+                        default: return 'arrow-right-circle';
+                    }
+                }
+
+                function formatarDataAtividade(data) {
+                    return new Date(data).toLocaleDateString('pt-BR');
+                }
+
+                function mostrarToast(mensagem, tipo) {
+                    const toastContainer = document.createElement('div');
+                    toastContainer.style.position = 'fixed';
+                    toastContainer.style.top = '20px';
+                    toastContainer.style.right = '20px';
+                    toastContainer.style.zIndex = '1050';
+                    
+                    toastContainer.innerHTML = `
+                        <div class="toast show" role="alert">
+                            <div class="toast-header bg-${tipo === 'success' ? 'success' : 'danger'} text-white">
+                                <strong class="me-auto">Notificação</strong>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                            </div>
+                            <div class="toast-body">
+                                ${mensagem}
+                            </div>
+                        </div>
+                    `;
+
+                    document.body.appendChild(toastContainer);
+                    
+                    setTimeout(() => {
+                        toastContainer.remove();
+                    }, 3000);
+                }
+
+                // Função para atualizar tabela de resultados
+                function atualizarTabelaResultados(dados) {
+                    const tbody = document.getElementById('tabelaResultados');
+                    const inicio = (paginaAtual - 1) * itensPorPagina;
+                    const fim = inicio + itensPorPagina;
+                    const dadosPaginados = dados.slice(inicio, fim);
+
+                    tbody.innerHTML = dadosPaginados.map(item => `
+                        <tr>
+                            <td>#${item.id}</td>
+                            <td>${formatarData(item.data)}</td>
+                            <td>${item.categoria}</td>
+                            <td>${item.descricao}</td>
+                            <td>${item.cliente}</td>
+                            <td>R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                            <td><span class="badge bg-${getBadgeColor(item.status)}">${item.status}</span></td>
+                            <td>${item.responsavel}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="visualizarDetalhes('${item.id}')" title="Visualizar Detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="toggleObservacaoTabela('${item.id}')" title="Adicionar Observação">
+                                        <i class="bi bi-pencil-square"></i>
+                                        ${item.observacoes && item.observacoes.length > 0 ? `
+                                            <span class="badge bg-success ms-1">${item.observacoes.length}</span>
+                                        ` : ''}
+                                    </button>
+                                    ${isAdminOrLeader() ? `
+                                    <button class="btn btn-sm btn-outline-warning" onclick="editarItem('${item.id}')" title="Editar Item">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    atualizarPaginacao(dados.length);
+                }
+
+                // Função para atualizar paginação
+                function atualizarPaginacao(totalItens) {
+                    const totalPaginas = Math.ceil(totalItens / itensPorPagina);
+                    const paginacao = document.querySelector('.pagination');
+                    
+                    let html = `
+                        <li class="page-item ${paginaAtual === 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="#" onclick="mudarPagina(${paginaAtual - 1})">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    `;
+
+                    for (let i = 1; i <= totalPaginas; i++) {
+                        html += `
+                            <li class="page-item ${i === paginaAtual ? 'active' : ''}">
+                                <a class="page-link" href="#" onclick="mudarPagina(${i})">${i}</a>
+                            </li>
+                        `;
+                    }
+
+                    html += `
+                        <li class="page-item ${paginaAtual === totalPaginas ? 'disabled' : ''}">
+                            <a class="page-link" href="#" onclick="mudarPagina(${paginaAtual + 1})">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    `;
+
+                    paginacao.innerHTML = html;
+                }
+
+                // Função para mudar página
+                function mudarPagina(novaPagina) {
+                    if (novaPagina < 1 || novaPagina > Math.ceil(dadosRelatorios.length / itensPorPagina)) return;
+                    paginaAtual = novaPagina;
+                    aplicarFiltros();
+                }
+
+                // Função para aplicar filtros
+                function aplicarFiltros() {
+                    const filtros = {
+                        categoria: document.getElementById('categoriaRelatorio').value,
+                        status: document.getElementById('statusRelatorio').value,
+                        periodo: document.getElementById('periodoRelatorio').value,
+                        dataInicial: document.getElementById('dataInicial').value,
+                        dataFinal: document.getElementById('dataFinal').value,
+                        valorMinimo: document.getElementById('valorMinimo').value,
+                        valorMaximo: document.getElementById('valorMaximo').value
+                    };
+
+                    carregarDadosRelatorios(filtros);
+                }
+
+                // Função para limpar filtros
+                function limparFiltros() {
+                    document.getElementById('categoriaRelatorio').value = '';
+                    document.getElementById('statusRelatorio').value = '';
+                    document.getElementById('periodoRelatorio').value = 'hoje';
+                    document.getElementById('dataInicial').value = '';
+                    document.getElementById('dataFinal').value = '';
+                    document.getElementById('valorMinimo').value = '';
+                    document.getElementById('valorMaximo').value = '';
+                    
+                    aplicarFiltros();
+                }
+
+                // Função para visualizar detalhes
+                function visualizarDetalhes(id) {
+                    const item = dadosRelatorios.find(item => item.id === id);
+                    if (!item) {
+                        mostrarToast('Item não encontrado', 'error');
+                        return;
+                    }
+
+                    const modalHtml = `
+                        <div class="modal fade" id="modalDetalhes" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Detalhes do Item #${item.id}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted">Data</label>
+                                                <div>${formatarData(item.data)}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted">Categoria</label>
+                                                <div>${item.categoria}</div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-muted">Descrição</label>
+                                            <div>${item.descricao}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted">Cliente</label>
+                                                <div>${item.cliente}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted">Valor</label>
+                                                <div>R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted">Status</label>
+                                                <div><span class="badge bg-${getBadgeColor(item.status)}">${item.status}</span></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted">Responsável</label>
+                                                <div>${item.responsavel}</div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-muted">Observações</label>
+                                            <div id="observacoesDetalhes">
+                                                ${item.observacoes ? item.observacoes.map(obs => `
+                                                    <div class="border-bottom py-2" data-observacao-id="${obs.id}">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <small class="text-muted">${obs.usuario} - ${formatarData(obs.data)}</small>
+                                                            <button class="btn btn-sm btn-link text-danger p-0" onclick="excluirObservacao('${item.id}', '${obs.id}')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div>${obs.texto}</div>
+                                                    </div>
+                                                `).join('') : '<div class="text-muted">Nenhuma observação</div>'}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-muted">Nova Observação</label>
+                                            <textarea class="form-control" rows="2" id="novaObservacaoDetalhes" placeholder="Digite sua observação..."></textarea>
+                                            <div class="text-end mt-2">
+                                                <button class="btn btn-sm btn-success" onclick="salvarObservacaoDetalhes('${item.id}')">
+                                                    <i class="bi bi-plus-circle"></i> Adicionar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Remover modal existente se houver
+                    const modalExistente = document.getElementById('modalDetalhes');
+                    if (modalExistente) {
+                        modalExistente.remove();
+                    }
+
+                    // Adicionar novo modal e mostrar
+                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+                    const modal = new bootstrap.Modal(document.getElementById('modalDetalhes'));
+                    modal.show();
+                }
+
+                // Função para salvar observação nos detalhes
+                async function salvarObservacaoDetalhes(id) {
+                    try {
+                        const textarea = document.getElementById('novaObservacaoDetalhes');
+                        const observacao = textarea.value.trim();
+                        
+                        if (!observacao) {
+                            mostrarToast('Digite uma observação antes de salvar.', 'error');
+                            return;
+                        }
+
+                        const user = JSON.parse(localStorage.getItem('user'));
+                        const novaObservacao = {
+                            id: Date.now().toString(),
+                            texto: observacao,
+                            usuario: user.name,
+                            data: new Date().toISOString()
+                        };
+
+                        // Atualizar dados locais
+                        const item = dadosRelatorios.find(item => item.id === id);
+                        if (item) {
+                            if (!item.observacoes) {
+                                item.observacoes = [];
+                            }
+                            item.observacoes.unshift(novaObservacao);
+                        }
+
+                        // Atualizar interface
+                        const observacoesDiv = document.getElementById('observacoesDetalhes');
+                        const novaObservacaoHtml = `
+                            <div class="border-bottom py-2" data-observacao-id="${novaObservacao.id}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${novaObservacao.usuario} - ${formatarData(novaObservacao.data)}</small>
+                                    <button class="btn btn-sm btn-link text-danger p-0" onclick="excluirObservacao('${id}', '${novaObservacao.id}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <div>${novaObservacao.texto}</div>
+                            </div>
+                        `;
+                        
+                        if (observacoesDiv.querySelector('.text-muted')) {
+                            observacoesDiv.innerHTML = '';
+                        }
+                        observacoesDiv.insertAdjacentHTML('afterbegin', novaObservacaoHtml);
+                        
+                        textarea.value = '';
+                        mostrarToast('Observação adicionada com sucesso!', 'success');
+
+                    } catch (error) {
+                        console.error('Erro ao salvar observação:', error);
+                        mostrarToast('Erro ao salvar observação. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para excluir observação
+                function excluirObservacao(itemId, observacaoId) {
+                    if (!confirm('Tem certeza que deseja excluir esta observação?')) return;
+
+                    try {
+                        // Atualizar dados locais
+                        const item = dadosRelatorios.find(item => item.id === itemId);
+                        if (item && item.observacoes) {
+                            item.observacoes = item.observacoes.filter(obs => obs.id !== observacaoId);
+                            
+                            // Atualizar interface
+                            const observacaoElement = document.querySelector(`[data-observacao-id="${observacaoId}"]`);
+                            if (observacaoElement) {
+                                observacaoElement.remove();
+                            }
+
+                            // Se não houver mais observações, mostrar mensagem
+                            const observacoesDiv = document.getElementById('observacoesDetalhes');
+                            if (item.observacoes.length === 0) {
+                                observacoesDiv.innerHTML = '<div class="text-muted">Nenhuma observação</div>';
+                            }
+
+                            mostrarToast('Observação excluída com sucesso!', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir observação:', error);
+                        mostrarToast('Erro ao excluir observação. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para alternar observação na tabela
+                function toggleObservacaoTabela(id) {
+                    const item = dadosRelatorios.find(item => item.id === id);
+                    if (!item) {
+                        mostrarToast('Item não encontrado', 'error');
+                        return;
+                    }
+
+                    const modalHtml = `
+                        <div class="modal fade" id="modalObservacao" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Observações - Item #${id}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Lista de Observações -->
+                                        <div class="mb-4">
+                                            <h6 class="mb-3">Observações Existentes</h6>
+                                            <div id="listaObservacoes" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                                                ${item.observacoes && item.observacoes.length > 0 ? 
+                                                    item.observacoes.map(obs => `
+                                                        <div class="border-bottom py-2">
+                                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                <small class="text-muted">
+                                                                    <i class="bi bi-person-circle me-1"></i>${obs.usuario}
+                                                                    <span class="ms-2">
+                                                                        <i class="bi bi-clock me-1"></i>${formatarData(obs.data)}
+                                                                    </span>
+                                                                </small>
+                                                                <button class="btn btn-sm btn-link text-danger p-0" onclick="excluirObservacaoTabela('${id}', '${obs.id}')">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="ps-2">${obs.texto}</div>
+                                                        </div>
+                                                    `).join('') : 
+                                                    '<div class="text-center text-muted py-3">Nenhuma observação registrada</div>'
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <!-- Nova Observação -->
+                                        <div>
+                                            <h6 class="mb-3">Nova Observação</h6>
+                                            <textarea class="form-control mb-3" rows="3" id="observacaoTabela" placeholder="Digite sua observação..."></textarea>
+                                            <div class="text-end">
+                                                <button class="btn btn-secondary me-2" data-bs-dismiss="modal">Fechar</button>
+                                                <button class="btn btn-success" onclick="salvarObservacaoTabela('${id}')">
+                                                    <i class="bi bi-plus-circle me-1"></i>Adicionar Observação
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Remover modal existente se houver
+                    const modalExistente = document.getElementById('modalObservacao');
+                    if (modalExistente) {
+                        modalExistente.remove();
+                    }
+
+                    // Adicionar novo modal e mostrar
+                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+                    const modal = new bootstrap.Modal(document.getElementById('modalObservacao'));
+                    modal.show();
+                }
+
+                // Função para excluir observação da tabela
+                function excluirObservacaoTabela(itemId, observacaoId) {
+                    if (!confirm('Tem certeza que deseja excluir esta observação?')) return;
+
+                    try {
+                        const item = dadosRelatorios.find(item => item.id === itemId);
+                        if (item && item.observacoes) {
+                            item.observacoes = item.observacoes.filter(obs => obs.id !== observacaoId);
+                            
+                            // Atualizar interface
+                            const observacaoElement = document.querySelector(`[data-observacao-id="${observacaoId}"]`);
+                            if (observacaoElement) {
+                                observacaoElement.remove();
+                            }
+
+                            // Se não houver mais observações, mostrar mensagem
+                            const listaObservacoes = document.getElementById('listaObservacoes');
+                            if (item.observacoes.length === 0) {
+                                listaObservacoes.innerHTML = '<div class="text-center text-muted py-3">Nenhuma observação registrada</div>';
+                            }
+
+                            // Atualizar badge na tabela
+                            atualizarTabelaResultados(dadosRelatorios);
+
+                            mostrarToast('Observação excluída com sucesso!', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir observação:', error);
+                        mostrarToast('Erro ao excluir observação. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para salvar observação da tabela
+                async function salvarObservacaoTabela(id) {
+                    try {
+                        const textarea = document.getElementById('observacaoTabela');
+                        const observacao = textarea.value.trim();
+                        
+                        // Atualizar dados locais
+                        const item = dadosRelatorios.find(item => item.id === id);
+                        if (item) {
+                            if (!item.observacoes) {
+                                item.observacoes = [];
+                            }
+                            
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            const novaObservacao = {
+                                id: Date.now().toString(),
+                                texto: observacao,
+                                usuario: user.name,
+                                data: new Date().toISOString()
+                            };
+                            
+                            item.observacoes.unshift(novaObservacao);
+
+                            // Registrar atividade na timeline
+                            registrarAtividade({
+                                tipo: 'observacao',
+                                itemId: id,
+                                descricao: `Adicionou uma observação ao item #${id}: ${observacao}`
+                            });
+                        }
+
+                        // Fechar modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalObservacao'));
+                        modal.hide();
+
+                        // Atualizar tabela
+                        atualizarTabelaResultados(dadosRelatorios);
+                        
+                        mostrarToast('Observação salva com sucesso!', 'success');
+
+                    } catch (error) {
+                        console.error('Erro ao salvar observação:', error);
+                        mostrarToast('Erro ao salvar observação. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para verificar se o usuário é admin ou líder
+                function isAdminOrLeader() {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    return user && (user.role === 'admin' || user.role === 'leader');
+                }
+
+                // Função para editar item
+                function editarItem(id) {
+                    const item = dadosRelatorios.find(item => item.id === id);
+                    if (!item) {
+                        mostrarToast('Item não encontrado', 'error');
+                        return;
+                    }
+
+                    const modalHtml = `
+                        <div class="modal fade" id="modalEditar" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Editar Item #${item.id}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="formEditar">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Data</label>
+                                                    <input type="date" class="form-control" id="editData" value="${item.data}" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Categoria</label>
+                                                    <select class="form-select" id="editCategoria" required>
+                                                        <option value="Pedido" ${item.categoria === 'Pedido' ? 'selected' : ''}>Pedido</option>
+                                                        <option value="Evento" ${item.categoria === 'Evento' ? 'selected' : ''}>Evento</option>
+                                                        <option value="Cardápio" ${item.categoria === 'Cardápio' ? 'selected' : ''}>Cardápio</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Descrição</label>
+                                                <textarea class="form-control" id="editDescricao" rows="2" required>${item.descricao}</textarea>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Cliente</label>
+                                                    <input type="text" class="form-control" id="editCliente" value="${item.cliente}" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Valor</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">R$</span>
+                                                        <input type="number" class="form-control" id="editValor" value="${item.valor}" step="0.01" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Status</label>
+                                                    <select class="form-select" id="editStatus" required>
+                                                        <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                                        <option value="Confirmado" ${item.status === 'Confirmado' ? 'selected' : ''}>Confirmado</option>
+                                                        <option value="Cancelado" ${item.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Responsável</label>
+                                                    <input type="text" class="form-control" id="editResponsavel" value="${item.responsavel}" required>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        ${isAdminOrLeader() ? `
+                                        <button type="button" class="btn btn-danger me-2" onclick="excluirItem('${item.id}')">
+                                            <i class="bi bi-trash me-1"></i>Excluir Item
+                                        </button>
+                                        ` : ''}
+                                        <button type="button" class="btn btn-success" onclick="salvarEdicao('${item.id}')">
+                                            <i class="bi bi-check-lg me-1"></i>Salvar Alterações
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Remover modal existente se houver
+                    const modalExistente = document.getElementById('modalEditar');
+                    if (modalExistente) {
+                        modalExistente.remove();
+                    }
+
+                    // Adicionar novo modal e mostrar
+                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+                    const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
+                    modal.show();
+                }
+
+                // Função para salvar edição
+                async function salvarEdicao(id) {
+                    try {
+                        const form = document.getElementById('formEditar');
+                        if (!form.checkValidity()) {
+                            form.reportValidity();
+                            return;
+                        }
+
+                        const dadosEditados = {
+                            data: document.getElementById('editData').value,
+                            categoria: document.getElementById('editCategoria').value,
+                            descricao: document.getElementById('editDescricao').value,
+                            cliente: document.getElementById('editCliente').value,
+                            valor: parseFloat(document.getElementById('editValor').value),
+                            status: document.getElementById('editStatus').value,
+                            responsavel: document.getElementById('editResponsavel').value
+                        };
+
+                        // Atualizar dados locais
+                        const itemIndex = dadosRelatorios.findIndex(item => item.id === id);
+                        if (itemIndex !== -1) {
+                            dadosRelatorios[itemIndex] = { ...dadosRelatorios[itemIndex], ...dadosEditados };
+                        }
+
+                        // Fechar modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                        modal.hide();
+
+                        // Atualizar tabela
+                        atualizarTabelaResultados(dadosRelatorios);
+
+                        // Registrar atividade
+                        registrarAtividade({
+                            tipo: 'edicao',
+                            itemId: id,
+                            descricao: `Item #${id} foi editado`
+                        });
+
+                        mostrarToast('Item atualizado com sucesso!', 'success');
+
+                    } catch (error) {
+                        console.error('Erro ao salvar edição:', error);
+                        mostrarToast('Erro ao salvar edição. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para registrar atividade
+                function registrarAtividade(atividade) {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const novaAtividade = {
+                        id: Date.now().toString(),
+                        data: new Date().toISOString(),
+                        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                        usuario: user.name,
+                        acao: atividade.tipo,
+                        tipo: 'item',
+                        descricao: atividade.descricao,
+                        observacao: '',
+                        observacaoUsuario: '',
+                        observacaoData: ''
+                    };
+
+                    dadosAtividades.unshift(novaAtividade);
+                    atualizarTimelineAtividades();
+                }
+
+                // Inicialização
+                document.addEventListener('DOMContentLoaded', function() {
+                    const token = localStorage.getItem('token');
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    
+                    if (!token || !user || (user.role !== 'admin' && user.role !== 'leader')) {
+                        window.location.href = '../index.html';
+                        return;
+                    }
+
+                    // Atualizar interface com informações do usuário
+                    updateInterface();
+                    
+                    // Carregar dados iniciais
+                    carregarDadosRelatorios();
+                    carregarAtividades();
+
+                    // Configurar listeners
+                    document.getElementById('periodoRelatorio').addEventListener('change', function(e) {
+                        const camposData = document.querySelectorAll('#dataInicial, #dataFinal');
+                        if (e.target.value === 'personalizado') {
+                            camposData.forEach(campo => campo.removeAttribute('disabled'));
+                        } else {
+                            camposData.forEach(campo => {
+                                campo.setAttribute('disabled', 'disabled');
+                                campo.value = '';
+                            });
+                        }
+                    });
+
+                    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            enviarMensagem();
+                        }
+                    });
+
+                    // Atualizar estatísticas a cada 5 minutos
+                    setInterval(() => {
+                        carregarDadosRelatorios();
+                    }, 300000);
+                });
+
+                // Função para excluir item
+                function excluirItem(id) {
+                    if (!confirm('Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.')) {
+                        return;
+                    }
+
+                    try {
+                        // Encontrar o item
+                        const itemIndex = dadosRelatorios.findIndex(item => item.id === id);
+                        if (itemIndex === -1) {
+                            mostrarToast('Item não encontrado', 'error');
+                            return;
+                        }
+
+                        // Remover o item dos dados
+                        const itemRemovido = dadosRelatorios.splice(itemIndex, 1)[0];
+
+                        // Fechar o modal de edição
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                        modal.hide();
+
+                        // Atualizar a tabela
+                        atualizarTabelaResultados(dadosRelatorios);
+
+                        // Registrar atividade
+                        registrarAtividade({
+                            tipo: 'exclusao',
+                            itemId: id,
+                            descricao: `Item #${id} foi excluído`
+                        });
+
+                        mostrarToast('Item excluído com sucesso!', 'success');
+
+                    } catch (error) {
+                        console.error('Erro ao excluir item:', error);
+                        mostrarToast('Erro ao excluir item. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para carregar atividades
+                async function carregarAtividades(periodo = 'hoje') {
+                    try {
+                        // Simulação de dados
+                        dadosAtividades = [
+                            {
+                                id: '1234',
+                                data: new Date().toISOString(),
+                                hora: '14:30',
+                                usuario: 'João Silva',
+                                acao: 'aceitou',
+                                tipo: 'pedido',
+                                descricao: 'Evento: Casamento - 150 pessoas',
+                                observacao: ''
+                            },
+                            {
+                                id: '1235',
+                                data: new Date(Date.now() - 86400000).toISOString(), // Ontem
+                                hora: '15:45',
+                                usuario: 'Ana Santos',
+                                acao: 'criou',
+                                tipo: 'evento',
+                                descricao: 'Aniversário - 50 pessoas',
+                                observacao: 'Cliente solicitou decoração especial'
+                            },
+                            {
+                                id: '1236',
+                                data: new Date(Date.now() - 172800000).toISOString(), // 2 dias atrás
+                                hora: '09:15',
+                                usuario: 'Maria Oliveira',
+                                acao: 'editou',
+                                tipo: 'cardápio',
+                                descricao: 'Cardápio: Festa de 15 anos',
+                                observacao: 'Adicionado sobremesa especial'
+                            }
+                        ];
+
+                        // Aplicar filtro inicial
+                        filtrarAtividades(periodo);
+
+                    } catch (error) {
+                        console.error('Erro ao carregar atividades:', error);
+                        mostrarToast('Erro ao carregar atividades. Tente novamente.', 'error');
+                    }
+                }
+
+                // Função para manipular seleção de arquivo
+                function handleFileSelect(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        // Aqui você pode adicionar validação de tipo e tamanho do arquivo
+                        if (file.size > 5 * 1024 * 1024) { // 5MB
+                            mostrarToast('Arquivo muito grande. Tamanho máximo: 5MB', 'error');
+                            event.target.value = '';
+                            return;
+                        }
+                    }
+                }
+
+                // Função para alternar emoji picker
+                function toggleEmojiPicker(event) {
+                    // Função removida
+                }
+
+                // Fechar emoji picker ao clicar fora
+                document.addEventListener('click', function(event) {
+                    const container = document.getElementById('emojiPickerContainer');
+                    const button = document.querySelector('.emoji-button');
+                    if (!container.contains(event.target) && !button.contains(event.target)) {
+                        container.classList.remove('active');
+                        button.classList.remove('active');
+                    }
+                });
+
+                // Função para alternar busca no chat
+                function toggleChatSearch() {
+                    // Implementar busca no chat
+                    mostrarToast('Busca em desenvolvimento', 'info');
+                }
+
+                // Função para alternar menu do chat
+                function toggleChatMenu() {
+                    // Implementar menu do chat
+                    mostrarToast('Menu em desenvolvimento', 'info');
+                }
+            </script>
+        </div>
+    </div>
+
+    <!-- Modal de Exportação -->
+    <div class="modal fade" id="modalExportar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Exportar Relatório</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Formato do Arquivo</label>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-success" onclick="exportarRelatorio('excel')">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Excel (.xlsx)
+                                </button>
+                                <button class="btn btn-outline-success" onclick="exportarRelatorio('pdf')">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>PDF (.pdf)
+                                </button>
+                                <button class="btn btn-outline-success" onclick="exportarRelatorio('csv')">
+                                    <i class="bi bi-file-earmark-text me-2"></i>CSV (.csv)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Verificar autenticação
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || (user.role !== 'admin' && user.role !== 'leader')) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Atualizar interface com informações do usuário
+            updateInterface();
+            
+            // Carregar dados dos relatórios
+            carregarDadosRelatorios();
+        });
+
+        // Função para atualizar a interface baseada no tipo de usuário
+        function updateInterface() {
+            const userArea = document.getElementById('userArea');
+            if (!userArea) return;
+
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (token && user) {
+                userArea.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 text-end">
+                            <div class="fw-bold">${user.name}</div>
+                            <div class="text-muted small">${user.role === 'admin' ? 'Administrador' : 'Líder'}</div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-link text-dark dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="perfil.html">
+                                    <i class="bi bi-person me-2"></i>Meu Perfil
+                                </a></li>
+                                ${user.role === 'admin' ? `
+                                <li><a class="dropdown-item" href="configuracoes.html">
+                                    <i class="bi bi-gear me-2"></i>Configurações
+                                </a></li>
+                                ` : ''}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Sair
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } else {
+                userArea.innerHTML = `
+                    <button class="btn btn-outline-success" onclick="openLoginModal()">Login</button>
+                `;
+            }
+        }
+
+        // Função para fazer logout
+        function handleLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        }
+
+        // Função para abrir o modal de exportação
+        function abrirModalExportar() {
+            const modal = new bootstrap.Modal(document.getElementById('modalExportar'));
+            modal.show();
+        }
+
+        // Função para exportar relatório
+        async function exportarRelatorio(formato) {
+            try {
+                const filtros = {
+                    categoria: document.getElementById('categoriaRelatorio').value,
+                    status: document.getElementById('statusRelatorio').value,
+                    periodo: document.getElementById('periodoRelatorio').value,
+                    dataInicial: document.getElementById('dataInicial').value,
+                    dataFinal: document.getElementById('dataFinal').value
+                };
+
+                // Obter dados filtrados
+                const dadosFiltrados = aplicarFiltrosAosDados(dadosRelatorios, filtros);
+
+                switch (formato) {
+                    case 'excel':
+                        exportarExcel(dadosFiltrados);
+                        break;
+                    case 'pdf':
+                        exportarPDF(dadosFiltrados);
+                        break;
+                    case 'csv':
+                        exportarCSV(dadosFiltrados);
+                        break;
+                }
+
+                // Fechar modal
+                const modalExportar = bootstrap.Modal.getInstance(document.getElementById('modalExportar'));
+                modalExportar.hide();
+
+                mostrarToast(`Relatório exportado com sucesso em formato ${formato.toUpperCase()}`, 'success');
+
+            } catch (error) {
+                console.error('Erro ao exportar relatório:', error);
+                mostrarToast('Erro ao exportar relatório. Tente novamente.', 'error');
+            }
+        }
+
+        // Funções auxiliares de exportação
+        function exportarExcel(dados) {
+            const ws = XLSX.utils.json_to_sheet(dados);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Relatório");
+            XLSX.writeFile(wb, `relatorio-${formatarDataArquivo()}.xlsx`);
+        }
+
+        function exportarPDF(dados) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Adicionar cabeçalho
+            doc.setFontSize(18);
+            doc.text("Relatório - Rojo Gastronomia", 20, 20);
+            
+            // Adicionar data
+            doc.setFontSize(12);
+            doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 20, 30);
+            
+            // Configurar tabela
+            const headers = ['ID', 'Data', 'Categoria', 'Descrição', 'Cliente', 'Valor', 'Status'];
+            const rows = dados.map(item => [
+                item.id,
+                formatarData(item.data),
+                item.categoria,
+                item.descricao,
+                item.cliente,
+                `R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+                item.status
+            ]);
+
+            // Adicionar tabela
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: 40,
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 2
+                },
+                headStyles: {
+                    fillColor: [25, 135, 84],
+                    textColor: 255
+                }
+            });
+
+            doc.save(`relatorio-${formatarDataArquivo()}.pdf`);
+        }
+
+        function exportarCSV(dados) {
+            const headers = ['ID', 'Data', 'Categoria', 'Descrição', 'Cliente', 'Valor', 'Status', 'Responsável'];
+            const rows = dados.map(item => [
+                item.id,
+                item.data,
+                item.categoria,
+                item.descricao,
+                item.cliente,
+                item.valor,
+                item.status,
+                item.responsavel
+            ]);
+
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `relatorio-${formatarDataArquivo()}.csv`;
+            link.click();
+        }
+
+        function formatarDataArquivo() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || (user.role !== 'admin' && user.role !== 'leader')) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Atualizar interface com informações do usuário
+            updateInterface();
+            
+            // Carregar dados iniciais
+            carregarDadosRelatorios();
+            carregarAtividades();
+
+            // Configurar listeners
+            document.getElementById('periodoRelatorio').addEventListener('change', function(e) {
+                const camposData = document.querySelectorAll('#dataInicial, #dataFinal');
+                if (e.target.value === 'personalizado') {
+                    camposData.forEach(campo => campo.removeAttribute('disabled'));
+                } else {
+                    camposData.forEach(campo => {
+                        campo.setAttribute('disabled', 'disabled');
+                        campo.value = '';
+                    });
+                }
+            });
+
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    enviarMensagem();
+                }
+            });
+
+            // Atualizar estatísticas a cada 5 minutos
+            setInterval(() => {
+                carregarDadosRelatorios();
+            }, 300000);
+        });
+    </script>
+</body>
+</html> 

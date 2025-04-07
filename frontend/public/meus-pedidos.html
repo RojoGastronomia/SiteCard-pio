@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - Rojo Gastronomia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <style>
+        .order-card {
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .status-confirmed {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .cart-icon {
+            position: relative;
+            text-decoration: none;
+            color: #198754;
+            font-size: 1.25rem;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #198754;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            min-width: 1.5rem;
+            text-align: center;
+            line-height: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos do Modal do Carrinho */
+        .cart-item {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .cart-item-price {
+            font-weight: 500;
+            color: #198754;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #198754;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .cart-empty i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #198754;
+        }
+
+        .cart-empty h5 {
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-empty p {
+            margin-bottom: 1rem;
+        }
+
+        .cart-empty .btn {
+            padding: 0.5rem 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <img src="data:image/jpeg;base64,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" alt="Rojo Gastronomia" class="navbar-logo">
+                <a class="navbar-brand ms-2" href="index.html">Cardápio Digital</a>
+            </div>
+            <div class="d-flex align-items-center">
+                <ul class="navbar-nav me-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="meus-pedidos.html">Meus Pedidos</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Área do usuário (será atualizada via JavaScript) -->
+                    <div id="userArea">
+                        <button class="btn btn-outline-success" onclick="openLoginModal()">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Tela de Bloqueio (será mostrada quando não estiver logado) -->
+        <div id="blockedContent" class="text-center py-5" style="display: none;">
+            <i class="bi bi-lock-fill display-1 text-secondary mb-4"></i>
+            <h2 class="mb-4">Usuário Deslogado</h2>
+            <p class="text-secondary mb-4">Necessário efetuar o login para visualizar os seus pedidos!</p>
+            <button class="btn btn-success px-4" onclick="openLoginModal()">Faça Login</button>
+        </div>
+
+        <!-- Conteúdo Principal (será mostrado quando estiver logado) -->
+        <div id="mainContent" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4">Meus Pedidos</h1>
+                    
+                    <!-- Lista de Pedidos -->
+                    <div id="ordersList" class="row g-4">
+                        <!-- Os pedidos serão inseridos aqui dinamicamente -->
+                    </div>
+
+                    <!-- Mensagem de Nenhum Pedido -->
+                    <div id="noOrders" class="text-center py-5">
+                        <i class="bi bi-bag-x display-4 text-secondary mb-3"></i>
+                        <h3 class="text-secondary mb-3">Nenhum pedido encontrado</h3>
+                        <p class="text-secondary mb-4">Você ainda não fez nenhum pedido.</p>
+                        <a href="index.html" class="btn btn-success">Ver Eventos Disponíveis</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="row g-0">
+                    <div class="col-5 bg-dark text-white p-5">
+                        <h2 class="display-6 fw-semibold mb-4">Cardápio Digital</h2>
+                        <p class="mb-5">Sistema completo para gerenciamento do seu restaurante</p>
+                        
+                        <div class="features">
+                            <div class="d-flex align-items-start mb-4">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Gestão de Cardápio</h6>
+                                    <p class="text-secondary mb-0">Atualize seus pratos e preços facilmente</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-4">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Pedidos Online</h6>
+                                    <p class="text-secondary mb-0">Receba pedidos diretamente no sistema</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Relatórios</h6>
+                                    <p class="text-secondary mb-0">Acompanhe o desempenho do seu negócio</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-7 p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h2 class="fs-3 fw-semibold mb-2">Entrar no Sistema</h2>
+                                <p class="text-secondary mb-0">Faça login para acessar o gerenciamento do seu restaurante</p>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form onsubmit="handleLogin(event)">
+                            <div class="mb-4">
+                                <label class="form-label mb-2">Email</label>
+                                <input type="email" class="form-control form-control-lg bg-light" id="loginEmail" placeholder="Seu email" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label mb-2">Senha</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-lg bg-light" id="loginPassword" placeholder="Sua senha" required>
+                                    <button class="btn btn-light border px-3" type="button">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+                                </div>
+                                <a href="#" class="text-success text-decoration-none">Esqueceu a senha?</a>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 py-3">Entrar</button>
+                            <div class="text-center mt-4">
+                                <span class="text-secondary">Não tem uma conta?</span>
+                                <a href="#" class="text-success text-decoration-none ms-1" onclick="openSignupModal()">Cadastre-se</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="row g-0">
+                    <div class="col-5 bg-dark text-white p-5">
+                        <h2 class="display-6 fw-semibold mb-4">Cardápio Digital</h2>
+                        <p class="mb-5">Crie sua conta e comece a gerenciar seu restaurante</p>
+                        
+                        <div class="features">
+                            <div class="d-flex align-items-start mb-4">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Gestão Simplificada</h6>
+                                    <p class="text-secondary mb-0">Interface intuitiva para gerenciar seu cardápio</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-4">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Pedidos em Tempo Real</h6>
+                                    <p class="text-secondary mb-0">Receba e gerencie pedidos instantaneamente</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Relatórios Detalhados</h6>
+                                    <p class="text-secondary mb-0">Acompanhe o desempenho do seu negócio</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-7 p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h2 class="fs-3 fw-semibold mb-2">Criar Conta</h2>
+                                <p class="text-secondary mb-0">Preencha seus dados para começar</p>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form>
+                            <div class="mb-4">
+                                <label class="form-label mb-2">Nome Completo</label>
+                                <input type="text" class="form-control form-control-lg bg-light" placeholder="Seu nome completo">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label mb-2">Email</label>
+                                <input type="email" class="form-control form-control-lg bg-light" placeholder="Seu email">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label mb-2">Senha</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-lg bg-light" placeholder="Crie uma senha">
+                                    <button class="btn btn-light border px-3" type="button">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label mb-2">Confirmar Senha</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-lg bg-light" placeholder="Confirme sua senha">
+                                    <button class="btn btn-light border px-3" type="button">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-check mb-4">
+                                <input type="checkbox" class="form-check-input" id="termsCheck">
+                                <label class="form-check-label" for="termsCheck">
+                                    Eu concordo com os <a href="#" class="text-success text-decoration-none">Termos de Uso</a> e <a href="#" class="text-success text-decoration-none">Política de Privacidade</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 py-3">Criar Conta</button>
+                            <div class="text-center mt-4">
+                                <span class="text-secondary">Já tem uma conta?</span>
+                                <a href="#" class="text-success text-decoration-none ms-1" onclick="openLoginModal()">Faça login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Carrinho -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header border-0 p-4">
+                    <div>
+                        <h2 class="fs-3 fw-semibold mb-1">Carrinho</h2>
+                        <p class="text-secondary mb-0">Revise seus itens selecionados</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="cartContent">
+                        <!-- Conteúdo do carrinho será inserido aqui dinamicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continuar Comprando</button>
+                    <button type="button" class="btn btn-success" onclick="checkout()">Finalizar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            // Elementos da página
+            const blockedContent = document.getElementById('blockedContent');
+            const mainContent = document.getElementById('mainContent');
+            
+            // Se não estiver logado, mostrar tela de bloqueio
+            if (!user) {
+                blockedContent.style.display = 'block';
+                mainContent.style.display = 'none';
+                return;
+            }
+
+            // Se for admin, redirecionar para a página de admin
+            if (user.role === 'admin') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Se estiver logado como usuário normal, mostrar conteúdo principal
+            blockedContent.style.display = 'none';
+            mainContent.style.display = 'block';
+
+            // Atualizar interface do usuário
+            updateUserInterface(user);
+
+            // Carregar pedidos do usuário
+            loadUserOrders();
+        });
+
+        // Função para lidar com o login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            try {
+                // Simular uma resposta de sucesso para teste
+                const mockResponse = {
+                    token: 'mock-token-123',
+                    user: {
+                        id: 1,
+                        name: email === 'admin@example.com' ? 'Admin' : 'Usuário Teste',
+                        email: email,
+                        role: email === 'admin@example.com' ? 'admin' : 'user'
+                    }
+                };
+
+                // Simular delay de rede
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Salvar token e dados do usuário
+                localStorage.setItem('token', mockResponse.token);
+                localStorage.setItem('user', JSON.stringify(mockResponse.user));
+
+                // Fechar modal
+                const bsLoginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                bsLoginModal.hide();
+                
+                // Se for admin, redirecionar para a página de admin
+                if (mockResponse.user.role === 'admin') {
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+                
+                // Se não for admin, atualizar a interface e mostrar conteúdo principal
+                const blockedContent = document.getElementById('blockedContent');
+                const mainContent = document.getElementById('mainContent');
+                blockedContent.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                updateUserInterface(mockResponse.user);
+                loadUserOrders();
+                
+                // Mostrar mensagem de sucesso
+                alert('Login realizado com sucesso!');
+            } catch (error) {
+                console.error('Erro no login:', error);
+                alert('Erro ao fazer login. Por favor, tente novamente.');
+            }
+        }
+
+        // Função para abrir o modal de login
+        function openLoginModal() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+
+        // Função para abrir o modal de cadastro
+        function openSignupModal() {
+            const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
+            signupModal.show();
+        }
+
+        // Função para carregar os pedidos do usuário
+        function loadUserOrders() {
+            // Simular pedidos do usuário (substitua isso pela chamada real à API)
+            const mockOrders = [
+                {
+                    id: 1,
+                    eventTitle: 'Pacote Almoço Corporativo',
+                    menuTitle: 'Executivo Clássico',
+                    date: '2024-03-20',
+                    guests: 10,
+                    total: 750.00,
+                    status: 'Confirmado'
+                },
+                {
+                    id: 2,
+                    eventTitle: 'Festa de Aniversário',
+                    menuTitle: 'Festa Premium',
+                    date: '2024-04-15',
+                    guests: 30,
+                    total: 2850.00,
+                    status: 'Pendente'
+                }
+            ];
+
+            const ordersList = document.getElementById('ordersList');
+            const noOrders = document.getElementById('noOrders');
+
+            if (mockOrders.length === 0) {
+                ordersList.style.display = 'none';
+                noOrders.style.display = 'block';
+                return;
+            }
+
+            noOrders.style.display = 'none';
+            ordersList.style.display = 'block';
+
+            ordersList.innerHTML = mockOrders.map(order => `
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm order-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1">${order.eventTitle}</h5>
+                                    <p class="text-secondary mb-1">${order.menuTitle}</p>
+                                    <p class="text-secondary mb-1">Data: ${formatDate(order.date)}</p>
+                                    <p class="text-secondary mb-1">${order.guests} convidados</p>
+                                </div>
+                                <span class="badge ${order.status === 'Confirmado' ? 'bg-success' : 'bg-warning'}">
+                                    ${order.status}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-secondary">
+                                    Total: <span class="fw-semibold">${formatCurrency(order.total)}</span>
+                                </div>
+                                <button class="btn btn-outline-success btn-sm" onclick="viewOrderDetails(${order.id})">
+                                    Ver Detalhes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Função para formatar data
+        function formatDate(dateString) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        }
+
+        // Função para formatar moeda
+        function formatCurrency(value) {
+            return value.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        // Função para visualizar detalhes do pedido
+        function viewOrderDetails(orderId) {
+            // Implementar visualização dos detalhes do pedido
+            alert('Detalhes do pedido em breve!');
+        }
+
+        // Função para atualizar a interface do usuário
+        function updateUserInterface(user) {
+            const userArea = document.getElementById('userArea');
+            if (userArea) {
+                userArea.innerHTML = `
+                    <div class="dropdown">
+                        <button class="btn btn-outline-success dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>${user.name}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="meus-pedidos.html">Meus Pedidos</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="handleLogout()">Sair</a></li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        // Função para lidar com o logout
+        function handleLogout() {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html> 

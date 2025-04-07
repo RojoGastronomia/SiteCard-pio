@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Eventos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#4F46E5',
+secondary: '#10B981'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+.chart-container { width: 100%; height: 300px; }
+</style>
+</head>
+<body class="bg-gray-50">
+<nav class="bg-white shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center">
+<div class="font-['Pacifico'] text-2xl text-primary">logo</div>
+<div class="hidden md:ml-8 md:flex md:space-x-8">
+<a href="#" class="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-primary text-sm font-medium">Dashboard</a>
+<a href="#" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Eventos Gastronômicos</a>
+<a href="#" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Participantes</a>
+<a href="https://readdy.ai/home/caa13790-6c46-4782-acc8-2ca57ce177c0/10837a7f-f80c-48ac-b0e7-08862078389d" data-readdy="true" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Cardápio Clientes</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<input type="text" placeholder="Buscar eventos..." class="w-64 pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<button class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 cursor-pointer whitespace-nowrap flex items-center">
+<i class="ri-add-line mr-2"></i>
+Criar Novo Evento
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-medium text-gray-900">Total de Eventos</h3>
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+<i class="ri-calendar-line text-primary"></i>
+</div>
+</div>
+<p class="mt-2 text-3xl font-semibold text-gray-900">156</p>
+<p class="text-sm text-gray-500">+12% desde o último mês</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-medium text-gray-900">Participantes Ativos</h3>
+<div class="w-10 h-10 flex items-center justify-center bg-secondary/10 rounded-full">
+<i class="ri-team-line text-secondary"></i>
+</div>
+</div>
+<p class="mt-2 text-3xl font-semibold text-gray-900">2.847</p>
+<p class="text-sm text-gray-500">+8% desde o último mês</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-medium text-gray-900">Eventos do Mês</h3>
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+<i class="ri-calendar-check-line text-primary"></i>
+</div>
+</div>
+<p class="mt-2 text-3xl font-semibold text-gray-900">42</p>
+<p class="text-sm text-gray-500">+15% desde o último mês</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2">
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-medium text-gray-900 mb-6">Eventos por Categoria</h3>
+<div id="categoryChart" class="chart-container"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-medium text-gray-900 mb-6">Próximos Eventos</h3>
+<div class="space-y-4">
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg">
+<i class="ri-restaurant-line text-primary"></i>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-medium text-gray-900">Festival Gastronômico</h4>
+<p class="text-sm text-gray-500">25 Mar, 2025</p>
+</div>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativo</span>
+</div>
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg">
+<i class="ri-restaurant-line text-primary"></i>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-medium text-gray-900">Festival Gastronômico</h4>
+<p class="text-sm text-gray-500">28 Mar, 2025</p>
+</div>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pendente</span>
+</div>
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg">
+<i class="ri-movie-line text-primary"></i>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-medium text-gray-900">Cinema ao Ar Livre</h4>
+<p class="text-sm text-gray-500">30 Mar, 2025</p>
+</div>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativo</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="bg-white shadow-sm rounded-lg">
+<div class="px-6 py-4 border-b border-gray-200">
+<h2 class="text-lg font-medium text-gray-900">Lista de Eventos</h2>
+</div>
+<div class="flex border-b border-gray-200">
+<button class="px-6 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 cursor-pointer whitespace-nowrap">Todos</button>
+<button class="px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary cursor-pointer whitespace-nowrap">Ativos</button>
+<button class="px-6 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 cursor-pointer whitespace-nowrap">Pendentes</button>
+<button class="px-6 py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 cursor-pointer whitespace-nowrap">Concluídos</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+<div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/efd31c48395c27fc337b9c0d3e5c2d90.jpg" class="w-full h-48 object-cover" alt="Festival de Música">
+<div class="p-4">
+<h3 class="text-lg font-medium text-gray-900">Festival Gastronômico</h3>
+<div class="mt-2 flex items-center text-sm text-gray-500">
+<i class="ri-calendar-line mr-2"></i>
+25 Mar, 2025
+</div>
+<div class="mt-2 flex items-center text-sm text-gray-500">
+<i class="ri-map-pin-line mr-2"></i>
+Parque Municipal
+</div>
+<div class="mt-2 flex items-center text-sm text-gray-500">
+<i class="ri-user-line mr-2"></i>
+500/1000 participantes
+</div>
+<div class="mt-4 flex justify-between items-center">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativo</span>
+<button class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 cursor-pointer whitespace-nowrap">Ver Detalhes</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div id="eventModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+<div class="bg-white rounded-lg max-w-3xl w-full mx-4">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-medium text-gray-900">Festival Gastronômico</h2>
+<button class="text-gray-400 hover:text-gray-500" onclick="closeEventModal()">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<img src="https://public.readdy.ai/ai/img_res/31469430d4bd36f73fd76bd0cf151557.jpg" class="w-full h-64 object-cover rounded-lg mb-6" alt="Festival de Música">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<h3 class="text-lg font-medium text-gray-900 mb-4">Informações do Evento</h3>
+<div class="space-y-3">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-calendar-line mr-2"></i>
+25 Mar, 2025 - 19:00
+</div>
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-map-pin-line mr-2"></i>
+Parque Municipal
+</div>
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-user-line mr-2"></i>
+Organizador: Produções Culturais SA
+</div>
+</div>
+<div class="mt-6">
+<h4 class="text-sm font-medium text-gray-900 mb-2">Descrição</h4>
+<p class="text-sm text-gray-500">Um festival gastronômico incrível com os melhores chefs nacionais e internacionais. Uma experiência única com pratos exclusivos, harmonização e muita diversão.</p>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-medium text-gray-900 mb-4">Participação</h3>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Número de Participantes</label>
+<input type="number" min="1" max="10" value="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Itens Disponíveis</label>
+<div class="space-y-2">
+<label class="flex items-center">
+<input type="checkbox" class="rounded text-primary focus:ring-primary">
+<span class="ml-2 text-sm text-gray-900">Ingresso VIP (R$ 250,00)</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="rounded text-primary focus:ring-primary">
+<span class="ml-2 text-sm text-gray-900">Área Lounge (R$ 150,00)</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="rounded text-primary focus:ring-primary">
+<span class="ml-2 text-sm text-gray-900">Kit Festa (R$ 80,00)</span>
+</label>
+</div>
+</div>
+<div class="pt-4 border-t border-gray-200">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-gray-900">Total:</span>
+<span class="font-medium text-gray-900">R$ 480,00</span>
+</div>
+</div>
+<button class="w-full !rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 cursor-pointer whitespace-nowrap">Confirmar Participação</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const categoryChart = echarts.init(document.getElementById('categoryChart'));
+const option = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.9)',
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+data: ['Pratos Quentes', 'Pratos Frios', 'Sobremesas', 'Bebidas'],
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+top: '10%',
+left: '3%',
+right: '4%',
+bottom: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'category',
+boundaryGap: false,
+data: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+axisLine: {
+lineStyle: {
+color: '#1f2937'
+}
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#1f2937'
+}
+}
+},
+series: [
+{
+name: 'Pratos Quentes',
+type: 'line',
+smooth: true,
+data: [12, 15, 18, 14, 16, 20],
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0,
+color: 'rgba(87, 181, 231, 0.1)'
+}, {
+offset: 1,
+color: 'rgba(87, 181, 231, 0)'
+}]
+}
+}
+},
+{
+name: 'Pratos Frios',
+type: 'line',
+smooth: true,
+data: [8, 10, 12, 9, 11, 13],
+itemStyle: {
+color: 'rgba(141, 211, 199, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0,
+color: 'rgba(141, 211, 199, 0.1)'
+}, {
+offset: 1,
+color: 'rgba(141, 211, 199, 0)'
+}]
+}
+}
+},
+{
+name: 'Sobremesas',
+type: 'line',
+smooth: true,
+data: [6, 8, 9, 7, 8, 10],
+itemStyle: {
+color: 'rgba(251, 191, 114, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0,
+color: 'rgba(251, 191, 114, 0.1)'
+}, {
+offset: 1,
+color: 'rgba(251, 191, 114, 0)'
+}]
+}
+}
+},
+{
+name: 'Bebidas',
+type: 'line',
+smooth: true,
+data: [4, 6, 7, 5, 6, 8],
+itemStyle: {
+color: 'rgba(252, 141, 98, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0,
+color: 'rgba(252, 141, 98, 0.1)'
+}, {
+offset: 1,
+color: 'rgba(252, 141, 98, 0)'
+}]
+}
+}
+}
+]
+};
+categoryChart.setOption(option);
+window.addEventListener('resize', function() {
+categoryChart.resize();
+});
+function showEventModal() {
+document.getElementById('eventModal').classList.remove('hidden');
+}
+function closeEventModal() {
+document.getElementById('eventModal').classList.add('hidden');
+}
+document.querySelectorAll('.bg-white button:not([onclick])').forEach(button => {
+button.addEventListener('click', showEventModal);
+});
+</script>
+</body>
+</html>

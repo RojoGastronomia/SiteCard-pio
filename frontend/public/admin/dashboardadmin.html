@@ -1,0 +1,270 @@
+d.html\admin\dashboard.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Rojo Gastronomia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r">
+            <div class="p-4 border-b">
+                <h1 class="text-xl font-bold text-gray-800">Painel Admin</h1>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-2">
+                <a href="/admin/dashboard.html" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50 active">
+                    <i class="ri-dashboard-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/users.html" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                    <i class="ri-user-line"></i>
+                    <span>Usuários</span>
+                </a>
+                <a href="/admin/logs.html" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                    <i class="ri-file-list-line"></i>
+                    <span>Logs de Atividade</span>
+                </a>
+                <a href="/admin/events.html" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                    <i class="ri-calendar-line"></i>
+                    <span>Eventos</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto">
+            <div class="p-8">
+                <!-- Dashboard Content -->
+                <div class="grid grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-gray-500 text-sm">Total de Usuários</h3>
+                        <p class="text-2xl font-bold mt-2" id="totalUsers">0</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-gray-500 text-sm">Eventos Ativos</h3>
+                        <p class="text-2xl font-bold mt-2" id="activeEvents">0</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-gray-500 text-sm">Faturamento Mensal</h3>
+                        <p class="text-2xl font-bold mt-2" id="monthlyRevenue">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow-sm">
+                    <div class="p-6 border-b">
+                        <h2 class="text-xl font-bold">Atividades Recentes</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <table class="w-full" id="recentActivities">
+                            <thead>
+                                <tr class="text-left text-sm text-gray-500">
+                                    <th class="pb-4">Usuário</th>
+                                    <th class="pb-4">Ação</th>
+                                    <th class="pb-4">Data/Hora</th>
+                                    <th class="pb-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Check admin authentication
+        checkAdminAuth();
+
+        async function checkAdminAuth() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'admin') {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            await loadDashboardData();
+        }
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load dashboard data');
+
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function updateDashboard(data) {
+            document.getElementById('totalUsers').textContent = data.totalUsers;
+            document.getElementById('activeEvents').textContent = data.activeEvents;
+            document.getElementById('monthlyRevenue').textContent = 
+                `R$ ${data.monthlyRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            
+            // Update recent activities
+            const activitiesTable = document.getElementById('recentActivities').getElementsByTagName('tbody')[0];
+            activitiesTable.innerHTML = data.recentActivities.map(activity => `
+                <tr class="border-b">
+                    <td class="py-4">${activity.user}</td>
+                    <td class="py-4">${activity.action}</td>
+                    <td class="py-4">${new Date(activity.timestamp).toLocaleString()}</td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${
+                            activity.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            activity.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                        }">
+                            ${activity.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r">
+      <div class="p-4 border-b">
+        <h1 class="text-xl font-bold text-gray-800">Painel Admin</h1>
+      </div>
+      
+      <nav class="p-4 space-y-2">
+        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+          <i class="ri-dashboard-line"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#users" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+          <i class="ri-user-line"></i>
+          <span>Usuários</span>
+        </a>
+        <a href="#logs" class="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+          <i class="ri-file-list-line"></i>
+          <span>Logs de Atividade</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto">
+      <div class="p-8">
+        <div class="grid grid-cols-3 gap-6 mb-8">
+          <!-- Stats Cards -->
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-gray-500 text-sm">Total de Usuários</h3>
+            <p class="text-2xl font-bold mt-2" id="totalUsers">0</p>
+          </div>
+          
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-gray-500 text-sm">Pedidos Hoje</h3>
+            <p class="text-2xl font-bold mt-2" id="todayOrders">0</p>
+          </div>
+          
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-gray-500 text-sm">Funcionários Ativos</h3>
+            <p class="text-2xl font-bold mt-2" id="activeEmployees">0</p>
+          </div>
+        </div>
+
+        <!-- Activity Logs Table -->
+        <div class="bg-white rounded-lg shadow-sm">
+          <div class="p-6 border-b">
+            <h2 class="text-xl font-bold">Logs de Atividade</h2>
+          </div>
+          
+          <div class="p-6">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left text-sm text-gray-500">
+                  <th class="pb-4">Usuário</th>
+                  <th class="pb-4">Ação</th>
+                  <th class="pb-4">Data/Hora</th>
+                  <th class="pb-4">Detalhes</th>
+                </tr>
+              </thead>
+              <tbody id="activityLogs">
+                <!-- Logs will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Check if user is admin
+    checkAdminAccess();
+
+    async function checkAdminAccess() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || user.role !== 'admin') {
+        window.location.href = '/index.html';
+      }
+    }
+
+    // Load activity logs
+    loadActivityLogs();
+
+    async function loadActivityLogs() {
+      try {
+        const response = await fetch('/api/admin/logs', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load logs');
+        
+        const logs = await response.json();
+        displayLogs(logs);
+      } catch (error) {
+        console.error('Error loading logs:', error);
+      }
+    }
+
+    function displayLogs(logs) {
+      const logsContainer = document.getElementById('activityLogs');
+      logsContainer.innerHTML = logs.map(log => `
+        <tr class="border-b">
+          <td class="py-4">${log.user.name}</td>
+          <td class="py-4">${log.action}</td>
+          <td class="py-4">${new Date(log.timestamp).toLocaleString()}</td>
+          <td class="py-4">${JSON.stringify(log.details)}</td>
+        </tr>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

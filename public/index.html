@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardápio Digital - Eventos</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#10b981',secondary:'#6366f1'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+background-color: #f9fafb;
+font-family: 'Inter', sans-serif;
+}
+.card-shadow {
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+input[type="number"] {
+-moz-appearance: textfield;
+}
+</style>
+</head>
+<body>
+<header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+<div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<a href="#" class="flex items-center space-x-2">
+<div class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center">
+<i class="ri-restaurant-line text-white ri-lg"></i>
+</div>
+<span class="text-xl font-medium text-gray-800">Cardápio Digital</span>
+</a>
+<div class="flex items-center space-x-6">
+<nav class="hidden md:flex space-x-6">
+<a href="#" class="text-primary border-b-2 border-primary pb-1 font-medium">Eventos</a>
+<a href="pedidos.html" data-readdy="true" class="text-gray-600 hover:text-gray-900">Meus Pedidos</a>
+</nav>
+<div class="flex items-center space-x-4">
+<a href="#" class="relative" id="cartButton">
+<div class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-gray-900">
+<i class="ri-shopping-cart-2-line ri-lg"></i>
+</div>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+</a>
+<div class="relative">
+<button class="flex items-center space-x-1 text-gray-700 hover:text-gray-900 bg-gray-100 rounded-full px-3 py-1.5">
+<i class="ri-user-line"></i>
+<span>Usuário Teste</span>
+<i class="ri-arrow-down-s-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="container mx-auto px-4 py-8">
+<h1 class="text-2xl font-bold text-gray-800 mb-8">Eventos Disponíveis</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Pacote Almoço Corporativo" data-description="Perfeito para reuniões de escritório e eventos corporativos. Selecione entre nossa variedade de opções profissionais...">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/1a2b7cfc31ac21de587bbb14f92dc047.jpg" alt="Pacote Almoço Corporativo" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Pacote Almoço Corporativo</h2>
+<p class="text-gray-600 text-sm mb-4">Perfeito para reuniões de escritório e eventos corporativos. Selecione entre nossa variedade de opções profissionais...</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-menu-line mr-2"></i>
+<span>2 opções de menu</span>
+</div>
+<span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Coffee Breaks" data-description="Faça uma pausa e aproveite um momento de descontração com café fresquinho, petiscos deliciosos e boa companhia.">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/3f3b128a2e3cb18ffd4204a6061d7b15.jpg" alt="Coffee Breaks" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Coffee Breaks</h2>
+<p class="text-gray-600 text-sm mb-4">Faça uma pausa e aproveite um momento de descontração com café fresquinho, petiscos deliciosos e boa companhia.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-menu-line mr-2"></i>
+<span>2 opções de menu</span>
+</div>
+<span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Festa de Aniversário" data-description="Celebre momentos especiais com nossos pacotes personalizados para festas de aniversário...">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/05604aca8895a0a3a16f1451783f34c6.jpg" alt="Festa de Aniversário" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Festa de Aniversário</h2>
+<p class="text-gray-600 text-sm mb-4">Celebre momentos especiais com nossos pacotes personalizados para festas de aniversário...</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-menu-line mr-2"></i>
+<span>2 opções de menu</span>
+</div>
+<span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Festa Infantil" data-description="Proporcione uma festa inesquecível para os pequenos com nossos pacotes temáticos e cardápios divertidos...">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/8d0ed35cd6bc776ccf294d69e68bc775.jpg" alt="Festa Infantil" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Festa Infantil</h2>
+<p class="text-gray-600 text-sm mb-4">Proporcione uma festa inesquecível para os pequenos com nossos pacotes temáticos e cardápios divertidos...</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-menu-line mr-2"></i>
+<span>2 opções de menu</span>
+</div>
+<span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Eventos Corporativos" data-description="Impressione seus clientes e colaboradores com nossos serviços de catering para eventos empresariais...">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/5b3c734545b54039764d78a747593839.jpg" alt="Eventos Corporativos" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Eventos Corporativos</h2>
+<p class="text-gray-600 text-sm mb-4">Impressione seus clientes e colaboradores com nossos serviços de catering para eventos empresariais...</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-menu-line mr-2"></i>
+<span>2 opções de menu</span>
+</div>
+<span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Casamento" data-description="Torne seu dia especial ainda mais memorável com nossos pacotes exclusivos para casamentos...">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/b8905632f9218145207ecce49d4cdfb3.jpg" alt="Casamento" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Casamento</h2>
+<p class="text-gray-600 text-sm mb-4">Torne seu dia especial ainda mais memorável com nossos pacotes exclusivos para casamentos...</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-menu-line mr-2"></i>
+<span>2 opções de menu</span>
+</div>
+<span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal -->
+<div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+<div class="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden relative">
+<div class="flex justify-between items-center p-4 border-b border-gray-200">
+<h2 id="modalTitle" class="text-xl font-semibold text-gray-800"></h2>
+<button id="closeModal" class="text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="md:w-1/2">
+<img id="modalImage" src="" alt="" class="w-full h-64 object-cover object-top rounded">
+<p id="modalDescription" class="text-gray-600 mt-4"></p>
+<div class="mt-6 space-y-4">
+<div class="flex items-center text-gray-700">
+<i class="ri-menu-line ri-lg mr-3 w-6 h-6 flex items-center justify-center"></i>
+<span>2 opções de menu disponíveis</span>
+</div>
+<div class="flex items-center text-gray-700">
+<i class="ri-time-line ri-lg mr-3 w-6 h-6 flex items-center justify-center"></i>
+<span>Disponível para agendamento</span>
+</div>
+</div>
+<button id="viewMenuOptions" class="mt-6 w-full bg-primary text-white py-3 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap relative">
+Ver Opções do Menu
+<span class="absolute -top-2 -right-2 bg-white text-primary text-xs px-2 py-0.5 rounded-full shadow-md animate-pulse hidden" id="menuRequiredBadge">Obrigatório</span>
+</button>
+</div>
+<div class="md:w-1/2 space-y-6">
+<div>
+<label for="eventDate" class="block text-gray-700 font-medium mb-2">Data do Evento</label>
+<input type="date" id="eventDate" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+</div>
+<div>
+<label for="guestCount" class="block text-gray-700 font-medium mb-2">Número de Convidados</label>
+<input type="number" id="guestCount" placeholder="Digite o número de convidados" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+</div>
+<button id="addToCart" class="w-full bg-gray-400 text-white py-3 rounded !rounded-button font-medium transition-colors mt-8 whitespace-nowrap cursor-not-allowed" disabled>
+Adicionar ao carrinho
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-white border-t border-gray-200 mt-12">
+<div class="container mx-auto px-4 py-8">
+<div class="flex flex-col md:flex-row justify-between items-center">
+<div class="mb-6 md:mb-0">
+<a href="#" class="flex items-center space-x-2">
+<div class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center">
+<i class="ri-restaurant-line text-white ri-lg"></i>
+</div>
+<span class="text-xl font-medium text-gray-800">Cardápio Digital</span>
+</a>
+<p class="text-gray-600 mt-2 text-sm">Soluções gastronômicas para todos os tipos de eventos</p>
+</div>
+<div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-12">
+<div>
+<h3 class="font-semibold text-gray-800 mb-3">Contato</h3>
+<ul class="text-gray-600 text-sm space-y-2">
+<li class="flex items-center">
+<i class="ri-phone-line mr-2"></i>
+<span>(11) 4567-8901</span>
+</li>
+<li class="flex items-center">
+<i class="ri-mail-line mr-2"></i>
+<span>contato@cardapiodigital.com.br</span>
+</li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-gray-800 mb-3">Siga-nos</h3>
+<div class="flex space-x-3">
+<a href="#" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-instagram-line"></i>
+</a>
+<a href="#" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-whatsapp-line"></i>
+</a>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-200 mt-8 pt-6 text-center text-sm text-gray-600">
+<p>© 2025 Cardápio Digital. Todos os direitos reservados.</p>
+</div>
+</div>
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const eventCards = document.querySelectorAll('.event-card');
+const eventModal = document.getElementById('eventModal');
+const closeModal = document.getElementById('closeModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalDescription = document.getElementById('modalDescription');
+const modalImage = document.getElementById('modalImage');
+const addToCartBtn = document.getElementById('addToCart');
+const viewMenuOptionsBtn = document.getElementById('viewMenuOptions');
+const cartButton = document.getElementById('cartButton');
+let selectedMenu = '';
+let currentEventName = '';
+let cartItems = [];
+// Criar modal de opções de menu dinamicamente
+const menuOptionsModal = document.createElement('div');
+menuOptionsModal.id = 'menuOptionsModal';
+menuOptionsModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center';
+menuOptionsModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden relative">
+<div class="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+<h2 class="text-xl font-semibold text-gray-800">Opções de Menu</h2>
+<button id="closeMenuModal" class="text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Menu Option 1 -->
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden card-shadow">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/c1248e0f61daa1c21adcdc44e06db716.jpg" alt="Menu Clássico" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-semibold text-gray-800">Menu Clássico</h3>
+<span class="bg-primary bg-opacity-10 text-primary text-xs px-3 py-1 rounded-full">Opção 1</span>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Entradas</h4>
+<p class="text-gray-600 text-sm">Bruschetta de tomate e manjericão, Canapés de queijo brie com geleia, Salada Caesar</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Pratos Principais</h4>
+<p class="text-gray-600 text-sm">Filé mignon ao molho madeira, Risoto de funghi, Salmão grelhado com ervas</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Sobremesas</h4>
+<p class="text-gray-600 text-sm">Cheesecake de frutas vermelhas, Petit gateau, Mousse de chocolate</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-white py-2 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap select-menu-option" data-menu="Menu Clássico">
+Selecionar este Menu
+</button>
+</div>
+</div>
+<!-- Menu Option 2 -->
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden card-shadow">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/c26e50eaed9c90bb67686543fce93bf6.jpg" alt="Menu Contemporâneo" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-semibold text-gray-800">Menu Contemporâneo</h3>
+<span class="bg-primary bg-opacity-10 text-primary text-xs px-3 py-1 rounded-full">Opção 2</span>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Entradas</h4>
+<p class="text-gray-600 text-sm">Tartar de atum com abacate, Ceviche de camarão, Carpaccio de beterraba</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Pratos Principais</h4>
+<p class="text-gray-600 text-sm">Ravioli de lagosta, Costela de cordeiro com redução de vinho, Risoto de limão siciliano</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Sobremesas</h4>
+<p class="text-gray-600 text-sm">Crème brûlée de pistache, Macarons sortidos, Pavlova de frutas tropicais</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-white py-2 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap select-menu-option" data-menu="Menu Contemporâneo">
+Selecionar este Menu
+</button>
+</div>
+</div>
+<!-- Menu Option 3 -->
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden card-shadow">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/67caacf1caa7581bd76579427e11f917.jpg" alt="Menu Vegetariano" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-semibold text-gray-800">Menu Vegetariano</h3>
+<span class="bg-primary bg-opacity-10 text-primary text-xs px-3 py-1 rounded-full">Opção 3</span>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Entradas</h4>
+<p class="text-gray-600 text-sm">Salada de quinoa com legumes, Guacamole com chips de batata doce, Homus com pão pita</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Pratos Principais</h4>
+<p class="text-gray-600 text-sm">Risoto de cogumelos selvagens, Curry de legumes, Lasanha de berinjela</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Sobremesas</h4>
+<p class="text-gray-600 text-sm">Pudim de chia com frutas, Brownie vegano, Sorvete de coco com calda de frutas vermelhas</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-white py-2 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap select-menu-option" data-menu="Menu Vegetariano">
+Selecionar este Menu
+</button>
+</div>
+</div>
+<!-- Menu Option 4 -->
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden card-shadow">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/ed2ce2f95ff8a90b05cba97302e5b80e.jpg" alt="Menu Regional Brasileiro" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-5">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-semibold text-gray-800">Menu Regional Brasileiro</h3>
+<span class="bg-primary bg-opacity-10 text-primary text-xs px-3 py-1 rounded-full">Opção 4</span>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Entradas</h4>
+<p class="text-gray-600 text-sm">Coxinha de frango, Pão de queijo, Bolinho de bacalhau, Dadinho de tapioca</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Pratos Principais</h4>
+<p class="text-gray-600 text-sm">Feijoada completa, Moqueca de peixe, Picanha na brasa, Bobó de camarão</p>
+</div>
+</div>
+<div class="flex items-start">
+<i class="ri-restaurant-line text-primary mt-1 mr-3 w-5 h-5 flex items-center justify-center"></i>
+<div>
+<h4 class="font-medium text-gray-700">Sobremesas</h4>
+<p class="text-gray-600 text-sm">Pudim de leite, Quindim, Cocada, Brigadeiro gourmet</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-white py-2 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap select-menu-option" data-menu="Menu Regional Brasileiro">
+Selecionar este Menu
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+`;
+document.body.appendChild(menuOptionsModal);
+eventCards.forEach(card => {
+card.addEventListener('click', function() {
+const eventName = this.getAttribute('data-event');
+const eventDescription = this.getAttribute('data-description');
+const eventImage = this.querySelector('img').src;
+currentEventName = eventName;
+modalTitle.textContent = eventName;
+modalDescription.textContent = eventDescription;
+modalImage.src = eventImage;
+modalImage.alt = eventName;
+eventModal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+// Reset selected menu when opening a new event
+selectedMenu = '';
+// Reset form fields
+document.getElementById('eventDate').value = '';
+document.getElementById('guestCount').value = '';
+// Remove any existing order summary
+const existingSummary = document.querySelector('#eventModal .bg-gray-50.rounded-lg');
+if (existingSummary) {
+existingSummary.remove();
+}
+// Mostrar o badge "Obrigatório" no botão de menu
+const menuRequiredBadge = document.getElementById('menuRequiredBadge');
+if (menuRequiredBadge) {
+menuRequiredBadge.classList.remove('hidden');
+setTimeout(() => {
+menuRequiredBadge.classList.add('hidden');
+}, 5000);
+}
+// Inicializar o estado do botão "Adicionar ao carrinho"
+setTimeout(updateAddToCartButton, 100);
+});
+});
+closeModal.addEventListener('click', function() {
+eventModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+eventModal.addEventListener('click', function(e) {
+if (e.target === eventModal) {
+eventModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
+// Menu Options Modal
+viewMenuOptionsBtn.addEventListener('click', function() {
+menuOptionsModal.classList.remove('hidden');
+});
+const closeMenuModal = document.getElementById('closeMenuModal');
+closeMenuModal.addEventListener('click', function() {
+menuOptionsModal.classList.add('hidden');
+});
+menuOptionsModal.addEventListener('click', function(e) {
+if (e.target === menuOptionsModal) {
+menuOptionsModal.classList.add('hidden');
+}
+});
+// Select Menu Option
+const selectMenuOptionBtns = document.querySelectorAll('.select-menu-option');
+selectMenuOptionBtns.forEach(btn => {
+btn.addEventListener('click', function() {
+const menuName = this.getAttribute('data-menu');
+selectedMenu = menuName;
+// Open menu items selection modal instead of closing
+openMenuItemsSelectionModal(menuName);
+// Atualizar o estado do botão "Adicionar ao carrinho" após selecionar o menu
+setTimeout(updateAddToCartButton, 100);
+});
+});
+// Function to show full order details
+function showFullOrderDetails() {
+if (!window.orderDetails) return;
+// Obter os valores atualizados
+const guestCount = document.getElementById('guestCount').value || window.orderDetails.guestCount;
+const basePrice = window.orderDetails.basePrice;
+const totalPrice = basePrice * parseInt(guestCount);
+// Atualizar os valores no objeto orderDetails
+window.orderDetails.guestCount = guestCount;
+window.orderDetails.totalPrice = totalPrice;
+const {menuName, selectedItems, categories} = window.orderDetails;
+// Create full order details modal
+let fullOrderModal = document.getElementById('fullOrderDetailsModal');
+if (!fullOrderModal) {
+fullOrderModal = document.createElement('div');
+fullOrderModal.id = 'fullOrderDetailsModal';
+fullOrderModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[70] hidden flex items-center justify-center';
+document.body.appendChild(fullOrderModal);
+}
+// Generate HTML for selected items by category
+let selectedItemsHTML = '';
+categories.forEach(category => {
+if (selectedItems[category] && selectedItems[category].length > 0) {
+selectedItemsHTML += `
+<div class="mb-3">
+<h4 class="font-medium text-gray-800 mb-1">${getCategoryDisplayName(category)}</h4>
+<ul class="list-disc pl-5 text-gray-600">
+${selectedItems[category].map(item => `<li>${item}</li>`).join('')}
+</ul>
+</div>
+`;
+}
+});
+fullOrderModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-hidden relative">
+<div class="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+<h2 class="text-xl font-semibold text-gray-800">Detalhes do Pedido</h2>
+<button id="closeFullOrderModal" class="text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+<div class="mb-4">
+<h3 class="text-lg font-semibold text-primary mb-2">${menuName}</h3>
+<div class="text-sm text-gray-600 mb-4">
+<p>Evento: ${currentEventName}</p>
+<p>Data: ${document.getElementById('eventDate').value}</p>
+<p>Convidados: ${guestCount}</p>
+</div>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg mb-4">
+<h3 class="text-base font-semibold text-gray-800 mb-2">Itens Selecionados</h3>
+${selectedItemsHTML}
+</div>
+<div class="border-t border-gray-200 pt-4 mt-4">
+<div class="flex justify-between items-center mb-1">
+<span class="text-gray-700">Preço por pessoa:</span>
+<span class="font-medium">R$ ${basePrice.toFixed(2)}</span>
+</div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-gray-700">Convidados:</span>
+<span class="font-medium">${guestCount}</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-gray-200 mt-2">
+<span class="font-medium text-gray-800">Total:</span>
+<span class="font-bold text-primary text-lg">R$ ${totalPrice.toFixed(2)}</span>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-gray-200 bg-gray-50">
+<button id="closeFullOrderDetails" class="w-full bg-primary text-white py-2 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">
+Fechar
+</button>
+</div>
+</div>
+`;
+// Show the modal
+fullOrderModal.classList.remove('hidden');
+// Add event listeners
+document.getElementById('closeFullOrderModal').addEventListener('click', function() {
+fullOrderModal.classList.add('hidden');
+});
+document.getElementById('closeFullOrderDetails').addEventListener('click', function() {
+fullOrderModal.classList.add('hidden');
+});
+fullOrderModal.addEventListener('click', function(e) {
+if (e.target === fullOrderModal) {
+fullOrderModal.classList.add('hidden');
+}
+});
+}
+// Function to open menu items selection modal
+function openMenuItemsSelectionModal(menuName) {
+// Create menu items selection modal if it doesn't exist
+let menuItemsModal = document.getElementById('menuItemsSelectionModal');
+if (!menuItemsModal) {
+menuItemsModal = document.createElement('div');
+menuItemsModal.id = 'menuItemsSelectionModal';
+menuItemsModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[60] hidden flex items-center justify-center';
+document.body.appendChild(menuItemsModal);
+}
+// Generate content based on selected menu
+let menuItems = getMenuItems(menuName);
+menuItemsModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-5xl max-h-[90vh] overflow-hidden relative">
+<div class="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+<h2 class="text-xl font-semibold text-gray-800">${menuName}</h2>
+<p class="text-sm text-gray-500">Selecione os itens de cada categoria</p>
+<button id="closeMenuItemsModal" class="text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+${menuItems}
+</div>
+<div class="mt-6 flex items-center text-gray-500 text-sm">
+<i class="ri-information-line mr-2"></i>
+<span>Selecione os itens dentro do limite de cada categoria</span>
+</div>
+</div>
+<div class="p-4 border-t border-gray-200 bg-gray-50 flex justify-end">
+<button id="cancelMenuItemsSelection" class="px-6 py-2 border border-gray-300 rounded !rounded-button text-gray-700 mr-3 hover:bg-gray-100 transition-colors whitespace-nowrap">
+Cancelar
+</button>
+<button id="confirmMenuItemsSelection" class="px-6 py-2 bg-primary text-white rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">
+Confirmar Seleção
+</button>
+</div>
+</div>
+`;
+// Show the modal
+menuItemsModal.classList.remove('hidden');
+// Add event listeners
+document.getElementById('closeMenuItemsModal').addEventListener('click', function() {
+menuItemsModal.classList.add('hidden');
+});
+document.getElementById('cancelMenuItemsSelection').addEventListener('click', function() {
+menuItemsModal.classList.add('hidden');
+});
+document.getElementById('confirmMenuItemsSelection').addEventListener('click', function() {
+// Validate selections
+const categories = ['entradas', 'pratosPrincipais', 'sobremesas', 'bebidas'];
+let isValid = true;
+let selectedItems = {};
+categories.forEach(category => {
+const checkboxes = document.querySelectorAll(`input[name="${category}"]:checked`);
+const requiredCount = document.querySelector(`.${category}-limit`).textContent.split(' ')[1];
+if (checkboxes.length !== parseInt(requiredCount)) {
+isValid = false;
+showNotification(`Por favor, selecione exatamente ${requiredCount} itens de ${getCategoryDisplayName(category)}.`);
+return;
+}
+selectedItems[category] = Array.from(checkboxes).map(cb => cb.value);
+});
+if (isValid) {
+menuItemsModal.classList.add('hidden');
+menuOptionsModal.classList.add('hidden');
+// Calcular preço baseado no menu e número de itens
+const basePrice = 120;
+const guestCount = document.getElementById('guestCount').value || 1;
+const totalPrice = basePrice * parseInt(guestCount);
+// Criar resumo do pedido para exibir no modal principal - versão compacta
+let orderSummaryHTML = `
+<div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+<h3 class="text-base font-semibold text-gray-800 mb-2">Resumo do Pedido</h3>
+<div class="flex items-center justify-between mb-1">
+<span class="text-gray-700">Menu:</span>
+<span class="font-medium text-primary">${menuName}</span>
+</div>
+`;
+// Adicionar contagem de itens por categoria em vez de listar todos
+let categoryCount = {};
+categories.forEach(category => {
+if (selectedItems[category] && selectedItems[category].length > 0) {
+categoryCount[category] = selectedItems[category].length;
+}
+});
+// Mostrar contagem de itens
+if (Object.keys(categoryCount).length > 0) {
+orderSummaryHTML += `<div class="flex items-center justify-between mb-1">
+<span class="text-gray-700">Itens selecionados:</span>
+<span class="font-medium">${Object.values(categoryCount).reduce((a, b) => a + b, 0)} itens</span>
+</div>`;
+}
+// Adicionar informações de preço
+orderSummaryHTML += `
+<div class="pt-2 border-t border-gray-200 mt-2">
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Preço por pessoa:</span>
+<span class="font-medium">R$ ${basePrice.toFixed(2)}</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-700">Convidados:</span>
+<span class="font-medium">${guestCount}</span>
+</div>
+<div class="flex justify-between items-center mt-1 pt-1 border-t border-gray-200">
+<span class="font-medium text-gray-800">Total:</span>
+<span class="font-bold text-primary">R$ ${totalPrice.toFixed(2)}</span>
+</div>
+</div>
+</div>
+`;
+// Adicionar o resumo ao modal principal
+const modalContent = document.querySelector('#eventModal .md\\:w-1\\/2:last-child');
+// Remover resumo anterior se existir
+const existingSummary = document.querySelector('#eventModal .bg-gray-50.rounded-lg');
+if (existingSummary) {
+existingSummary.remove();
+}
+// Criar versão clicável do resumo
+const clickableOrderSummaryHTML = `
+<div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm cursor-pointer hover:bg-gray-100 transition-colors" id="orderSummaryCollapsed">
+<div class="flex items-center justify-between">
+<h3 class="text-base font-semibold text-gray-800">Resumo do Pedido</h3>
+<span class="text-primary text-sm">Clique para ver detalhes <i class="ri-arrow-down-s-line"></i></span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-gray-700">Menu:</span>
+<span class="font-medium text-primary">${menuName}</span>
+</div>
+<div class="flex justify-between items-center mt-1 pt-1 border-t border-gray-200">
+<span class="font-medium text-gray-800">Total:</span>
+<span class="font-bold text-primary">R$ ${totalPrice.toFixed(2)}</span>
+</div>
+</div>
+`;
+modalContent.insertAdjacentHTML('beforeend', clickableOrderSummaryHTML);
+// Armazenar os detalhes completos para uso posterior
+window.orderDetails = {
+menuName,
+selectedItems,
+categories,
+basePrice,
+guestCount,
+totalPrice
+};
+// Adicionar evento de clique para mostrar detalhes completos
+document.getElementById('orderSummaryCollapsed').addEventListener('click', function() {
+showFullOrderDetails();
+});
+// Adicionar evento para atualizar o preço em tempo real quando o número de convidados mudar
+document.getElementById('guestCount').addEventListener('input', updateTotalPrice);
+showNotification(`Menu "${menuName}" com itens personalizados selecionado com sucesso!`, 'success');
+// Atualizar o estado do botão "Adicionar ao carrinho" após selecionar o menu
+updateAddToCartButton();
+}
+});
+// Initialize checkboxes to limit selection
+initializeCheckboxLimits('entradas', 2);
+initializeCheckboxLimits('pratosPrincipais', 2);
+initializeCheckboxLimits('sobremesas', 1);
+initializeCheckboxLimits('bebidas', 2);
+}
+function getCategoryDisplayName(category) {
+const names = {
+'entradas': 'Entradas',
+'pratosPrincipais': 'Pratos Principais',
+'sobremesas': 'Sobremesas',
+'bebidas': 'Bebidas'
+};
+return names[category] || category;
+}
+function initializeCheckboxLimits(categoryName, limit) {
+const checkboxes = document.querySelectorAll(`input[name="${categoryName}"]`);
+checkboxes.forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+const checked = document.querySelectorAll(`input[name="${categoryName}"]:checked`);
+if (checked.length > limit) {
+this.checked = false;
+showNotification(`Você só pode selecionar ${limit} itens de ${getCategoryDisplayName(categoryName)}.`);
+}
+});
+});
+}
+function getMenuItems(menuName) {
+// Different menu items based on selected menu
+let menuData = {
+'Menu Clássico': {
+entradas: [
+{ id: 'e1', name: 'Bruschetta de Tomate e Manjericão', desc: 'Pão italiano grelhado com tomate, manjericão e azeite', img: 'https://public.readdy.ai/ai/img_res/52df43839701833dcbd110152fb475a5.jpg' },
+{ id: 'e2', name: 'Carpaccio de Salmão', desc: 'Finas fatias de salmão com rúcula e molho de mostarda', img: 'https://public.readdy.ai/ai/img_res/af718d201988b5ac8c469609f522c959.jpg' },
+{ id: 'e3', name: 'Crostini de Cogumelos', desc: 'Pão crocante com cogumelos salteados e queijo', img: 'https://public.readdy.ai/ai/img_res/e3ffc524b6e6a25406bbc138eaca8c60.jpg' },
+{ id: 'e4', name: 'Canapés de Queijo Brie', desc: 'Canapés com queijo brie e geleia de damasco', img: 'https://public.readdy.ai/ai/img_res/5d9928332f56a8facf90adeff2440d80.jpg' }
+],
+pratosPrincipais: [
+{ id: 'p1', name: 'Filé ao Molho de Vinho', desc: 'Filé mignon ao molho de vinho tinto com legumes', img: 'https://public.readdy.ai/ai/img_res/119bf86bc268349ebaa6bf748eff47a3.jpg' },
+{ id: 'p2', name: 'Risoto de Frutos do Mar', desc: 'Risoto cremoso com frutos do mar e açafrão', img: 'https://public.readdy.ai/ai/img_res/4f09941cf6bb45f99d65b5a793949961.jpg' },
+{ id: 'p3', name: 'Peixe Grelhado', desc: 'Peixe fresco grelhado com legumes e molho de ervas', img: 'https://public.readdy.ai/ai/img_res/94bd36a16a92710c0fe522a083d647cc.jpg' },
+{ id: 'p4', name: 'Medalhão de Filé Mignon', desc: 'Medalhões de filé mignon com molho de cogumelos', img: 'https://public.readdy.ai/ai/img_res/b81451f34c53954aadcc2f2fd1a9706c.jpg' }
+],
+sobremesas: [
+{ id: 's1', name: 'Cheesecake de Frutas Vermelhas', desc: 'Cheesecake cremoso com calda de frutas vermelhas', img: 'https://public.readdy.ai/ai/img_res/0b4586edb611c4f3997aa5a2028e31ba.jpg' },
+{ id: 's2', name: 'Petit Gateau', desc: 'Bolo de chocolate com centro derretido e sorvete de baunilha', img: 'https://public.readdy.ai/ai/img_res/4dee783b7bb620d556c8b8febee8c1e9.jpg' },
+{ id: 's3', name: 'Mousse de Chocolate', desc: 'Mousse de chocolate belga com raspas de chocolate', img: 'https://public.readdy.ai/ai/img_res/c171f77bc287762da900473549a973dd.jpg' }
+],
+bebidas: [
+{ id: 'b1', name: 'Vinho Tinto', desc: 'Seleção de vinhos tintos premium', img: 'https://public.readdy.ai/ai/img_res/40a1b2a093ed233c32580ebee3407010.jpg' },
+{ id: 'b2', name: 'Vinho Branco', desc: 'Seleção de vinhos brancos premium', img: 'https://public.readdy.ai/ai/img_res/00f3552afa16fcd53864068fa3cde306.jpg' },
+{ id: 'b3', name: 'Água e Refrigerantes', desc: 'Água mineral, refrigerantes e sucos naturais', img: 'https://public.readdy.ai/ai/img_res/d3f20953b16988dd77610e6d95886acc.jpg' },
+{ id: 'b4', name: 'Espumante', desc: 'Espumante brut ou demi-sec', img: 'https://public.readdy.ai/ai/img_res/e374facdb0109199457ce1d5a431aadf.jpg' }
+]
+},
+'Menu Contemporâneo': {
+// Similar structure for other menus
+entradas: [
+{ id: 'e1', name: 'Tartar de Atum com Abacate', desc: 'Tartar de atum fresco com abacate e molho cítrico', img: 'https://public.readdy.ai/ai/img_res/ab39133caed75388c49747fa744f6650.jpg' },
+{ id: 'e2', name: 'Ceviche de Camarão', desc: 'Camarões marinados em suco de limão com pimenta e coentro', img: 'https://public.readdy.ai/ai/img_res/e83c0f1cc066eb9bf94072fc776738f3.jpg' },
+{ id: 'e3', name: 'Carpaccio de Beterraba', desc: 'Finas fatias de beterraba com queijo de cabra e nozes', img: 'https://public.readdy.ai/ai/img_res/deb115d485f7ca97a74775d25d99ba76.jpg' },
+{ id: 'e4', name: 'Burrata com Tomates', desc: 'Burrata cremosa com tomates confitados e pesto', img: 'https://public.readdy.ai/ai/img_res/b23af758c2540d34b09f5d28b8d5c199.jpg' }
+],
+pratosPrincipais: [
+{ id: 'p1', name: 'Ravioli de Lagosta', desc: 'Ravioli recheado com lagosta ao molho de champagne', img: 'https://public.readdy.ai/ai/img_res/fd8f9edba761afe30eb57a068a753f83.jpg' },
+{ id: 'p2', name: 'Costela de Cordeiro', desc: 'Costela de cordeiro com redução de vinho tinto e purê trufado', img: 'https://public.readdy.ai/ai/img_res/b2905f332d59f7ac3b643835b8769c69.jpg' },
+{ id: 'p3', name: 'Risoto de Limão Siciliano', desc: 'Risoto cremoso de limão siciliano com camarões grelhados', img: 'https://public.readdy.ai/ai/img_res/90633b7f7b5a34269411ae1143b7d4ee.jpg' },
+{ id: 'p4', name: 'Pato com Molho de Laranja', desc: 'Magret de pato com molho de laranja e especiarias', img: 'https://public.readdy.ai/ai/img_res/2b73a2e5b00c71a84e88830bd6a412ce.jpg' }
+],
+sobremesas: [
+{ id: 's1', name: 'Crème Brûlée de Pistache', desc: 'Crème brûlée aromatizado com pistache', img: 'https://public.readdy.ai/ai/img_res/e98c119bb8186b7d7e994e4b1130dc26.jpg' },
+{ id: 's2', name: 'Macarons Sortidos', desc: 'Seleção de macarons em diversos sabores', img: 'https://public.readdy.ai/ai/img_res/84955db40f1390dfb07e0eee29ebecaf.jpg' },
+{ id: 's3', name: 'Pavlova de Frutas Tropicais', desc: 'Merengue crocante com creme e frutas tropicais', img: 'https://public.readdy.ai/ai/img_res/c46b986d63d12988097cafd7b0c21ddd.jpg' }
+],
+bebidas: [
+{ id: 'b1', name: 'Coquetel de Assinatura', desc: 'Coquetéis exclusivos criados pelo nosso mixologista', img: 'https://public.readdy.ai/ai/img_res/0188dd779157b7131b293cea3c89a347.jpg' },
+{ id: 'b2', name: 'Vinhos Premium', desc: 'Seleção de vinhos premium nacionais e importados', img: 'https://public.readdy.ai/ai/img_res/9c4828444f32b7f69d19fced06ae4a80.jpg' },
+{ id: 'b3', name: 'Água Gourmet', desc: 'Águas aromatizadas e águas minerais especiais', img: 'https://public.readdy.ai/ai/img_res/d418d5bf6c49c705d28008c355cf8e89.jpg' },
+{ id: 'b4', name: 'Champagne', desc: 'Champagne francês de alta qualidade', img: 'https://public.readdy.ai/ai/img_res/7703c0840b3103c2aae99b05d41cc910.jpg' }
+]
+}
+};
+// Default to Menu Clássico if the selected menu is not in our data
+const menuItems = menuData[menuName] || menuData['Menu Clássico'];
+// Generate HTML for each category
+return `
+<div class="space-y-8">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Entradas</h3>
+<span class="text-sm text-gray-500 entradas-limit">Selecione 2 entradas</span>
+</div>
+<div class="space-y-3">
+${menuItems.entradas.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="entradas" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Pratos Principais</h3>
+<span class="text-sm text-gray-500 pratosPrincipais-limit">Selecione 2 pratos principais</span>
+</div>
+<div class="space-y-3">
+${menuItems.pratosPrincipais.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="pratosPrincipais" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Sobremesas</h3>
+<span class="text-sm text-gray-500 sobremesas-limit">Selecione 1 sobremesa</span>
+</div>
+<div class="space-y-3">
+${menuItems.sobremesas.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="sobremesas" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Bebidas</h3>
+<span class="text-sm text-gray-500 bebidas-limit">Selecione 2 bebidas</span>
+</div>
+<div class="space-y-3">
+${menuItems.bebidas.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="bebidas" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+</div>
+`;
+}
+// Função para atualizar o preço total em tempo real
+function updateTotalPrice() {
+if (!window.orderDetails) return;
+const guestCount = document.getElementById('guestCount').value || 1;
+const basePrice = window.orderDetails.basePrice;
+const totalPrice = basePrice * parseInt(guestCount);
+window.orderDetails.guestCount = guestCount;
+window.orderDetails.totalPrice = totalPrice;
+// Atualizar o resumo do pedido se existir
+const orderSummary = document.getElementById('orderSummaryCollapsed');
+if (orderSummary) {
+const totalElement = orderSummary.querySelector('.font-bold.text-primary');
+if (totalElement) {
+totalElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+}
+}
+}
+// Adicionar evento de input para atualizar o preço em tempo real
+document.getElementById('guestCount').addEventListener('input', updateTotalPrice);
+// Função para verificar se todos os campos obrigatórios estão preenchidos
+function validateOrderFields() {
+const eventDate = document.getElementById('eventDate').value;
+const guestCount = document.getElementById('guestCount').value;
+return eventDate && guestCount && guestCount > 0 && selectedMenu;
+}
+// Função para atualizar o estado do botão "Adicionar ao carrinho"
+function updateAddToCartButton() {
+const isValid = validateOrderFields();
+addToCartBtn.disabled = !isValid;
+addToCartBtn.classList.toggle('bg-gray-700', isValid);
+addToCartBtn.classList.toggle('hover:bg-gray-800', isValid);
+addToCartBtn.classList.toggle('bg-gray-400', !isValid);
+addToCartBtn.classList.toggle('cursor-not-allowed', !isValid);
+// Destacar o botão "Ver Opções do Menu" se não houver menu selecionado
+const viewMenuBtn = document.getElementById('viewMenuOptions');
+if (!selectedMenu && viewMenuBtn) {
+viewMenuBtn.classList.add('animate-pulse', 'ring-2', 'ring-primary', 'ring-opacity-50');
+} else if (viewMenuBtn) {
+viewMenuBtn.classList.remove('animate-pulse', 'ring-2', 'ring-primary', 'ring-opacity-50');
+}
+}
+// Adicionar eventos para monitorar mudanças nos campos
+document.getElementById('eventDate').addEventListener('change', updateAddToCartButton);
+document.getElementById('guestCount').addEventListener('input', updateAddToCartButton);
+addToCartBtn.addEventListener('click', function() {
+const eventDate = document.getElementById('eventDate').value;
+const guestCount = document.getElementById('guestCount').value;
+if (!validateOrderFields()) {
+if (!eventDate) {
+showNotification('Por favor, selecione uma data para o evento.');
+} else if (!guestCount || guestCount <= 0) {
+showNotification('Por favor, informe o número de convidados.');
+} else if (!selectedMenu) {
+showNotification('Por favor, selecione uma opção de menu.');
+// Destacar o botão de menu com animação
+const viewMenuBtn = document.getElementById('viewMenuOptions');
+viewMenuBtn.classList.add('animate-pulse', 'ring-2', 'ring-primary', 'ring-opacity-50');
+setTimeout(() => {
+viewMenuBtn.classList.remove('animate-pulse', 'ring-2', 'ring-primary', 'ring-opacity-50');
+}, 3000);
+}
+return;
+}
+// Adicionar ao array de itens do carrinho
+const cartItem = {
+id: Date.now(),
+eventName: currentEventName,
+menuName: selectedMenu,
+eventDate: eventDate,
+guestCount: parseInt(guestCount),
+basePrice: window.orderDetails ? window.orderDetails.basePrice : 120,
+totalPrice: window.orderDetails ? window.orderDetails.totalPrice : 120 * parseInt(guestCount),
+selectedItems: window.orderDetails ? window.orderDetails.selectedItems : {},
+image: modalImage.src
+};
+cartItems.push(cartItem);
+// Atualizar contador do carrinho
+const cartCounter = document.querySelector('.ri-shopping-cart-2-line').nextElementSibling;
+cartCounter.textContent = cartItems.length;
+// Fechar modal do evento
+eventModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+// Mostrar notificação de sucesso
+showNotification(`Evento "${currentEventName}" com menu "${selectedMenu}" adicionado ao carrinho com sucesso!`, 'success');
+// Abrir o modal do carrinho após adicionar o item
+const cartModal = document.getElementById('cartModal');
+if (!cartModal) {
+createCartModal();
+} else {
+updateCartModal();
+}
+document.getElementById('cartModal').classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+// Inicializar o estado do botão quando o modal é aberto
+eventCards.forEach(card => {
+card.addEventListener('click', function() {
+// Código existente...
+// Adicionar esta linha para inicializar o estado do botão
+setTimeout(updateAddToCartButton, 100);
+});
+});
+function showNotification(message, type = 'error') {
+const notification = document.createElement('div');
+notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded shadow-lg ${type === 'success' ? 'bg-primary' : 'bg-red-500'} text-white z-50`;
+notification.textContent = message;
+document.body.appendChild(notification);
+setTimeout(() => {
+notification.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+setTimeout(() => {
+document.body.removeChild(notification);
+}, 500);
+}, 3000);
+}
+// Criar modal do carrinho
+function createCartModal() {
+const cartModal = document.createElement('div');
+cartModal.id = 'cartModal';
+cartModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center';
+document.body.appendChild(cartModal);
+// Atualizar o conteúdo do modal do carrinho
+updateCartModal();
+// Adicionar evento de clique para fechar o modal ao clicar fora dele
+cartModal.addEventListener('click', function(e) {
+if (e.target === cartModal) {
+cartModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
+}
+// Atualizar o conteúdo do modal do carrinho
+function updateCartModal() {
+const cartModal = document.getElementById('cartModal');
+if (!cartModal) return;
+let cartItemsHTML = '';
+let totalCartValue = 0;
+if (cartItems.length === 0) {
+cartItemsHTML = `
+<div class="flex flex-col items-center justify-center py-12">
+<div class="w-20 h-20 flex items-center justify-center text-gray-300 mb-4">
+<i class="ri-shopping-cart-line ri-4x"></i>
+</div>
+<h3 class="text-xl font-medium text-gray-700 mb-2">Seu carrinho está vazio</h3>
+<p class="text-gray-500 text-center mb-6">Adicione itens ao seu carrinho para continuar</p>
+<a href="#" class="bg-primary text-white px-6 py-2 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">
+Explorar Eventos
+</a>
+</div>
+`;
+} else {
+cartItems.forEach(item => {
+totalCartValue += item.totalPrice;
+cartItemsHTML += `
+<div class="border-b border-gray-200 py-4 flex flex-col md:flex-row" data-item-id="${item.id}">
+<div class="md:w-1/4 mb-4 md:mb-0">
+<img src="${item.image}" alt="${item.eventName}" class="w-full h-32 object-cover object-top rounded">
+</div>
+<div class="md:w-2/4 md:px-4 flex flex-col justify-between">
+<div>
+<h3 class="font-medium text-gray-800">${item.eventName}</h3>
+<p class="text-sm text-gray-600 mb-1">Menu: ${item.menuName}</p>
+<p class="text-sm text-gray-600 mb-1">Data: ${item.eventDate}</p>
+<p class="text-sm text-gray-600">Convidados: ${item.guestCount}</p>
+</div>
+<div class="flex items-center mt-2">
+<button class="text-gray-500 hover:text-red-500 text-sm flex items-center remove-cart-item" data-item-id="${item.id}">
+<i class="ri-delete-bin-line mr-1"></i> Remover
+</button>
+</div>
+</div>
+<div class="md:w-1/4 flex flex-col items-end justify-between mt-4 md:mt-0">
+<div class="text-right">
+<p class="text-sm text-gray-600">Preço por pessoa:</p>
+<p class="font-medium">R$ ${item.basePrice.toFixed(2)}</p>
+</div>
+<div class="text-right mt-2">
+<p class="text-sm text-gray-600">Total:</p>
+<p class="font-bold text-primary">R$ ${item.totalPrice.toFixed(2)}</p>
+</div>
+</div>
+</div>
+`;
+});
+}
+cartModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden relative">
+<div class="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+<h2 class="text-xl font-semibold text-gray-800">Carrinho de Compras</h2>
+<button id="closeCartModal" class="text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="overflow-y-auto max-h-[calc(90vh-180px)] p-6">
+${cartItemsHTML}
+</div>
+${cartItems.length > 0 ? `
+<div class="border-t border-gray-200 p-4 bg-gray-50">
+<div class="flex justify-between items-center mb-4">
+<span class="text-gray-700 font-medium">Total do Pedido:</span>
+<span class="font-bold text-primary text-xl">R$ ${totalCartValue.toFixed(2)}</span>
+</div>
+<div class="flex flex-col sm:flex-row gap-3">
+<button id="continueShoppingBtn" class="px-6 py-3 border border-gray-300 rounded !rounded-button text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex-1">
+Continuar Comprando
+</button>
+<button id="checkoutBtn" class="px-6 py-3 bg-primary text-white rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap flex-1">
+Finalizar Pedido
+</button>
+</div>
+</div>
+` : ''}
+</div>
+`;
+// Adicionar eventos após atualizar o conteúdo
+const closeCartModalBtn = document.getElementById('closeCartModal');
+if (closeCartModalBtn) {
+closeCartModalBtn.addEventListener('click', function() {
+cartModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+}
+const continueShoppingBtn = document.getElementById('continueShoppingBtn');
+if (continueShoppingBtn) {
+continueShoppingBtn.addEventListener('click', function() {
+cartModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+}
+const checkoutBtn = document.getElementById('checkoutBtn');
+if (checkoutBtn) {
+checkoutBtn.addEventListener('click', function() {
+showNotification('Redirecionando para a página de pagamento...', 'success');
+setTimeout(() => {
+cartModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}, 1500);
+});
+}
+// Adicionar eventos para os botões de remover
+const removeButtons = document.querySelectorAll('.remove-cart-item');
+removeButtons.forEach(button => {
+button.addEventListener('click', function() {
+const itemId = parseInt(this.getAttribute('data-item-id'));
+removeCartItem(itemId);
+});
+});
+}
+// Função para remover item do carrinho
+function removeCartItem(itemId) {
+const index = cartItems.findIndex(item => item.id === itemId);
+if (index !== -1) {
+cartItems.splice(index, 1);
+// Atualizar contador do carrinho
+const cartCounter = document.querySelector('.ri-shopping-cart-2-line').nextElementSibling;
+cartCounter.textContent = cartItems.length;
+// Atualizar o modal do carrinho
+updateCartModal();
+showNotification('Item removido do carrinho com sucesso!', 'success');
+}
+}
+// Adicionar evento de clique ao botão do carrinho
+cartButton.addEventListener('click', function(e) {
+e.preventDefault();
+const cartModal = document.getElementById('cartModal');
+if (!cartModal) {
+createCartModal();
+} else {
+updateCartModal();
+}
+document.getElementById('cartModal').classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+});
+</script>
+</body>
+</html>

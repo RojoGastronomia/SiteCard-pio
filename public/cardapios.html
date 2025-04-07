@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Cardápios</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#4F46E5',
+secondary: '#10B981'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+</style>
+</head>
+<body class="bg-gray-50">
+<nav class="bg-white shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center">
+<div class="font-['Pacifico'] text-2xl text-primary">logo</div>
+<div class="hidden md:ml-8 md:flex md:space-x-8">
+<a href="#" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Dashboard</a>
+<a href="#" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Eventos Gastronômicos</a>
+<a href="https://readdy.ai/home/caa13790-6c46-4782-acc8-2ca57ce177c0/66637a5b-a9c2-412d-8b1f-575913c0f681" data-readdy="true" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">Participantes</a>
+<a href="https://readdy.ai/home/caa13790-6c46-4782-acc8-2ca57ce177c0/3e6c6387-67c1-4d8f-a14c-fd2031570d0b" data-readdy="true" class="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-primary text-sm font-medium">Cardápio Clientes</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<input type="text" placeholder="Buscar cardápios..." class="w-64 pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<button onclick="showNewMenuModal()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 cursor-pointer whitespace-nowrap flex items-center">
+<i class="ri-add-line mr-2"></i>
+Novo Cardápio
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-sm z-50">
+<div class="flex items-center">
+<i class="ri-checkbox-circle-line mr-2"></i>
+<span>Cardápio criado com sucesso!</span>
+</div>
+</div>
+<div class="flex justify-between items-center mb-6">
+<h1 class="text-2xl font-semibold text-gray-900">Gestão de Cardápios</h1>
+<div class="flex space-x-4">
+<div class="relative">
+<button onclick="toggleEventFilter()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center">
+<i class="ri-filter-3-line mr-2"></i>
+Tipo de Evento
+<i class="ri-arrow-down-s-line ml-2"></i>
+</button>
+<div id="eventFilterDropdown" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+<div class="py-1">
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Casamentos</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Aniversários</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Corporativos</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Festas Temáticas</a>
+</div>
+</div>
+</div>
+<div class="relative">
+<button onclick="toggleStatusFilter()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center">
+<i class="ri-checkbox-multiple-line mr-2"></i>
+Status
+<i class="ri-arrow-down-s-line ml-2"></i>
+</button>
+<div id="statusFilterDropdown" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+<div class="py-1">
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ativo</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inativo</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rascunho</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-900">Menu Executivo</h3>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativo</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-calendar-line mr-2"></i>
+Eventos Corporativos
+</div>
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-list-check-2 mr-2"></i>
+32 itens
+</div>
+</div>
+<div class="mt-4 space-y-2">
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Entradas (8)
+</div>
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Pratos Principais (12)
+</div>
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Sobremesas (6)
+</div>
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Bebidas (6)
+</div>
+</div>
+<div class="mt-6 flex justify-end space-x-3">
+<button onclick="showEditMenuModal()" class="!rounded-button bg-white border border-gray-300 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+<i class="ri-edit-line"></i>
+</button>
+<button onclick="showDeleteConfirmation()" class="!rounded-button bg-white border border-gray-300 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+<i class="ri-delete-bin-line"></i>
+</button>
+<button onclick="showMenuDetails()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Ver Detalhes</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-900">Menu Casamento Premium</h3>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativo</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-calendar-line mr-2"></i>
+Casamentos
+</div>
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-list-check-2 mr-2"></i>
+45 itens
+</div>
+</div>
+<div class="mt-4 space-y-2">
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Entradas (12)
+</div>
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Pratos Principais (15)
+</div>
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Sobremesas (10)
+</div>
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+Bebidas (8)
+</div>
+</div>
+<div class="mt-6 flex justify-end space-x-3">
+<button onclick="showEditMenuModal()" class="!rounded-button bg-white border border-gray-300 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+<i class="ri-edit-line"></i>
+</button>
+<button onclick="showDeleteConfirmation()" class="!rounded-button bg-white border border-gray-300 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+<i class="ri-delete-bin-line"></i>
+</button>
+<button onclick="showMenuDetails()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Ver Detalhes</button>
+</div>
+</div>
+</div>
+</div>
+<div id="newMenuModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+<div class="bg-white rounded-lg max-w-2xl w-full mx-4">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-medium text-gray-900">Novo Cardápio</h2>
+<button onclick="closeNewMenuModal()" class="text-gray-400 hover:text-gray-500">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<form class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Nome do Cardápio</label>
+<input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Evento</label>
+<select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+<option>Selecione o tipo de evento</option>
+<option>Casamentos</option>
+<option>Aniversários</option>
+<option>Corporativos</option>
+<option>Festas Temáticas</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+<div class="space-x-4">
+<label class="inline-flex items-center">
+<input type="radio" name="status" class="text-primary focus:ring-primary">
+<span class="ml-2 text-sm text-gray-700">Ativo</span>
+</label>
+<label class="inline-flex items-center">
+<input type="radio" name="status" class="text-primary focus:ring-primary">
+<span class="ml-2 text-sm text-gray-700">Rascunho</span>
+</label>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Categorias e Itens</label>
+<div class="space-y-4">
+<div class="category-section">
+<label class="flex items-center mb-2">
+<input type="checkbox" class="rounded text-primary focus:ring-primary" onchange="toggleCategoryItems(this, 'entradas')">
+<span class="ml-2 text-sm text-gray-700">Entradas</span>
+</label>
+<div id="entradas-items" class="hidden ml-6 space-y-2">
+<div class="flex items-center gap-2">
+<input type="text" placeholder="Nome do item" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="text" placeholder="Descrição" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="number" placeholder="Preço" class="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<button onclick="addItemToCategory('entradas')" class="!rounded-button p-1.5 text-primary hover:bg-gray-50">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div id="entradas-list" class="space-y-2"></div>
+</div>
+</div>
+<div class="category-section">
+<label class="flex items-center mb-2">
+<input type="checkbox" class="rounded text-primary focus:ring-primary" onchange="toggleCategoryItems(this, 'pratos')">
+<span class="ml-2 text-sm text-gray-700">Pratos Principais</span>
+</label>
+<div id="pratos-items" class="hidden ml-6 space-y-2">
+<div class="flex items-center gap-2">
+<input type="text" placeholder="Nome do item" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="text" placeholder="Descrição" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="number" placeholder="Preço" class="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<button onclick="addItemToCategory('pratos')" class="!rounded-button p-1.5 text-primary hover:bg-gray-50">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div id="pratos-list" class="space-y-2"></div>
+</div>
+</div>
+<div class="category-section">
+<label class="flex items-center mb-2">
+<input type="checkbox" class="rounded text-primary focus:ring-primary" onchange="toggleCategoryItems(this, 'sobremesas')">
+<span class="ml-2 text-sm text-gray-700">Sobremesas</span>
+</label>
+<div id="sobremesas-items" class="hidden ml-6 space-y-2">
+<div class="flex items-center gap-2">
+<input type="text" placeholder="Nome do item" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="text" placeholder="Descrição" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="number" placeholder="Preço" class="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<button onclick="addItemToCategory('sobremesas')" class="!rounded-button p-1.5 text-primary hover:bg-gray-50">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div id="sobremesas-list" class="space-y-2"></div>
+</div>
+</div>
+<div class="category-section">
+<label class="flex items-center mb-2">
+<input type="checkbox" class="rounded text-primary focus:ring-primary" onchange="toggleCategoryItems(this, 'bebidas')">
+<span class="ml-2 text-sm text-gray-700">Bebidas</span>
+</label>
+<div id="bebidas-items" class="hidden ml-6 space-y-2">
+<div class="flex items-center gap-2">
+<input type="text" placeholder="Nome do item" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="text" placeholder="Descrição" class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<input type="number" placeholder="Preço" class="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-lg">
+<button onclick="addItemToCategory('bebidas')" class="!rounded-button p-1.5 text-primary hover:bg-gray-50">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<div id="bebidas-list" class="space-y-2"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex justify-end space-x-3">
+<button type="button" onclick="closeNewMenuModal()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+<button type="button" onclick="handleCreateMenu(event)" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Criar Cardápio</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<div id="menuDetailsModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+<div class="bg-white rounded-lg max-w-4xl w-full mx-4">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-medium text-gray-900">Menu Executivo</h2>
+<button onclick="closeMenuDetails()" class="text-gray-400 hover:text-gray-500">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<h3 class="text-lg font-medium text-gray-900 mb-4">Entradas</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="text-sm font-medium text-gray-900">Bruschetta de Tomate</h4>
+<p class="text-sm text-gray-500">Tomate, manjericão, azeite extra virgem</p>
+</div>
+<span class="text-sm font-medium text-gray-900">R$ 12,00</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h4 class="text-sm font-medium text-gray-900">Carpaccio de Salmão</h4>
+<p class="text-sm text-gray-500">Salmão, alcaparras, rúcula</p>
+</div>
+<span class="text-sm font-medium text-gray-900">R$ 28,00</span>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-medium text-gray-900 mb-4">Pratos Principais</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="text-sm font-medium text-gray-900">Filé à Parmegiana</h4>
+<p class="text-sm text-gray-500">Filé mignon, molho de tomate, queijo</p>
+</div>
+<span class="text-sm font-medium text-gray-900">R$ 45,00</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h4 class="text-sm font-medium text-gray-900">Risoto de Camarão</h4>
+<p class="text-sm text-gray-500">Arroz arbóreo, camarão, açafrão</p>
+</div>
+<span class="text-sm font-medium text-gray-900">R$ 52,00</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+<button onclick="closeMenuDetails()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Fechar</button>
+</div>
+</div>
+</div>
+</div>
+<div id="deleteConfirmationModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+<div class="bg-white rounded-lg max-w-md w-full mx-4">
+<div class="p-6">
+<div class="mb-6">
+<div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+<i class="ri-error-warning-line text-2xl text-red-600"></i>
+</div>
+<div class="mt-3 text-center">
+<h3 class="text-lg font-medium text-gray-900">Excluir Cardápio</h3>
+<p class="mt-2 text-sm text-gray-500">Tem certeza que deseja excluir este cardápio? Esta ação não pode ser desfeita.</p>
+</div>
+</div>
+<div class="flex justify-end space-x-3">
+<button onclick="closeDeleteConfirmation()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+<button onclick="deleteMenu()" class="!rounded-button bg-red-600 text-white px-4 py-2 text-sm font-medium hover:bg-red-700">Excluir</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+function toggleEventFilter() {
+const dropdown = document.getElementById('eventFilterDropdown');
+dropdown.classList.toggle('hidden');
+}
+function toggleStatusFilter() {
+const dropdown = document.getElementById('statusFilterDropdown');
+dropdown.classList.toggle('hidden');
+}
+function showNewMenuModal() {
+document.getElementById('newMenuModal').classList.remove('hidden');
+document.querySelector('#newMenuModal h2').textContent = 'Novo Cardápio';
+document.querySelector('#newMenuModal form').reset();
+document.querySelector('#newMenuModal button[type="button"]:last-child').textContent = 'Criar Cardápio';
+document.querySelector('#newMenuModal button[type="button"]:last-child').onclick = (e) => handleCreateMenu(e);
+}
+function closeNewMenuModal() {
+document.getElementById('newMenuModal').classList.add('hidden');
+}
+function showEditMenuModal() {
+const modal = document.getElementById('newMenuModal');
+modal.classList.remove('hidden');
+document.querySelector('#newMenuModal h2').textContent = 'Editar Cardápio';
+const menuCard = event.target.closest('.bg-white');
+const menuName = menuCard.querySelector('h3').textContent;
+const eventType = menuCard.querySelector('.ri-calendar-line').nextSibling.textContent.trim();
+const status = menuCard.querySelector('.rounded-full').textContent;
+const categories = Array.from(menuCard.querySelectorAll('.ri-checkbox-circle-line')).map(icon =>
+icon.parentElement.textContent.trim()
+);
+const form = modal.querySelector('form');
+form.querySelector('input[type="text"]').value = menuName;
+form.querySelector('select').value = eventType;
+form.querySelectorAll('input[name="status"]').forEach(radio => {
+if(radio.nextElementSibling.textContent.trim() === status) {
+radio.checked = true;
+}
+});
+form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+if(categories.includes(checkbox.nextElementSibling.textContent.trim())) {
+checkbox.checked = true;
+}
+});
+const submitButton = form.querySelector('button[type="button"]:last-child');
+submitButton.textContent = 'Salvar Alterações';
+submitButton.onclick = (e) => handleEditMenu(e, menuCard);
+}
+function handleEditMenu(event, menuCard) {
+event.preventDefault();
+const form = document.querySelector('#newMenuModal form');
+const menuName = form.querySelector('input[type="text"]').value;
+const eventType = form.querySelector('select').value;
+const status = form.querySelector('input[name="status"]:checked')?.value;
+const categories = Array.from(form.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.nextElementSibling.textContent);
+if (!menuName || !eventType || !status || categories.length === 0) {
+const errorFields = [];
+if (!menuName) errorFields.push('Nome do Cardápio');
+if (!eventType) errorFields.push('Tipo de Evento');
+if (!status) errorFields.push('Status');
+if (categories.length === 0) errorFields.push('Categorias');
+const errorMessage = document.createElement('div');
+errorMessage.className = 'text-red-600 text-sm mt-4';
+errorMessage.textContent = `Por favor, preencha os campos obrigatórios: ${errorFields.join(', ')}`;
+const submitButton = form.querySelector('button[type="button"]');
+form.insertBefore(errorMessage, submitButton.parentElement);
+setTimeout(() => {
+errorMessage.remove();
+}, 3000);
+return;
+}
+menuCard.querySelector('h3').textContent = menuName;
+menuCard.querySelector('.rounded-full').textContent = status;
+menuCard.querySelector('.ri-calendar-line').nextSibling.textContent = ` ${eventType}`;
+menuCard.querySelector('.ri-list-check-2').nextSibling.textContent = ` ${categories.length} itens`;
+const categoriesContainer = menuCard.querySelector('.mt-4.space-y-2');
+categoriesContainer.innerHTML = categories.map(category => `
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+${category}
+</div>
+`).join('');
+closeNewMenuModal();
+const successMessage = document.getElementById('successMessage');
+successMessage.querySelector('span').textContent = 'Cardápio atualizado com sucesso!';
+successMessage.classList.remove('hidden');
+setTimeout(() => {
+successMessage.classList.add('hidden');
+}, 3000);
+}
+function showMenuDetails() {
+document.getElementById('menuDetailsModal').classList.remove('hidden');
+}
+function closeMenuDetails() {
+document.getElementById('menuDetailsModal').classList.add('hidden');
+}
+function showDeleteConfirmation() {
+document.getElementById('deleteConfirmationModal').classList.remove('hidden');
+}
+function closeDeleteConfirmation() {
+document.getElementById('deleteConfirmationModal').classList.add('hidden');
+}
+function deleteMenu() {
+closeDeleteConfirmation();
+}
+function toggleCategoryItems(checkbox, category) {
+const itemsContainer = document.getElementById(`${category}-items`);
+if (checkbox.checked) {
+itemsContainer.classList.remove('hidden');
+} else {
+itemsContainer.classList.add('hidden');
+// Clear items when category is unchecked
+document.getElementById(`${category}-list`).innerHTML = '';
+}
+}
+function addItemToCategory(category) {
+const container = document.getElementById(`${category}-items`);
+const nameInput = container.querySelector('input[placeholder="Nome do item"]');
+const descInput = container.querySelector('input[placeholder="Descrição"]');
+const priceInput = container.querySelector('input[placeholder="Preço"]');
+// Remove existing error message if any
+const existingError = container.querySelector('.error-message');
+if (existingError) {
+existingError.remove();
+}
+// Validate inputs
+const errors = [];
+if (!nameInput.value.trim()) errors.push('Nome do item');
+if (!descInput.value.trim()) errors.push('Descrição');
+if (!priceInput.value || isNaN(priceInput.value) || parseFloat(priceInput.value) <= 0) errors.push('Preço válido');
+if (errors.length > 0) {
+const errorDiv = document.createElement('div');
+errorDiv.className = 'error-message text-red-600 text-sm mt-2';
+errorDiv.textContent = `Por favor, preencha os campos obrigatórios: ${errors.join(', ')}`;
+container.querySelector('.flex').insertAdjacentElement('afterend', errorDiv);
+setTimeout(() => errorDiv.remove(), 3000);
+return;
+}
+const itemsList = document.getElementById(`${category}-list`);
+const itemDiv = document.createElement('div');
+itemDiv.className = 'flex items-center gap-2 bg-gray-50 p-2 rounded-lg animate-fade-in';
+itemDiv.innerHTML = `
+<div class="flex-1">
+<div class="text-sm font-medium">${nameInput.value.trim()}</div>
+<div class="text-sm text-gray-500">${descInput.value.trim()}</div>
+</div>
+<div class="text-sm font-medium">R$ ${parseFloat(priceInput.value).toFixed(2)}</div>
+<button onclick="removeItem(this)" class="!rounded-button p-1.5 text-red-500 hover:bg-red-50 transition-colors duration-200">
+<i class="ri-delete-bin-line"></i>
+</button>
+`;
+// Add success animation
+itemDiv.style.opacity = '0';
+itemDiv.style.transform = 'translateY(10px)';
+itemsList.appendChild(itemDiv);
+// Trigger reflow
+itemDiv.offsetHeight;
+// Apply animation
+itemDiv.style.transition = 'all 0.3s ease-out';
+itemDiv.style.opacity = '1';
+itemDiv.style.transform = 'translateY(0)';
+// Show success message
+const successDiv = document.createElement('div');
+successDiv.className = 'text-green-600 text-sm mt-2';
+successDiv.textContent = 'Item adicionado com sucesso!';
+container.querySelector('.flex').insertAdjacentElement('afterend', successDiv);
+setTimeout(() => successDiv.remove(), 2000);
+// Clear inputs with animation
+nameInput.style.transition = 'background-color 0.3s';
+descInput.style.transition = 'background-color 0.3s';
+priceInput.style.transition = 'background-color 0.3s';
+nameInput.style.backgroundColor = '#f0fdf4';
+descInput.style.backgroundColor = '#f0fdf4';
+priceInput.style.backgroundColor = '#f0fdf4';
+setTimeout(() => {
+nameInput.value = '';
+descInput.value = '';
+priceInput.value = '';
+nameInput.style.backgroundColor = '';
+descInput.style.backgroundColor = '';
+priceInput.style.backgroundColor = '';
+}, 200);
+}
+function removeItem(button) {
+const item = button.parentElement;
+item.style.transition = 'all 0.3s ease-out';
+item.style.opacity = '0';
+item.style.transform = 'translateY(10px)';
+setTimeout(() => item.remove(), 300);
+}
+function handleCreateMenu(event) {
+event.preventDefault();
+const form = document.querySelector('#newMenuModal form');
+const menuName = form.querySelector('input[type="text"]').value;
+const eventType = form.querySelector('select').value;
+const status = form.querySelector('input[name="status"]:checked')?.value;
+const categories = [];
+const categoryItems = {};
+['entradas', 'pratos', 'sobremesas', 'bebidas'].forEach(category => {
+const checkbox = form.querySelector(`input[type="checkbox"][onchange*="${category}"]`);
+if (checkbox.checked) {
+categories.push(checkbox.nextElementSibling.textContent);
+const items = Array.from(document.getElementById(`${category}-list`).children).map(item => ({
+name: item.querySelector('.font-medium').textContent,
+description: item.querySelector('.text-gray-500').textContent,
+price: item.querySelector('.font-medium:last-of-type').textContent
+}));
+categoryItems[category] = items;
+}
+});
+if (!menuName || !eventType || !status || categories.length === 0) {
+const errorFields = [];
+if (!menuName) errorFields.push('Nome do Cardápio');
+if (!eventType) errorFields.push('Tipo de Evento');
+if (!status) errorFields.push('Status');
+if (categories.length === 0) errorFields.push('Categorias');
+const errorMessage = document.createElement('div');
+errorMessage.className = 'text-red-600 text-sm mt-4';
+errorMessage.textContent = `Por favor, preencha os campos obrigatórios: ${errorFields.join(', ')}`;
+const submitButton = form.querySelector('button[type="button"]');
+form.insertBefore(errorMessage, submitButton.parentElement);
+setTimeout(() => {
+errorMessage.remove();
+}, 3000);
+return;
+}
+const newMenu = {
+name: menuName,
+eventType: eventType,
+status: status,
+categories: categories,
+items: categoryItems
+};
+const menuContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
+const menuCard = createMenuCard(newMenu);
+menuContainer.insertBefore(menuCard, menuContainer.firstChild);
+closeNewMenuModal();
+form.reset();
+// Clear all items lists
+['entradas', 'pratos', 'sobremesas', 'bebidas'].forEach(category => {
+document.getElementById(`${category}-list`).innerHTML = '';
+document.getElementById(`${category}-items`).classList.add('hidden');
+});
+const successMessage = document.getElementById('successMessage');
+successMessage.classList.remove('hidden');
+setTimeout(() => {
+successMessage.classList.add('hidden');
+}, 3000);
+}
+function createMenuCard(menu) {
+const div = document.createElement('div');
+div.className = 'bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden';
+div.innerHTML = `
+<div class="p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-900">${menu.name}</h3>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${menu.status}</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-calendar-line mr-2"></i>
+${menu.eventType}
+</div>
+<div class="flex items-center text-sm text-gray-500">
+<i class="ri-list-check-2 mr-2"></i>
+${menu.categories.length} itens
+</div>
+</div>
+<div class="mt-4 space-y-2">
+${menu.categories.map(category => `
+<div class="flex items-center text-sm text-gray-700">
+<i class="ri-checkbox-circle-line mr-2 text-primary"></i>
+${category}
+</div>
+`).join('')}
+</div>
+<div class="mt-6 flex justify-end space-x-3">
+<button onclick="showEditMenuModal()" class="!rounded-button bg-white border border-gray-300 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+<i class="ri-edit-line"></i>
+</button>
+<button onclick="showDeleteConfirmation()" class="!rounded-button bg-white border border-gray-300 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+<i class="ri-delete-bin-line"></i>
+</button>
+<button onclick="showMenuDetails()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Ver Detalhes</button>
+</div>
+</div>
+`;
+return div;
+}
+document.addEventListener('click', function(event) {
+const eventFilterDropdown = document.getElementById('eventFilterDropdown');
+const statusFilterDropdown = document.getElementById('statusFilterDropdown');
+if (!event.target.closest('[onclick="toggleEventFilter()"]')) {
+eventFilterDropdown.classList.add('hidden');
+}
+if (!event.target.closest('[onclick="toggleStatusFilter()"]')) {
+statusFilterDropdown.classList.add('hidden');
+}
+});
+</script>
+</main>
+</body>
+</html>
