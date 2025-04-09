@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "nodemon backend/server.js",
-    "build": "node scripts/build.js",
+    "build": "node -e \"require('fs-extra').copySync('frontend/public', 'dist', {overwrite: true})\"",
     "preview": "serve dist"
   },
   "dependencies": {
