@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "name": "cardapio-micro",
   "version": "1.0.0",
@@ -17,24 +16,4 @@
   "devDependencies": {
     "nodemon": "^3.0.2"
   }
-=======
-{
-  "name": "cardapio-micro",
-  "version": "1.0.0",
-  "description": "Sistema de cardápio e eventos",
-  "main": "server.js",
-  "scripts": {
-    "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.1",
-    "express": "^4.18.2",
-    "mongoose": "^8.1.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
-  }
->>>>>>> a128a4dd78fe14ef5fe6e6f130dbfe9533f1e72f
 }

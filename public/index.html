@@ -5,7 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cardápio Digital - Eventos</title>
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-<script>tailwind.config={theme:{extend:{colors:{primary:'#10b981',secondary:'#6366f1'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#10b981',secondary:'#6366f1'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}
+</script>
+<style>
+/* Animações para o contador do carrinho */
+.scale-125 {
+transform: scale(1.25);
+transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.scale-75 {
+transform: scale(0.75);
+transition: transform 0.3s ease, background-color 0.3s ease;
+}
+/* Animações para o modal de login/cadastro */
+@keyframes slideIn {
+from { transform: translateX(-100%); opacity: 0; }
+to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+from { transform: translateX(0); opacity: 1; }
+to { transform: translateX(100%); opacity: 0; }
+}
+.slide-in {
+animation: slideIn 0.5s forwards;
+}
+.slide-out {
+animation: slideOut 0.5s forwards;
+}
+.flip-container {
+perspective: 1000px;
+}
+.flip {
+transition: transform 0.6s;
+transform-style: preserve-3d;
+}
+.flip-active {
+transform: rotateY(180deg);
+}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -40,7 +77,7 @@ input[type="number"] {
 </a>
 <div class="flex items-center space-x-6">
 <nav class="hidden md:flex space-x-6">
-<a href="#" class="text-primary border-b-2 border-primary pb-1 font-medium">Eventos</a>
+<a href="index.html" class="text-primary border-b-2 border-primary pb-1 font-medium">Eventos</a>
 <a href="pedidos.html" data-readdy="true" class="text-gray-600 hover:text-gray-900">Meus Pedidos</a>
 </nav>
 <div class="flex items-center space-x-4">
@@ -51,116 +88,167 @@ input[type="number"] {
 <span class="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
 </a>
 <div class="relative">
-<button class="flex items-center space-x-1 text-gray-700 hover:text-gray-900 bg-gray-100 rounded-full px-3 py-1.5">
+<button id="loginButton" class="flex items-center space-x-1 text-gray-700 hover:text-gray-900 bg-gray-100 rounded-full px-3 py-1.5">
 <i class="ri-user-line"></i>
-<span>Usuário Teste</span>
+<span>Login</span>
 <i class="ri-arrow-down-s-line"></i>
 </button>
+<div id="loginDropdown" class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50 hidden">
+<div id="loggedInMenu" class="py-2 hidden">
+<a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+<i class="ri-user-line mr-2"></i> Meu Perfil
+</a>
+<a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+<i class="ri-file-list-line mr-2"></i> Meus Pedidos
+</a>
+<a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+<i class="ri-settings-line mr-2"></i> Configurações
+</a>
+<div class="border-t border-gray-200 my-1"></div>
+<a href="#" id="logoutButton" class="block px-4 py-2 text-red-600 hover:bg-gray-100">
+<i class="ri-logout-box-line mr-2"></i> Sair
+</a>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 </header>
 <main class="container mx-auto px-4 py-8">
-<h1 class="text-2xl font-bold text-gray-800 mb-8">Eventos Disponíveis</h1>
+<h1 class="text-2xl font-bold text-gray-800 mb-4">Eventos Disponíveis</h1>
+<div class="mb-8">
+<div class="relative mb-4">
+<input type="text" id="searchEvents" placeholder="Buscar eventos..." class="w-full px-4 py-3 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+<div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+<i class="ri-search-line"></i>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors whitespace-nowrap category-filter" data-category="todos">Todos</button>
+<button class="px-4 py-2 bg-primary text-white rounded-full text-sm font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap category-filter active" data-category="corporativo">Corporativo</button>
+<button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors whitespace-nowrap category-filter" data-category="aniversario">Aniversário</button>
+<button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors whitespace-nowrap category-filter" data-category="casamento">Casamento</button>
+<button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors whitespace-nowrap category-filter" data-category="jantar">Jantar Romântico</button>
+<button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors whitespace-nowrap category-filter" data-category="especial">Evento Especial</button>
+</div>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <!-- Card 1 -->
-<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Pacote Almoço Corporativo" data-description="Perfeito para reuniões de escritório e eventos corporativos. Selecione entre nossa variedade de opções profissionais...">
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Pacote Almoço Corporativo" data-description="Perfeito para reuniões de escritório e eventos corporativos. Selecione entre nossa variedade de opções profissionais..." data-category="corporativo">
 <div class="h-48 overflow-hidden">
 <img src="https://public.readdy.ai/ai/img_res/1a2b7cfc31ac21de587bbb14f92dc047.jpg" alt="Pacote Almoço Corporativo" class="w-full h-full object-cover object-top">
 </div>
 <div class="p-5">
-<h2 class="text-xl font-semibold text-gray-800 mb-2">Pacote Almoço Corporativo</h2>
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Pacote Almoço Corporativo</h2>
+<span class="bg-secondary bg-opacity-10 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap">Corporativo</span>
+</div>
 <p class="text-gray-600 text-sm mb-4">Perfeito para reuniões de escritório e eventos corporativos. Selecione entre nossa variedade de opções profissionais...</p>
 <div class="flex items-center justify-between">
 <div class="flex items-center text-sm text-gray-500">
 <i class="ri-menu-line mr-2"></i>
-<span>2 opções de menu</span>
+<span class="menu-options-count">4 opções de menu</span>
 </div>
 <span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
 </div>
 </div>
 </div>
 <!-- Card 2 -->
-<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Coffee Breaks" data-description="Faça uma pausa e aproveite um momento de descontração com café fresquinho, petiscos deliciosos e boa companhia.">
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Coffee Breaks" data-description="Faça uma pausa e aproveite um momento de descontração com café fresquinho, petiscos deliciosos e boa companhia." data-category="corporativo">
 <div class="h-48 overflow-hidden">
 <img src="https://public.readdy.ai/ai/img_res/3f3b128a2e3cb18ffd4204a6061d7b15.jpg" alt="Coffee Breaks" class="w-full h-full object-cover object-top">
 </div>
 <div class="p-5">
-<h2 class="text-xl font-semibold text-gray-800 mb-2">Coffee Breaks</h2>
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Coffee Breaks</h2>
+<span class="bg-secondary bg-opacity-10 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap">Corporativo</span>
+</div>
 <p class="text-gray-600 text-sm mb-4">Faça uma pausa e aproveite um momento de descontração com café fresquinho, petiscos deliciosos e boa companhia.</p>
 <div class="flex items-center justify-between">
 <div class="flex items-center text-sm text-gray-500">
 <i class="ri-menu-line mr-2"></i>
-<span>2 opções de menu</span>
+<span class="menu-options-count">4 opções de menu</span>
 </div>
 <span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
 </div>
 </div>
 </div>
 <!-- Card 3 -->
-<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Festa de Aniversário" data-description="Celebre momentos especiais com nossos pacotes personalizados para festas de aniversário...">
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Festa de Aniversário" data-description="Celebre momentos especiais com nossos pacotes personalizados para festas de aniversário..." data-category="aniversario">
 <div class="h-48 overflow-hidden">
 <img src="https://public.readdy.ai/ai/img_res/05604aca8895a0a3a16f1451783f34c6.jpg" alt="Festa de Aniversário" class="w-full h-full object-cover object-top">
 </div>
 <div class="p-5">
-<h2 class="text-xl font-semibold text-gray-800 mb-2">Festa de Aniversário</h2>
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Festa de Aniversário</h2>
+<span class="bg-secondary bg-opacity-10 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap">Aniversário</span>
+</div>
 <p class="text-gray-600 text-sm mb-4">Celebre momentos especiais com nossos pacotes personalizados para festas de aniversário...</p>
 <div class="flex items-center justify-between">
 <div class="flex items-center text-sm text-gray-500">
 <i class="ri-menu-line mr-2"></i>
-<span>2 opções de menu</span>
+<span class="menu-options-count">4 opções de menu</span>
 </div>
 <span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
 </div>
 </div>
 </div>
 <!-- Card 4 -->
-<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Festa Infantil" data-description="Proporcione uma festa inesquecível para os pequenos com nossos pacotes temáticos e cardápios divertidos...">
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Festa Infantil" data-description="Proporcione uma festa inesquecível para os pequenos com nossos pacotes temáticos e cardápios divertidos..." data-category="aniversario">
 <div class="h-48 overflow-hidden">
 <img src="https://public.readdy.ai/ai/img_res/8d0ed35cd6bc776ccf294d69e68bc775.jpg" alt="Festa Infantil" class="w-full h-full object-cover object-top">
 </div>
 <div class="p-5">
-<h2 class="text-xl font-semibold text-gray-800 mb-2">Festa Infantil</h2>
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Festa Infantil</h2>
+<span class="bg-secondary bg-opacity-10 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap">Aniversário</span>
+</div>
 <p class="text-gray-600 text-sm mb-4">Proporcione uma festa inesquecível para os pequenos com nossos pacotes temáticos e cardápios divertidos...</p>
 <div class="flex items-center justify-between">
 <div class="flex items-center text-sm text-gray-500">
 <i class="ri-menu-line mr-2"></i>
-<span>2 opções de menu</span>
+<span class="menu-options-count">4 opções de menu</span>
 </div>
 <span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
 </div>
 </div>
 </div>
 <!-- Card 5 -->
-<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Eventos Corporativos" data-description="Impressione seus clientes e colaboradores com nossos serviços de catering para eventos empresariais...">
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Eventos Corporativos" data-description="Impressione seus clientes e colaboradores com nossos serviços de catering para eventos empresariais..." data-category="corporativo">
 <div class="h-48 overflow-hidden">
 <img src="https://public.readdy.ai/ai/img_res/5b3c734545b54039764d78a747593839.jpg" alt="Eventos Corporativos" class="w-full h-full object-cover object-top">
 </div>
 <div class="p-5">
-<h2 class="text-xl font-semibold text-gray-800 mb-2">Eventos Corporativos</h2>
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Eventos Corporativos</h2>
+<span class="bg-secondary bg-opacity-10 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap">Corporativo</span>
+</div>
 <p class="text-gray-600 text-sm mb-4">Impressione seus clientes e colaboradores com nossos serviços de catering para eventos empresariais...</p>
 <div class="flex items-center justify-between">
 <div class="flex items-center text-sm text-gray-500">
 <i class="ri-menu-line mr-2"></i>
-<span>2 opções de menu</span>
+<span class="menu-options-count">4 opções de menu</span>
 </div>
 <span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
 </div>
 </div>
 </div>
 <!-- Card 6 -->
-<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Casamento" data-description="Torne seu dia especial ainda mais memorável com nossos pacotes exclusivos para casamentos...">
+<div class="bg-white rounded-lg overflow-hidden card-shadow cursor-pointer event-card" data-event="Casamento" data-description="Torne seu dia especial ainda mais memorável com nossos pacotes exclusivos para casamentos..." data-category="casamento">
 <div class="h-48 overflow-hidden">
 <img src="https://public.readdy.ai/ai/img_res/b8905632f9218145207ecce49d4cdfb3.jpg" alt="Casamento" class="w-full h-full object-cover object-top">
 </div>
 <div class="p-5">
-<h2 class="text-xl font-semibold text-gray-800 mb-2">Casamento</h2>
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Casamento</h2>
+<span class="bg-secondary bg-opacity-10 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap">Casamento</span>
+</div>
 <p class="text-gray-600 text-sm mb-4">Torne seu dia especial ainda mais memorável com nossos pacotes exclusivos para casamentos...</p>
 <div class="flex items-center justify-between">
 <div class="flex items-center text-sm text-gray-500">
 <i class="ri-menu-line mr-2"></i>
-<span>2 opções de menu</span>
+<span class="menu-options-count">4 opções de menu</span>
 </div>
 <span class="bg-primary text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">Disponível</span>
 </div>
@@ -184,7 +272,7 @@ input[type="number"] {
 <div class="mt-6 space-y-4">
 <div class="flex items-center text-gray-700">
 <i class="ri-menu-line ri-lg mr-3 w-6 h-6 flex items-center justify-center"></i>
-<span>2 opções de menu disponíveis</span>
+<span id="modalMenuOptionsCount">4 opções de menu disponíveis</span>
 </div>
 <div class="flex items-center text-gray-700">
 <i class="ri-time-line ri-lg mr-3 w-6 h-6 flex items-center justify-center"></i>
@@ -232,24 +320,24 @@ Adicionar ao carrinho
 <ul class="text-gray-600 text-sm space-y-2">
 <li class="flex items-center">
 <i class="ri-phone-line mr-2"></i>
-<span>(11) 4567-8901</span>
+<span>(11) 99913-0862</span>
 </li>
 <li class="flex items-center">
 <i class="ri-mail-line mr-2"></i>
-<span>contato@cardapiodigital.com.br</span>
+<span>suporte@rojogastronomia.com</span>
 </li>
 </ul>
 </div>
 <div>
 <h3 class="font-semibold text-gray-800 mb-3">Siga-nos</h3>
 <div class="flex space-x-3">
-<a href="#" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
+<a href="https://www.instagram.com/rojogastronomia/?hl=en" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
 <i class="ri-instagram-line"></i>
 </a>
-<a href="#" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
+<a href="https://www.facebook.com/rojogastronomia/?locale=pt_BR" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
 <i class="ri-facebook-fill"></i>
 </a>
-<a href="#" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
+<a href="contact.html" data-readdy="true" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors">
 <i class="ri-whatsapp-line"></i>
 </a>
 </div>
@@ -272,9 +360,32 @@ const modalImage = document.getElementById('modalImage');
 const addToCartBtn = document.getElementById('addToCart');
 const viewMenuOptionsBtn = document.getElementById('viewMenuOptions');
 const cartButton = document.getElementById('cartButton');
+const loginButton = document.getElementById('loginButton');
+const loginDropdown = document.getElementById('loginDropdown');
+const searchInput = document.getElementById('searchEvents');
+const categoryFilters = document.querySelectorAll('.category-filter');
 let selectedMenu = '';
 let currentEventName = '';
 let cartItems = [];
+let isLoggedIn = false; // Estado de login do usuário
+let currentCategory = 'corporativo'; // Categoria atual selecionada
+// Definir o número de opções de menu para cada evento
+const menuOptionsCount = {
+'Pacote Almoço Corporativo': 4,
+'Coffee Breaks': 3,
+'Festa de Aniversário': 5,
+'Festa Infantil': 3,
+'Eventos Corporativos': 4,
+'Casamento': 6
+};
+// Atualizar a contagem de opções de menu para cada card
+document.querySelectorAll('.event-card').forEach(card => {
+const eventName = card.getAttribute('data-event');
+const countElement = card.querySelector('.menu-options-count');
+if (countElement && menuOptionsCount[eventName]) {
+countElement.textContent = `${menuOptionsCount[eventName]} opções de menu`;
+}
+});
 // Criar modal de opções de menu dinamicamente
 const menuOptionsModal = document.createElement('div');
 menuOptionsModal.id = 'menuOptionsModal';
@@ -468,6 +579,11 @@ const existingSummary = document.querySelector('#eventModal .bg-gray-50.rounded-
 if (existingSummary) {
 existingSummary.remove();
 }
+// Atualizar a contagem de opções de menu no modal
+const modalMenuOptionsCount = document.getElementById('modalMenuOptionsCount');
+if (modalMenuOptionsCount && menuOptionsCount[eventName]) {
+modalMenuOptionsCount.textContent = `${menuOptionsCount[eventName]} opções de menu disponíveis`;
+}
 // Mostrar o badge "Obrigatório" no botão de menu
 const menuRequiredBadge = document.getElementById('menuRequiredBadge');
 if (menuRequiredBadge) {
@@ -509,7 +625,9 @@ selectMenuOptionBtns.forEach(btn => {
 btn.addEventListener('click', function() {
 const menuName = this.getAttribute('data-menu');
 selectedMenu = menuName;
-// Open menu items selection modal instead of closing
+// Fechar o modal de opções de menu
+menuOptionsModal.classList.add('hidden');
+// Open menu items selection modal
 openMenuItemsSelectionModal(menuName);
 // Atualizar o estado do botão "Adicionar ao carrinho" após selecionar o menu
 setTimeout(updateAddToCartButton, 100);
@@ -648,21 +766,39 @@ Confirmar Seleção
 `;
 // Show the modal
 menuItemsModal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
 // Add event listeners
 document.getElementById('closeMenuItemsModal').addEventListener('click', function() {
 menuItemsModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
 });
 document.getElementById('cancelMenuItemsSelection').addEventListener('click', function() {
 menuItemsModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+// Reabrir o modal de opções de menu se cancelar
+if (menuName === 'Menu Clássico') {
+setTimeout(() => {
+menuOptionsModal.classList.remove('hidden');
+}, 100);
+}
 });
 document.getElementById('confirmMenuItemsSelection').addEventListener('click', function() {
 // Validate selections
-const categories = ['entradas', 'pratosPrincipais', 'sobremesas', 'bebidas'];
+let categories = [];
 let isValid = true;
 let selectedItems = {};
+if (menuName === 'Almoço Buffet Standard') {
+categories = ['bebidas', 'saladas', 'sobremesas'];
+} else if (menuName === 'Menu Clássico') {
+categories = ['entradas', 'pratosPrincipais', 'sobremesas', 'bebidas'];
+} else {
+categories = ['entradas', 'pratosPrincipais', 'sobremesas', 'bebidas'];
+}
 categories.forEach(category => {
 const checkboxes = document.querySelectorAll(`input[name="${category}"]:checked`);
-const requiredCount = document.querySelector(`.${category}-limit`).textContent.split(' ')[1];
+const limitElement = document.querySelector(`.${category}-limit`);
+if (!limitElement) return;
+const requiredCount = limitElement.textContent.split(' ')[1];
 if (checkboxes.length !== parseInt(requiredCount)) {
 isValid = false;
 showNotification(`Por favor, selecione exatamente ${requiredCount} itens de ${getCategoryDisplayName(category)}.`);
@@ -670,9 +806,14 @@ return;
 }
 selectedItems[category] = Array.from(checkboxes).map(cb => cb.value);
 });
+// Adicionar itens fixos para o Almoço Buffet Standard
+if (menuName === 'Almoço Buffet Standard' && isValid) {
+selectedItems['fixos'] = ['Água', 'Refrigerantes'];
+categories = ['pratosPrincipais', 'bebidas', 'saladas', 'sobremesas'];
+}
 if (isValid) {
 menuItemsModal.classList.add('hidden');
-menuOptionsModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
 // Calcular preço baseado no menu e número de itens
 const basePrice = 120;
 const guestCount = document.getElementById('guestCount').value || 1;
@@ -768,17 +909,22 @@ initializeCheckboxLimits('entradas', 2);
 initializeCheckboxLimits('pratosPrincipais', 2);
 initializeCheckboxLimits('sobremesas', 1);
 initializeCheckboxLimits('bebidas', 2);
+initializeCheckboxLimits('saladas', 2);
 }
 function getCategoryDisplayName(category) {
 const names = {
 'entradas': 'Entradas',
 'pratosPrincipais': 'Pratos Principais',
 'sobremesas': 'Sobremesas',
-'bebidas': 'Bebidas'
+'bebidas': 'Bebidas',
+'saladas': 'Saladas',
+'fixos': 'Bebidas Fixas'
 };
 return names[category] || category;
 }
 function initializeCheckboxLimits(categoryName, limit) {
+const limitElement = document.querySelector(`.${categoryName}-limit`);
+if (!limitElement) return;
 const checkboxes = document.querySelectorAll(`input[name="${categoryName}"]`);
 checkboxes.forEach(checkbox => {
 checkbox.addEventListener('change', function() {
@@ -793,29 +939,61 @@ showNotification(`Você só pode selecionar ${limit} itens de ${getCategoryDispl
 function getMenuItems(menuName) {
 // Different menu items based on selected menu
 let menuData = {
-'Menu Clássico': {
-entradas: [
-{ id: 'e1', name: 'Bruschetta de Tomate e Manjericão', desc: 'Pão italiano grelhado com tomate, manjericão e azeite', img: 'https://public.readdy.ai/ai/img_res/52df43839701833dcbd110152fb475a5.jpg' },
-{ id: 'e2', name: 'Carpaccio de Salmão', desc: 'Finas fatias de salmão com rúcula e molho de mostarda', img: 'https://public.readdy.ai/ai/img_res/af718d201988b5ac8c469609f522c959.jpg' },
-{ id: 'e3', name: 'Crostini de Cogumelos', desc: 'Pão crocante com cogumelos salteados e queijo', img: 'https://public.readdy.ai/ai/img_res/e3ffc524b6e6a25406bbc138eaca8c60.jpg' },
-{ id: 'e4', name: 'Canapés de Queijo Brie', desc: 'Canapés com queijo brie e geleia de damasco', img: 'https://public.readdy.ai/ai/img_res/5d9928332f56a8facf90adeff2440d80.jpg' }
+'Almoço Buffet Standard': {
+fixos: [
+{ id: 'f1', name: 'Água', desc: 'Água mineral natural e com gás', img: 'https://public.readdy.ai/ai/img_res/9569cd503e60cd0c0f8de8073f19987b.jpg' },
+{ id: 'f2', name: 'Refrigerantes', desc: 'Variedade de refrigerantes tradicionais e zero', img: 'https://public.readdy.ai/ai/img_res/31fe3f18a33f21637d727c5086c155f7.jpg' }
 ],
 pratosPrincipais: [
-{ id: 'p1', name: 'Filé ao Molho de Vinho', desc: 'Filé mignon ao molho de vinho tinto com legumes', img: 'https://public.readdy.ai/ai/img_res/119bf86bc268349ebaa6bf748eff47a3.jpg' },
-{ id: 'p2', name: 'Risoto de Frutos do Mar', desc: 'Risoto cremoso com frutos do mar e açafrão', img: 'https://public.readdy.ai/ai/img_res/4f09941cf6bb45f99d65b5a793949961.jpg' },
-{ id: 'p3', name: 'Peixe Grelhado', desc: 'Peixe fresco grelhado com legumes e molho de ervas', img: 'https://public.readdy.ai/ai/img_res/94bd36a16a92710c0fe522a083d647cc.jpg' },
-{ id: 'p4', name: 'Medalhão de Filé Mignon', desc: 'Medalhões de filé mignon com molho de cogumelos', img: 'https://public.readdy.ai/ai/img_res/b81451f34c53954aadcc2f2fd1a9706c.jpg' }
-],
-sobremesas: [
-{ id: 's1', name: 'Cheesecake de Frutas Vermelhas', desc: 'Cheesecake cremoso com calda de frutas vermelhas', img: 'https://public.readdy.ai/ai/img_res/0b4586edb611c4f3997aa5a2028e31ba.jpg' },
-{ id: 's2', name: 'Petit Gateau', desc: 'Bolo de chocolate com centro derretido e sorvete de baunilha', img: 'https://public.readdy.ai/ai/img_res/4dee783b7bb620d556c8b8febee8c1e9.jpg' },
-{ id: 's3', name: 'Mousse de Chocolate', desc: 'Mousse de chocolate belga com raspas de chocolate', img: 'https://public.readdy.ai/ai/img_res/c171f77bc287762da900473549a973dd.jpg' }
+{ id: 'p1', name: 'Cupim Assado', desc: 'Cupim assado ao molho de manteiga de garrafa', img: 'https://public.readdy.ai/ai/img_res/0d97086fa13abc026d2546f4c36aaf4f.jpg' },
+{ id: 'p2', name: 'Filé de Frango', desc: 'Filé coxa e sobrecoxa de frango ao molho de tangerina', img: 'https://public.readdy.ai/ai/img_res/a6cafcceb82834e6d4e8269cd6a25878.jpg' },
+{ id: 'p3', name: 'Filé de Merluza', desc: 'Filé de merluza ao pizzaiolo', img: 'https://public.readdy.ai/ai/img_res/e7c26f9efd9df99bc65fcd19d8dda3e8.jpg' },
+{ id: 'p4', name: 'Filé de Frango com Milho', desc: 'Filé de frango com creme de milho', img: 'https://public.readdy.ai/ai/img_res/2daa368b0044e17d2832a7a787a7e3ce.jpg' },
+{ id: 'p5', name: 'Lombo Suíno', desc: 'Lombo suíno em crosta de ervas', img: 'https://public.readdy.ai/ai/img_res/8c36bc70c2f20c0f3cb47f15ab75f836.jpg' },
+{ id: 'p6', name: 'Penne ao Molho de Tomate', desc: 'Penne ao molho de tomate com raspas de limão e folhas de manjericão (Vegano)', img: 'https://public.readdy.ai/ai/img_res/38f7fe151e2644315c2d735c7f02bd3a.jpg' },
+{ id: 'p7', name: 'Polenta Cremosa', desc: 'Polenta cremosa no azeite com cogumelos trufados e legumes brazeados (Vegano)', img: 'https://public.readdy.ai/ai/img_res/527e6453c005b65dc939368628f0c509.jpg' },
+{ id: 'p8', name: 'Filé Saint Peter', desc: 'Filé Saint Peter ao molho manteiga de alcaparras e vinho branco', img: 'https://public.readdy.ai/ai/img_res/cfb1f7eaf9ed5fadfae7d2a2433ff98b.jpg' }
 ],
 bebidas: [
-{ id: 'b1', name: 'Vinho Tinto', desc: 'Seleção de vinhos tintos premium', img: 'https://public.readdy.ai/ai/img_res/40a1b2a093ed233c32580ebee3407010.jpg' },
-{ id: 'b2', name: 'Vinho Branco', desc: 'Seleção de vinhos brancos premium', img: 'https://public.readdy.ai/ai/img_res/00f3552afa16fcd53864068fa3cde306.jpg' },
-{ id: 'b3', name: 'Água e Refrigerantes', desc: 'Água mineral, refrigerantes e sucos naturais', img: 'https://public.readdy.ai/ai/img_res/d3f20953b16988dd77610e6d95886acc.jpg' },
-{ id: 'b4', name: 'Espumante', desc: 'Espumante brut ou demi-sec', img: 'https://public.readdy.ai/ai/img_res/e374facdb0109199457ce1d5a431aadf.jpg' }
+{ id: 'b1', name: 'Suco de Abacaxi', desc: 'Suco natural de abacaxi', img: 'https://public.readdy.ai/ai/img_res/a2a18578de97e9153a023c360b44d5d6.jpg' },
+{ id: 'b2', name: 'Suco de Laranja', desc: 'Suco natural de laranja', img: 'https://public.readdy.ai/ai/img_res/0f60495d9ca6f2e908053ddf3af17470.jpg' },
+{ id: 'b3', name: 'Suco de Limão', desc: 'Suco natural de limão', img: 'https://public.readdy.ai/ai/img_res/5a3258f2c1b57729c70eff210d8fda53.jpg' },
+{ id: 'b4', name: 'Suco de Uva', desc: 'Suco natural de uva', img: 'https://public.readdy.ai/ai/img_res/dbb98e4159e4012a6ee5a199dc40f384.jpg' }
+],
+saladas: [
+{ id: 's1', name: 'Salada de Abóbora Cabotia', desc: 'Abóbora cabotia com queijo, agrião e molho pesto', img: 'https://public.readdy.ai/ai/img_res/720155d758970dcf4070dc7277b7d2f0.jpg' },
+{ id: 's2', name: 'Salada de Alface Crespa', desc: 'Alface crespa com tomate e cebola roxa com dressing de mostarda e limão', img: 'https://public.readdy.ai/ai/img_res/9488fe4a1fd0bc19dc89ceaecb7aab30.jpg' },
+{ id: 's3', name: 'Couscous com Mix de Verdes', desc: 'Couscous marroquino com mix de folhas verdes', img: 'https://public.readdy.ai/ai/img_res/cceeb7c49f85990c690d70ec8e6f7b57.jpg' },
+{ id: 's4', name: 'Salada Caprese', desc: 'Tomate, mussarela de búfala e manjericão', img: 'https://public.readdy.ai/ai/img_res/f059ecf5cfe7b409164e09af95c709b6.jpg' }
+],
+sobremesas: [
+{ id: 'd1', name: 'Frutas da Estação', desc: 'Seleção de frutas frescas da estação', img: 'https://public.readdy.ai/ai/img_res/87e7b060ccf6fa701181561a5d9fff71.jpg' },{ id: 'd2', name: 'Mousse de Chocolate', desc: 'Mousse de chocolate meio amargo', img: 'https://public.readdy.ai/ai/img_res/c113ce4dbe790c601724c41916e7913e.jpg' },
+{ id: 'd3', name: 'Pudim de Leite', desc: 'Pudim de leite tradicional com calda de caramelo', img: 'https://public.readdy.ai/ai/img_res/eaa9f8cf83b1c48a27077a379f0f91ea.jpg' }
+]
+},
+'Menu Clássico': {
+entradas: [
+{ id: 'e1', name: 'Bruschetta de Tomate', desc: 'Bruschetta de tomate e manjericão com azeite extra virgem', img: 'https://public.readdy.ai/ai/img_res/1d3a3158639ad34586a75a20bc25ff12.jpg' },
+{ id: 'e2', name: 'Canapés de Queijo Brie', desc: 'Canapés de queijo brie com geleia de damasco', img: 'https://public.readdy.ai/ai/img_res/32d859d7e294105ae1dfc5b0398ada2f.jpg' },
+{ id: 'e3', name: 'Salada Caesar', desc: 'Salada Caesar tradicional com croutons e lascas de parmesão', img: 'https://public.readdy.ai/ai/img_res/d463d03138e152092570b78b4a348079.jpg' },
+{ id: 'e4', name: 'Carpaccio de Carne', desc: 'Carpaccio de filé mignon com alcaparras e mostarda dijon', img: 'https://public.readdy.ai/ai/img_res/9728b0db8ca07b43685dda2b24dd90ab.jpg' }
+],
+pratosPrincipais: [
+{ id: 'p1', name: 'Filé Mignon ao Molho Madeira', desc: 'Filé mignon grelhado ao molho madeira com batatas assadas', img: 'https://public.readdy.ai/ai/img_res/0ea91b458ae7869cdb3da161a2e06235.jpg' },
+{ id: 'p2', name: 'Risoto de Funghi', desc: 'Risoto cremoso de funghi com lascas de parmesão', img: 'https://public.readdy.ai/ai/img_res/409362658030475f086043af5d149eb9.jpg' },
+{ id: 'p3', name: 'Salmão Grelhado com Ervas', desc: 'Salmão grelhado com ervas frescas e legumes da estação', img: 'https://public.readdy.ai/ai/img_res/b483cc594737f16524fa8b8bbb165045.jpg' },
+{ id: 'p4', name: 'Medalhão de Filé com Molho de Vinho', desc: 'Medalhão de filé ao molho de vinho tinto com purê de batatas', img: 'https://public.readdy.ai/ai/img_res/335c3f118c4464296a92bfb4471af301.jpg' }
+],
+sobremesas: [
+{ id: 's1', name: 'Cheesecake de Frutas Vermelhas', desc: 'Cheesecake cremoso com calda de frutas vermelhas', img: 'https://public.readdy.ai/ai/img_res/e4c40294f8463d471c05c40cb6caaab5.jpg' },
+{ id: 's2', name: 'Petit Gateau', desc: 'Petit gateau de chocolate com sorvete de baunilha', img: 'https://public.readdy.ai/ai/img_res/8640bfe13211e34b25286880230772ac.jpg' },
+{ id: 's3', name: 'Mousse de Chocolate', desc: 'Mousse de chocolate belga com raspas de chocolate', img: 'https://public.readdy.ai/ai/img_res/6a42827b437bff456801774bf984ed6a.jpg' }
+],
+bebidas: [
+{ id: 'b1', name: 'Vinho Tinto', desc: 'Seleção de vinhos tintos nacionais e importados', img: 'https://public.readdy.ai/ai/img_res/00db4cd8b84b0d4a5496e154c809c0e1.jpg' },
+{ id: 'b2', name: 'Vinho Branco', desc: 'Seleção de vinhos brancos nacionais e importados', img: 'https://public.readdy.ai/ai/img_res/7b975989515b5cb760b6dc5bf7401c3e.jpg' },
+{ id: 'b3', name: 'Água e Refrigerantes', desc: 'Água mineral e refrigerantes tradicionais e zero', img: 'https://public.readdy.ai/ai/img_res/4138a7ed266f862d50deff923f1d9e8e.jpg' },
+{ id: 'b4', name: 'Sucos Naturais', desc: 'Variedade de sucos naturais da fruta', img: 'https://public.readdy.ai/ai/img_res/b8d7434f55d946c1b5b415f3ead02e07.jpg' }
 ]
 },
 'Menu Contemporâneo': {
@@ -845,9 +1023,109 @@ bebidas: [
 ]
 }
 };
-// Default to Menu Clássico if the selected menu is not in our data
+// Use the menu data for the selected menu, or default to Menu Clássico if not found
 const menuItems = menuData[menuName] || menuData['Menu Clássico'];
 // Generate HTML for each category
+if (menuName === 'Almoço Buffet Standard') {
+return `
+<div class="space-y-8">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Bebidas Fixas</h3>
+<span class="text-sm text-gray-500">Incluídas no pacote</span>
+</div>
+<div class="space-y-3">
+${menuItems.fixos.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded bg-gray-50">
+<div class="w-5 h-5 bg-primary rounded-full flex items-center justify-center mr-3">
+<i class="ri-check-line text-white text-xs"></i>
+</div>
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<p class="font-medium text-gray-800">${item.name}</p>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Pratos Principais</h3>
+<span class="text-sm text-gray-500 pratosPrincipais-limit">Selecione 2 pratos principais</span>
+</div>
+<div class="space-y-3">
+${menuItems.pratosPrincipais.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="pratosPrincipais" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Bebidas</h3>
+<span class="text-sm text-gray-500 bebidas-limit">Selecione 2 sucos</span>
+</div>
+<div class="space-y-3">
+${menuItems.bebidas.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="bebidas" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Saladas</h3>
+<span class="text-sm text-gray-500 saladas-limit">Selecione 2 saladas</span>
+</div>
+<div class="space-y-3">
+${menuItems.saladas.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="saladas" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold text-primary">Sobremesas</h3>
+<span class="text-sm text-gray-500 sobremesas-limit">Selecione 1 sobremesa</span>
+</div>
+<div class="space-y-3">
+${menuItems.sobremesas.map(item => `
+<div class="flex items-center p-3 border border-gray-100 rounded hover:bg-gray-50">
+<input type="checkbox" id="${item.id}" name="sobremesas" value="${item.name}" class="mr-3 h-5 w-5 text-primary focus:ring-primary">
+<img src="${item.img}" alt="${item.name}" class="w-20 h-16 object-cover rounded mr-3">
+<div>
+<label for="${item.id}" class="font-medium text-gray-800 cursor-pointer">${item.name}</label>
+<p class="text-sm text-gray-600">${item.desc}</p>
+</div>
+</div>
+`).join('')}
+</div>
+</div>
+</div>
+`;
+} else {
 return `
 <div class="space-y-8">
 <div>
@@ -927,6 +1205,7 @@ ${menuItems.bebidas.map(item => `
 </div>
 `;
 }
+}
 // Função para atualizar o preço total em tempo real
 function updateTotalPrice() {
 if (!window.orderDetails) return;
@@ -1004,8 +1283,14 @@ image: modalImage.src
 };
 cartItems.push(cartItem);
 // Atualizar contador do carrinho
-const cartCounter = document.querySelector('.ri-shopping-cart-2-line').nextElementSibling;
+const cartCounter = document.querySelector('#cartButton .absolute');
 cartCounter.textContent = cartItems.length;
+// Adicionar animação ao contador do carrinho
+cartCounter.classList.add('scale-125', 'bg-secondary');
+setTimeout(() => {
+cartCounter.classList.remove('scale-125', 'bg-secondary');
+cartCounter.classList.add('bg-primary');
+}, 300);
 // Fechar modal do evento
 eventModal.classList.add('hidden');
 document.body.style.overflow = 'auto';
@@ -1157,12 +1442,15 @@ document.body.style.overflow = 'auto';
 }
 const checkoutBtn = document.getElementById('checkoutBtn');
 if (checkoutBtn) {
-checkoutBtn.addEventListener('click', function() {
-showNotification('Redirecionando para a página de pagamento...', 'success');
-setTimeout(() => {
-cartModal.classList.add('hidden');
-document.body.style.overflow = 'auto';
-}, 1500);
+checkoutBtn.addEventListener('click', function () {
+    // Fechar o modal do carrinho
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) {
+        cartModal.classList.add('hidden');
+    }
+
+    // Abrir o modal de checkout
+    openCheckoutModal();
 });
 }
 // Adicionar eventos para os botões de remover
@@ -1180,12 +1468,356 @@ const index = cartItems.findIndex(item => item.id === itemId);
 if (index !== -1) {
 cartItems.splice(index, 1);
 // Atualizar contador do carrinho
-const cartCounter = document.querySelector('.ri-shopping-cart-2-line').nextElementSibling;
+const cartCounter = document.querySelector('#cartButton .absolute');
 cartCounter.textContent = cartItems.length;
+// Adicionar animação ao contador do carrinho
+cartCounter.classList.add('scale-75', 'bg-red-500');
+setTimeout(() => {
+cartCounter.classList.remove('scale-75', 'bg-red-500');
+cartCounter.classList.add('bg-primary');
+}, 300);
 // Atualizar o modal do carrinho
 updateCartModal();
 showNotification('Item removido do carrinho com sucesso!', 'success');
 }
+}
+// Função para abrir o modal de checkout
+function openCheckoutModal() {
+// Criar modal de checkout se não existir
+let checkoutModal = document.getElementById('checkoutModal');
+if (!checkoutModal) {
+checkoutModal = document.createElement('div');
+checkoutModal.id = 'checkoutModal';
+checkoutModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+document.body.appendChild(checkoutModal);
+}
+// Calcular o total do pedido
+let totalCartValue = 0;
+cartItems.forEach(item => {
+totalCartValue += item.totalPrice;
+});
+// Gerar HTML para os itens do carrinho (versão resumida)
+let cartItemsHTML = '';
+cartItems.forEach(item => {
+cartItemsHTML += `
+<div class="flex justify-between items-center py-2 border-b border-gray-100">
+<div class="flex items-center">
+<div class="w-12 h-12 rounded overflow-hidden mr-3">
+<img src="${item.image}" alt="${item.eventName}" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h4 class="font-medium text-gray-800">${item.eventName}</h4>
+<p class="text-xs text-gray-500">Menu: ${item.menuName}</p>
+</div>
+</div>
+<p class="font-medium text-gray-800">R$ ${item.totalPrice.toFixed(2)}</p>
+</div>
+`;
+});
+// Gerar o HTML do modal
+checkoutModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-5xl max-h-[90vh] overflow-hidden relative">
+<div class="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+<h2 class="text-xl font-semibold text-gray-800">Finalizar Pedido</h2>
+<button id="closeCheckoutModal" class="text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="overflow-y-auto max-h-[calc(90vh-180px)]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+<!-- Coluna de informações do cliente -->
+<div class="p-6 border-r border-gray-200">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Informações de Contato</h3>
+<div class="space-y-4">
+<div>
+<label for="checkout-name" class="block text-gray-700 mb-1 text-sm">Nome Completo</label>
+<input type="text" id="checkout-name" placeholder="Digite seu nome completo" class="w-full px-4 py-2 bg-gray-50 border-none rounded text-sm">
+</div>
+<div>
+<label for="checkout-email" class="block text-gray-700 mb-1 text-sm">Email</label>
+<input type="email" id="checkout-email" placeholder="Digite seu email" class="w-full px-4 py-2 bg-gray-50 border-none rounded text-sm">
+</div>
+<div>
+<label for="checkout-phone" class="block text-gray-700 mb-1 text-sm">Telefone</label>
+<input type="tel" id="checkout-phone" placeholder="(00) 00000-0000" class="w-full px-4 py-2 bg-gray-50 border-none rounded text-sm">
+</div>
+<div>
+<label for="checkout-company" class="block text-gray-700 mb-1 text-sm">Empresa (opcional)</label>
+<input type="text" id="checkout-company" placeholder="Nome da empresa" class="w-full px-4 py-2 bg-gray-50 border-none rounded text-sm">
+</div>
+<div>
+<label for="checkout-notes" class="block text-gray-700 mb-1 text-sm">Observações</label>
+<textarea id="checkout-notes" placeholder="Informações adicionais sobre o evento" rows="3" class="w-full px-4 py-2 bg-gray-50 border-none rounded text-sm"></textarea>
+</div>
+</div>
+<div class="mt-6">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Método de Pagamento</h3>
+<div class="space-y-3">
+<div class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-gray-50 payment-option active" data-payment="credit">
+<input type="radio" name="payment" id="payment-credit" checked class="mr-3">
+<label for="payment-credit" class="flex items-center cursor-pointer">
+<i class="ri-bank-card-line text-gray-700 mr-2 ri-lg"></i>
+<span>Cartão de Crédito</span>
+</label>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-gray-50 payment-option" data-payment="pix">
+<input type="radio" name="payment" id="payment-pix" class="mr-3">
+<label for="payment-pix" class="flex items-center cursor-pointer">
+<i class="ri-qr-code-line text-gray-700 mr-2 ri-lg"></i>
+<span>Pix</span>
+</label>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-gray-50 payment-option" data-payment="bank">
+<input type="radio" name="payment" id="payment-bank" class="mr-3">
+<label for="payment-bank" class="flex items-center cursor-pointer">
+<i class="ri-bank-line text-gray-700 mr-2 ri-lg"></i>
+<span>Transferência Bancária</span>
+</label>
+</div>
+</div>
+<!-- Formulário de cartão de crédito (visível por padrão) -->
+<div id="credit-card-form" class="mt-4 p-4 bg-gray-50 rounded">
+<div class="space-y-3">
+<div>
+<label for="card-number" class="block text-gray-700 mb-1 text-sm">Número do Cartão</label>
+<input type="text" id="card-number" placeholder="0000 0000 0000 0000" class="w-full px-4 py-2 bg-white border-none rounded text-sm">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label for="card-expiry" class="block text-gray-700 mb-1 text-sm">Validade</label>
+<input type="text" id="card-expiry" placeholder="MM/AA" class="w-full px-4 py-2 bg-white border-none rounded text-sm">
+</div>
+<div>
+<label for="card-cvv" class="block text-gray-700 mb-1 text-sm">CVV</label>
+<input type="text" id="card-cvv" placeholder="123" class="w-full px-4 py-2 bg-white border-none rounded text-sm">
+</div>
+</div>
+<div>
+<label for="card-name" class="block text-gray-700 mb-1 text-sm">Nome no Cartão</label>
+<input type="text" id="card-name" placeholder="Nome como está no cartão" class="w-full px-4 py-2 bg-white border-none rounded text-sm">
+</div>
+<div>
+<label for="card-installments" class="block text-gray-700 mb-1 text-sm">Parcelamento</label>
+<select id="card-installments" class="w-full px-4 py-2 bg-white border-none rounded text-sm pr-8">
+<option value="1">À vista - R$ ${totalCartValue.toFixed(2)}</option>
+<option value="2">2x de R$ ${(totalCartValue / 2).toFixed(2)}</option>
+<option value="3">3x de R$ ${(totalCartValue / 3).toFixed(2)}</option>
+<option value="4">4x de R$ ${(totalCartValue / 4).toFixed(2)}</option>
+<option value="5">5x de R$ ${(totalCartValue / 5).toFixed(2)}</option>
+<option value="6">6x de R$ ${(totalCartValue / 6).toFixed(2)}</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Formulário de PIX (oculto por padrão) -->
+<div id="pix-form" class="mt-4 p-4 bg-gray-50 rounded hidden">
+<div class="text-center">
+<div class="w-48 h-48 bg-white p-3 rounded mx-auto mb-4">
+<div class="w-full h-full bg-gray-100 flex items-center justify-center">
+<i class="ri-qr-code-line ri-5x text-gray-400"></i>
+</div>
+</div>
+<p class="text-sm text-gray-600 mb-2">Escaneie o QR Code para pagar</p>
+<p class="text-xs text-gray-500">O QR Code será gerado após a confirmação do pedido</p>
+</div>
+</div>
+<!-- Formulário de transferência bancária (oculto por padrão) -->
+<div id="bank-form" class="mt-4 p-4 bg-gray-50 rounded hidden">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-700">Banco:</span>
+<span class="text-sm font-medium">Banco do Brasil</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-700">Agência:</span>
+<span class="text-sm font-medium">1234-5</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-700">Conta:</span>
+<span class="text-sm font-medium">12345-6</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-700">CNPJ:</span>
+<span class="text-sm font-medium">12.345.678/0001-90</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm text-gray-700">Favorecido:</span>
+<span class="text-sm font-medium">Cardápio Digital Ltda</span>
+</div>
+<p class="text-xs text-gray-500 mt-2">Após realizar a transferência, envie o comprovante para o email: financeiro@cardapiodigital.com.br</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna de resumo do pedido -->
+<div class="p-6 bg-gray-50">
+<h3 class="text-lg font-semibold text-gray-800 mb-4">Resumo do Pedido</h3>
+<div class="bg-white rounded p-4 mb-4">
+<div class="max-h-64 overflow-y-auto mb-4">
+${cartItemsHTML}
+</div>
+<div class="border-t border-gray-200 pt-3 mt-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-gray-600">Subtotal:</span>
+<span class="font-medium">R$ ${totalCartValue.toFixed(2)}</span>
+</div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-gray-600">Taxa de serviço (10%):</span>
+<span class="font-medium">R$ ${(totalCartValue * 0.1).toFixed(2)}</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-gray-100 mt-2">
+<span class="font-medium text-gray-800">Total:</span>
+<span class="font-bold text-primary text-xl">R$ ${(totalCartValue * 1.1).toFixed(2)}</span>
+</div>
+</div>
+</div>
+<div class="bg-white rounded p-4 mb-6">
+<h4 class="font-medium text-gray-800 mb-2">Detalhes da Entrega</h4>
+<p class="text-sm text-gray-600 mb-4">Nossa equipe entrará em contato para confirmar os detalhes do local e horário do evento.</p>
+<div class="flex items-center text-sm text-gray-600 mb-2">
+<i class="ri-calendar-line mr-2 text-primary"></i>
+<span>Confirmação em até 24 horas</span>
+</div>
+<div class="flex items-center text-sm text-gray-600">
+<i class="ri-customer-service-line mr-2 text-primary"></i>
+<span>Suporte dedicado para seu evento</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center">
+<input type="checkbox" id="terms-accept" class="mr-2">
+<label for="terms-accept" class="text-sm text-gray-700">Li e aceito os <a href="#" class="text-primary">Termos de Serviço</a> e <a href="#" class="text-primary">Política de Privacidade</a></label>
+</div>
+<button id="confirm-order-btn" class="w-full bg-primary text-white py-3 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+Confirmar Pedido
+</button>
+<button id="back-to-cart-btn" class="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded !rounded-button font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
+Voltar ao Carrinho
+</button>
+</div>
+<div class="mt-6 flex items-center justify-center">
+<div class="flex items-center space-x-3">
+<i class="ri-lock-line text-gray-500"></i>
+<span class="text-xs text-gray-500">Pagamento 100% seguro</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+`;
+// Mostrar o modal
+document.body.style.overflow = 'hidden';
+// Adicionar eventos após criar o modal
+const closeCheckoutModalBtn = document.getElementById('closeCheckoutModal');
+closeCheckoutModalBtn.addEventListener('click', function() {
+checkoutModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+// Evento para voltar ao carrinho
+const backToCartBtn = document.getElementById('back-to-cart-btn');
+backToCartBtn.addEventListener('click', function() {
+checkoutModal.classList.add('hidden');
+document.getElementById('cartModal').classList.remove('hidden');
+});
+// Evento para alternar entre métodos de pagamento
+const paymentOptions = document.querySelectorAll('.payment-option');
+paymentOptions.forEach(option => {
+option.addEventListener('click', function() {
+// Atualizar estado dos radio buttons
+const radio = this.querySelector('input[type="radio"]');
+radio.checked = true;
+// Atualizar classes ativas
+paymentOptions.forEach(opt => opt.classList.remove('active', 'border-primary'));
+this.classList.add('active', 'border-primary');
+// Mostrar o formulário correspondente
+const paymentType = this.getAttribute('data-payment');
+document.getElementById('credit-card-form').classList.add('hidden');
+document.getElementById('pix-form').classList.add('hidden');
+document.getElementById('bank-form').classList.add('hidden');
+document.getElementById(`${paymentType}-form`).classList.remove('hidden');
+});
+});
+// Habilitar/desabilitar botão de confirmar pedido com base no checkbox de termos
+const termsCheckbox = document.getElementById('terms-accept');
+const confirmOrderBtn = document.getElementById('confirm-order-btn');
+termsCheckbox.addEventListener('change', function() {
+confirmOrderBtn.disabled = !this.checked;
+});
+// Evento para confirmar pedido
+confirmOrderBtn.addEventListener('click', function() {
+if (!termsCheckbox.checked) {
+showNotification('Você precisa aceitar os termos de serviço.');
+return;
+}
+// Validar campos obrigatórios
+const name = document.getElementById('checkout-name').value;
+const email = document.getElementById('checkout-email').value;
+const phone = document.getElementById('checkout-phone').value;
+if (!name || !email || !phone) {
+showNotification('Por favor, preencha todos os campos obrigatórios.');
+return;
+}
+// Verificar qual método de pagamento está selecionado
+const selectedPayment = document.querySelector('.payment-option.active').getAttribute('data-payment');
+// Validar campos específicos do método de pagamento
+if (selectedPayment === 'credit') {
+const cardNumber = document.getElementById('card-number').value;
+const cardExpiry = document.getElementById('card-expiry').value;
+const cardCvv = document.getElementById('card-cvv').value;
+const cardName = document.getElementById('card-name').value;
+if (!cardNumber || !cardExpiry || !cardCvv || !cardName) {
+showNotification('Por favor, preencha todos os dados do cartão.');
+return;
+}
+}
+// Simular processamento do pedido
+checkoutModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-md p-8 text-center">
+<div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-primary"></div>
+</div>
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Processando seu pedido</h2>
+<p class="text-gray-600">Por favor, aguarde enquanto processamos seu pedido...</p>
+</div>
+`;
+// Simular conclusão após 2 segundos
+setTimeout(() => {
+checkoutModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-md p-8 text-center">
+<div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center bg-green-100 rounded-full">
+<i class="ri-check-line ri-3x text-green-500"></i>
+</div>
+<h2 class="text-xl font-semibold text-gray-800 mb-2">Pedido Confirmado!</h2>
+<p class="text-gray-600 mb-6">Seu pedido foi recebido com sucesso. Em breve você receberá um email com todos os detalhes.</p>
+<p class="font-medium text-gray-800 mb-1">Número do Pedido:</p>
+<p class="text-primary font-bold text-xl mb-6">#${Math.floor(100000 + Math.random() * 900000)}</p>
+<button id="finish-order-btn" class="w-full bg-primary text-white py-3 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">
+Concluir
+</button>
+</div>
+`;
+// Adicionar evento ao botão de concluir
+document.getElementById('finish-order-btn').addEventListener('click', function() {
+// Limpar o carrinho
+cartItems = [];
+// Atualizar contador do carrinho
+const cartCounter = document.querySelector('#cartButton .absolute');
+cartCounter.textContent = '0';
+// Fechar o modal
+checkoutModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+// Redirecionar para a página inicial
+window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+}, 2000);
+});
+// Fechar o modal ao clicar fora dele
+checkoutModal.addEventListener('click', function(e) {
+if (e.target === checkoutModal) {
+checkoutModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
 }
 // Adicionar evento de clique ao botão do carrinho
 cartButton.addEventListener('click', function(e) {
@@ -1199,6 +1831,339 @@ updateCartModal();
 document.getElementById('cartModal').classList.remove('hidden');
 document.body.style.overflow = 'hidden';
 });
+// Gerenciar o modal de login
+loginButton.addEventListener('click', function(e) {
+e.stopPropagation();
+// Criar modal de login se não existir
+let loginModal = document.getElementById('loginModal');
+if (!loginModal) {
+loginModal = document.createElement('div');
+loginModal.id = 'loginModal';
+loginModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+loginModal.innerHTML = `
+<div class="bg-white rounded-lg w-full max-w-5xl flex overflow-hidden">
+<div class="w-1/2 bg-gray-900 text-white p-10 flex flex-col justify-center transition-all duration-500">
+<h1 class="text-3xl font-bold mb-2">Cardápio Digital</h1>
+<p class="text-base mb-10">Sistema completo para gerenciamento do seu restaurante</p>
+<div class="space-y-6">
+<div class="flex items-start">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center mr-4 mt-1">
+<i class="ri-check-line text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-medium mb-1">Gestão de Cardápio</h3>
+<p class="text-gray-400 text-sm">Atualize seus pratos e preços facilmente</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center mr-4 mt-1">
+<i class="ri-check-line text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-medium mb-1">Pedidos Online</h3>
+<p class="text-gray-400 text-sm">Receba pedidos diretamente no sistema</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center mr-4 mt-1">
+<i class="ri-check-line text-white"></i>
+</div>
+<div>
+<h3 class="text-lg font-medium mb-1">Relatórios</h3>
+<p class="text-gray-400 text-sm">Acompanhe o desempenho do seu negócio</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-1/2 p-10 flex flex-col transition-all duration-500">
+<div class="flex space-x-4 mb-8">
+<button class="text-gray-800 font-medium border-b-2 border-gray-800 pb-1 login-tab active" id="loginTabBtn">Login</button>
+<button class="text-gray-500 hover:text-gray-800 pb-1 register-tab" id="registerTabBtn">Cadastro</button>
+</div>
+<div id="loginTabContent" class="flex-1">
+<h2 class="text-2xl font-medium text-gray-800 mb-2">Entrar no Sistema</h2>
+<p class="text-gray-500 mb-8">Faça login para acessar o gerenciamento do seu restaurante</p>
+<div class="space-y-6">
+<div>
+<label for="email" class="block text-gray-700 mb-2">Email</label>
+<input type="email" id="email" placeholder="Seu email" class="w-full px-4 py-3 bg-gray-50 border-none rounded">
+</div>
+<div>
+<label for="password" class="block text-gray-700 mb-2">Senha</label>
+<div class="relative">
+<input type="password" id="password" placeholder="Sua senha" class="w-full px-4 py-3 bg-gray-50 border-none rounded">
+<button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" id="rememberMe" class="mr-2">
+<label for="rememberMe" class="text-gray-700 text-sm">Lembrar-me</label>
+</div>
+<a href="#" class="text-gray-500 text-sm hover:text-primary">Esqueceu a senha?</a>
+</div>
+</div>
+<button class="w-full bg-gray-900 text-white py-3 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap mt-8">
+Entrar
+</button>
+</div>
+<div id="registerTabContent" class="flex-1 hidden">
+<h2 class="text-2xl font-medium text-gray-800 mb-2">Criar Conta</h2>
+<p class="text-gray-500 mb-6">Cadastre-se para gerenciar seu restaurante</p>
+<div class="space-y-5">
+<div>
+<label for="username" class="block text-gray-700 mb-2">Usuário</label>
+<input type="text" id="username" placeholder="Seu usuário" class="w-full px-4 py-3 bg-gray-50 border-none rounded">
+</div>
+<div>
+<label for="register-email" class="block text-gray-700 mb-2">Email</label>
+<input type="email" id="register-email" placeholder="Seu email" class="w-full px-4 py-3 bg-gray-50 border-none rounded">
+</div>
+<div>
+<label for="register-password" class="block text-gray-700 mb-2">Senha</label>
+<div class="relative">
+<input type="password" id="register-password" placeholder="Sua senha" class="w-full px-4 py-3 bg-gray-50 border-none rounded">
+<button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div>
+<label for="confirm-password" class="block text-gray-700 mb-2">Confirmar Senha</label>
+<div class="relative">
+<input type="password" id="confirm-password" placeholder="Confirme sua senha" class="w-full px-4 py-3 bg-gray-50 border-none rounded">
+<button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="flex items-center">
+<input type="checkbox" id="termsAccept" class="mr-2">
+<label for="termsAccept" class="text-gray-700 text-sm">Li e aceito os <a href="#" class="text-primary">Termos de Uso</a> e <a href="#" class="text-primary">Política de Privacidade</a></label>
+</div>
+</div>
+<button class="w-full bg-gray-900 text-white py-3 rounded !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap mt-6">
+Criar Conta
+</button>
+</div>
+</div>
+</div>
+`;
+document.body.appendChild(loginModal);
+// Adicionar eventos para as abas
+const loginTab = document.querySelector('.login-tab');
+const registerTab = document.querySelector('.register-tab');
+const loginContent = document.querySelector('#loginTabContent');
+const registerContent = document.querySelector('#registerTabContent');
+loginTab.addEventListener('click', function() {
+loginTab.classList.add('active', 'border-b-2', 'border-gray-800', 'text-gray-800');
+registerTab.classList.remove('active', 'border-b-2', 'border-gray-800', 'text-gray-800');
+registerTab.classList.add('text-gray-500');
+// Animação para trocar o lado escuro
+const darkSide = loginModal.querySelector('.bg-gray-900');
+const lightSide = loginModal.querySelector('.w-1/2:not(.bg-gray-900)');
+// Adicionar classes de transição
+darkSide.style.transition = 'all 0.5s ease-in-out';
+lightSide.style.transition = 'all 0.5s ease-in-out';
+// Animar a troca
+darkSide.style.opacity = '0.3';
+setTimeout(() => {
+// Trocar as posições no DOM
+darkSide.parentNode.insertBefore(darkSide, lightSide);
+darkSide.style.opacity = '1';
+// Mostrar conteúdo
+loginContent.classList.remove('hidden');
+registerContent.classList.add('hidden');
+}, 250);
+});
+registerTab.addEventListener('click', function() {
+registerTab.classList.add('active', 'border-b-2', 'border-gray-800', 'text-gray-800');
+loginTab.classList.remove('active', 'border-b-2', 'border-gray-800', 'text-gray-800');
+loginTab.classList.add('text-gray-500');
+// Animação para trocar o lado escuro
+const darkSide = loginModal.querySelector('.bg-gray-900');
+const lightSide = loginModal.querySelector('.w-1/2:not(.bg-gray-900)');
+// Adicionar classes de transição
+darkSide.style.transition = 'all 0.5s ease-in-out';
+lightSide.style.transition = 'all 0.5s ease-in-out';
+// Animar a troca
+darkSide.style.opacity = '0.3';
+setTimeout(() => {
+// Trocar as posições no DOM
+darkSide.parentNode.appendChild(darkSide);
+darkSide.style.opacity = '1';
+// Mostrar conteúdo
+registerContent.classList.remove('hidden');
+loginContent.classList.add('hidden');
+}, 250);
+});
+// Adicionar eventos para os botões de mostrar/esconder senha no formulário de cadastro
+const registerPasswordToggles = loginModal.querySelectorAll('#registerTabContent .ri-eye-line');
+registerPasswordToggles.forEach(toggle => {
+toggle.parentElement.addEventListener('click', function() {
+const input = this.parentElement.querySelector('input');
+if (input.type === 'password') {
+input.type = 'text';
+this.querySelector('i').classList.remove('ri-eye-line');
+this.querySelector('i').classList.add('ri-eye-off-line');
+} else {
+input.type = 'password';
+this.querySelector('i').classList.remove('ri-eye-off-line');
+this.querySelector('i').classList.add('ri-eye-line');
+}
+});
+});
+// Fechar o modal ao clicar fora dele
+loginModal.addEventListener('click', function(e) {
+if (e.target === loginModal) {
+loginModal.classList.add('hidden');
+}
+});
+// Toggle password visibility
+const passwordToggles = loginModal.querySelectorAll('.ri-eye-line');
+passwordToggles.forEach(toggle => {
+toggle.parentElement.addEventListener('click', function() {
+const input = this.parentElement.querySelector('input');
+if (input.type === 'password') {
+input.type = 'text';
+this.querySelector('i').classList.remove('ri-eye-line');
+this.querySelector('i').classList.add('ri-eye-off-line');
+} else {
+input.type = 'password';
+this.querySelector('i').classList.remove('ri-eye-off-line');
+this.querySelector('i').classList.add('ri-eye-line');
+}
+});
+});
+}
+loginModal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+// Fechar o dropdown ao clicar fora dele
+document.addEventListener('click', function(e) {
+const loginModal = document.getElementById('loginModal');
+if (loginModal && e.target === loginModal) {
+loginModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
+// Removido código de alternância entre formulários que não são mais necessários
+// Simular login e cadastro
+document.addEventListener('click', function(e) {
+// Botão de login
+if (e.target.closest('#loginTabContent button.w-full.bg-gray-900')) {
+const email = document.getElementById('email')?.value;
+const password = document.getElementById('password')?.value;
+if (email && password) {
+// Simular login bem-sucedido
+isLoggedIn = true;
+loginButton.innerHTML = `
+<i class="ri-user-line"></i>
+<span>Minha Conta</span>
+<i class="ri-arrow-down-s-line"></i>
+`;
+const loginModal = document.getElementById('loginModal');
+if (loginModal) {
+loginModal.classList.add('hidden');
+}
+document.getElementById('loggedInMenu').classList.remove('hidden');
+showNotification('Login realizado com sucesso!', 'success');
+document.body.style.overflow = 'auto';
+} else {
+showNotification('Por favor, preencha todos os campos.');
+}
+}
+// Botão de cadastro
+if (e.target.closest('#registerTabContent button.w-full.bg-gray-900')) {
+const username = document.getElementById('username')?.value;
+const email = document.getElementById('register-email')?.value;
+const password = document.getElementById('register-password')?.value;
+const confirmPassword = document.getElementById('confirm-password')?.value;
+const termsAccepted = document.getElementById('termsAccept')?.checked;
+if (username && email && password && confirmPassword) {
+if (password !== confirmPassword) {
+showNotification('As senhas não coincidem.');
+return;
+}
+if (!termsAccepted) {
+showNotification('Você precisa aceitar os termos de uso e política de privacidade.');
+return;
+}
+// Simular cadastro bem-sucedido
+isLoggedIn = true;
+loginButton.innerHTML = `
+<i class="ri-user-line"></i>
+<span>Minha Conta</span>
+<i class="ri-arrow-down-s-line"></i>
+`;
+const loginModal = document.getElementById('loginModal');
+if (loginModal) {
+loginModal.classList.add('hidden');
+}
+document.getElementById('loggedInMenu').classList.remove('hidden');
+showNotification('Conta criada com sucesso!', 'success');
+document.body.style.overflow = 'auto';
+} else {
+showNotification('Por favor, preencha todos os campos.');
+}
+}
+});
+// Simular logout
+document.getElementById('logoutButton').addEventListener('click', function(e) {
+e.preventDefault();
+isLoggedIn = false;
+loginButton.innerHTML = `
+<i class="ri-user-line"></i>
+<span>Login</span>
+<i class="ri-arrow-down-s-line"></i>
+`;
+document.getElementById('loginForm').classList.remove('hidden');
+document.getElementById('loggedInMenu').classList.add('hidden');
+showNotification('Logout realizado com sucesso!', 'success');
+loginDropdown.classList.add('hidden');
+});
+// Funcionalidade de pesquisa
+searchInput.addEventListener('input', function() {
+filterEvents();
+});
+// Funcionalidade de filtro por categoria
+categoryFilters.forEach(filter => {
+filter.addEventListener('click', function() {
+// Remover classe ativa de todos os filtros
+categoryFilters.forEach(btn => {
+btn.classList.remove('active', 'bg-primary', 'text-white');
+btn.classList.add('bg-gray-100', 'text-gray-700');
+});
+// Adicionar classe ativa ao filtro clicado
+this.classList.add('active', 'bg-primary', 'text-white');
+this.classList.remove('bg-gray-100', 'text-gray-700');
+// Atualizar categoria atual
+currentCategory = this.getAttribute('data-category');
+// Filtrar eventos
+filterEvents();
+});
+});
+// Filtrar eventos corporativos por padrão ao carregar a página
+filterEvents();
+// Função para filtrar eventos por pesquisa e categoria
+function filterEvents() {
+const searchTerm = searchInput.value.toLowerCase();
+eventCards.forEach(card => {
+const eventName = card.getAttribute('data-event').toLowerCase();
+const eventDescription = card.getAttribute('data-description').toLowerCase();
+const eventCategory = card.getAttribute('data-category');
+const matchesSearch = eventName.includes(searchTerm) || eventDescription.includes(searchTerm);
+const matchesCategory = currentCategory === 'todos' || eventCategory === currentCategory;
+if (matchesSearch && matchesCategory) {
+card.style.display = 'block';
+} else {
+card.style.display = 'none';
+}
+});
+}
+// Código de simulação de cadastro e recuperação de senha removido pois agora usamos o modal
 });
 </script>
 </body>
