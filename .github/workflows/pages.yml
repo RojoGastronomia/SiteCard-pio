@@ -28,10 +28,16 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm install -g fs-extra
       
       - name: Build
-        run: npm run build
+        run: |
+          mkdir -p scripts
+          node scripts/build.js
+        env:
+          NODE_ENV: production
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
