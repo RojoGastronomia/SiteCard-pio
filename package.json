@@ -5,14 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
+    "dev": "nodemon backend/server.js",
+    "build": "mkdir -p dist && cp -r frontend/public/* dist/",
+    "preview": "serve dist"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
-    "mongoose": "^8.1.0"
+    "mongoose": "^8.1.0",
+    "serve": "^14.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
