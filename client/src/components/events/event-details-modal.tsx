@@ -276,10 +276,13 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                               <input 
                                                 type="checkbox" 
                                                 name="sobremesas"
-                                                className="sr-only"
+                                                className="peer sr-only"
                                                 onChange={(e) => {
                                                   const checked = document.querySelectorAll('input[name="sobremesas"]:checked');
-                                                  if (checked.length > 2) e.target.checked = false;
+                                                  if (checked.length > 2) {
+                                                    e.target.checked = false;
+                                                    return;
+                                                  }
                                                 }}
                                               />
                                               <div className="relative">
