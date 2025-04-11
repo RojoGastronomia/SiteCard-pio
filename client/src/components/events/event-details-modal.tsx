@@ -34,7 +34,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
   const [eventDate, setEventDate] = useState("");
   const [guestCount, setGuestCount] = useState(20);
   const [selectedMenuId, setSelectedMenuId] = useState("");
-  const [showMenuOptions, setShowMenuOptions] = useState(false);
+  const [showMenuOptions, setShowMenuOptions] = useState(true); // Começamos com o menu visível
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [menuItemsLoading, setMenuItemsLoading] = useState(true);
 
@@ -50,6 +50,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
         }
         
         const data = await response.json();
+        console.log("Menu items carregados:", data);
         setMenuItems(data);
       } catch (error) {
         console.error("Erro ao carregar itens do menu:", error);
