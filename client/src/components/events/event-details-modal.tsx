@@ -192,24 +192,29 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                             { name: "Carpaccio", img: "https://public.readdy.ai/ai/img_res/e3ffc524b6e6a25406bbc138eaca8c60.jpg", desc: "Finas fatias de carne com molho especial" },
                                             { name: "Ceviche", img: "https://public.readdy.ai/ai/img_res/5d9928332f56a8facf90adeff2440d80.jpg", desc: "Peixe branco marinado com limão e temperos" }
                                           ].map((item) => (
-                                            <div key={item.name} className="border rounded-lg overflow-hidden">
-                                              <img src={item.img} alt={item.name} className="w-full h-32 object-cover" />
-                                              <div className="p-3">
-                                                <div className="flex items-center justify-between mb-2">
-                                                  <span className="font-medium text-gray-800">{item.name}</span>
-                                                  <input 
-                                                    type="checkbox" 
-                                                    name="entradas"
-                                                    className="rounded text-primary"
-                                                    onChange={(e) => {
-                                                      const checked = document.querySelectorAll('input[name="entradas"]:checked');
-                                                      if (checked.length > 2) e.target.checked = false;
-                                                    }}
-                                                  />
+                                            <label key={item.name} className="border rounded-lg overflow-hidden block cursor-pointer hover:border-primary transition-colors">
+                                              <input 
+                                                type="checkbox" 
+                                                name="entradas"
+                                                className="sr-only"
+                                                onChange={(e) => {
+                                                  const checked = document.querySelectorAll('input[name="entradas"]:checked');
+                                                  if (checked.length > 2) e.target.checked = false;
+                                                }}
+                                              />
+                                              <div className="relative">
+                                                <img src={item.img} alt={item.name} className="w-full h-32 object-cover" />
+                                                <div className="p-3">
+                                                  <div className="flex items-center justify-between mb-2">
+                                                    <span className="font-medium text-gray-800">{item.name}</span>
+                                                    <div className="w-5 h-5 border-2 rounded border-primary flex items-center justify-center">
+                                                      <div className="w-3 h-3 bg-primary rounded peer-checked:block hidden"></div>
+                                                    </div>
+                                                  </div>
+                                                  <p className="text-sm text-gray-600">{item.desc}</p>
                                                 </div>
-                                                <p className="text-sm text-gray-600">{item.desc}</p>
                                               </div>
-                                            </div>
+                                            </label>
                                           ))}
                                         </div>
                                       </div>
