@@ -27,6 +27,11 @@ export default function HomePage() {
     setSelectedEvent(event);
   };
 
+  const handleMenuOptionsClick = (e: React.MouseEvent, event: Event) => {
+    setSelectedEvent(event);
+    // Quando abrimos o modal via botão de menu, definimos as opções como visíveis automaticamente
+  };
+
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
@@ -90,6 +95,7 @@ export default function HomePage() {
                 key={event.id} 
                 event={event} 
                 onClick={() => handleEventClick(event)}
+                onMenuOptionsClick={handleMenuOptionsClick}
               />
             ))}
           </div>
