@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/context/cart-context";
 import { useToast } from "@/hooks/use-toast";
@@ -36,18 +35,36 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
   const [guestCount, setGuestCount] = useState(20);
   const [selectedMenuId, setSelectedMenuId] = useState("");
   const [showMenuOptions, setShowMenuOptions] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [menuItemsLoading, setMenuItemsLoading] = useState(true);
 
   // Fetch menu items
-  const { data: menuItems, isLoading: menuItemsLoading } = useQuery<MenuItem[]>({
-    queryKey: ["/api/events", event.id, "menu-items"],
-    onError: (error: Error) => {
-      toast({
-        title: "Error loading menu items",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        setMenuItemsLoading(true);
+        const response = await fetch(`/api/events/${event.id}/menu-items`);
+        
+        if (!response.ok) {
+          throw new Error(`Erro: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setMenuItems(data);
+      } catch (error) {
+        console.error("Erro ao carregar itens do menu:", error);
+        toast({
+          title: "Erro ao carregar itens do menu",
+          description: error instanceof Error ? error.message : "Erro desconhecido",
+          variant: "destructive",
+        });
+      } finally {
+        setMenuItemsLoading(false);
+      }
+    };
+
+    fetchMenuItems();
+  }, [event.id, toast]);
 
   // Get the selected menu item
   const selectedMenuItem = menuItems?.find(item => item.id.toString() === selectedMenuId);
