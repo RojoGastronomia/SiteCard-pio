@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/layout/navbar";
@@ -25,6 +26,9 @@ export default function AdminNavbar() {
             </Link>
             <Link href="/admin/orders">
               <Button variant={location === '/admin/orders' ? 'default' : 'outline'} className="rounded-full">Pedidos</Button>
+            </Link>
+            <Link href="/admin/master">
+              <Button variant={location === '/admin/master' ? 'default' : 'outline'} className="rounded-full">Master</Button>
             </Link>
           </div>
         </div>

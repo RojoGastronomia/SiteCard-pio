@@ -16,6 +16,7 @@ import AdminEventsPage from "@/pages/admin/events-page";
 import AdminMenusPage from "@/pages/admin/menus-page";
 import AdminUsersPage from "@/pages/admin/users-page";
 import AdminOrdersPage from "@/pages/admin/orders-page";
+import MasterPage from "@/pages/admin/master-page"; // Import the MasterPage component
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <ProtectedRoute path="/admin/menus" component={AdminMenusPage} requireAdmin />
       <ProtectedRoute path="/admin/users" component={AdminUsersPage} requireAdmin />
       <ProtectedRoute path="/admin/orders" component={AdminOrdersPage} requireAdmin />
+      <ProtectedRoute path="/admin/master" component={MasterPage} requireAdmin /> {/* Added MasterPage route */}
       <Route component={NotFound} />
     </Switch>
   );
