@@ -21,11 +21,9 @@ async function seed() {
       title: "Pacote Almoço Corporativo",
       description: "Serviço completo de catering para almoços corporativos. Inclui opções de menu, serviço de garçom e montagem.",
       status: "available",
-      category: "corporate",
+      eventType: "corporate",
       imageUrl: "https://public.readdy.ai/ai/img_res/68a2ff7ee6f61f6c6b0f78ca78bc5f13.jpg",
       menuOptions: 2,
-      minGuests: 10,
-      maxGuests: 100,
     }).returning();
     
     // Menu items for Event 1
@@ -53,11 +51,9 @@ async function seed() {
       title: "Casamento",
       description: "Serviço de catering completo para casamentos. Inclui coquetel de entrada, jantar, sobremesa e open bar.",
       status: "available",
-      category: "wedding",
+      eventType: "wedding",
       imageUrl: "https://public.readdy.ai/ai/img_res/6f8df1bd2a80878edaccbfb15a0a1a93.jpg",
       menuOptions: 3,
-      minGuests: 50,
-      maxGuests: 300,
     }).returning();
     
     // Menu items for Event 2
@@ -93,11 +89,9 @@ async function seed() {
       title: "Aniversário",
       description: "Buffet completo para festas de aniversário. Diversas opções de cardápio e temas.",
       status: "available",
-      category: "birthday",
+      eventType: "birthday",
       imageUrl: "https://public.readdy.ai/ai/img_res/73f50ccacb2c3c2fba36fe1f8ea8f96c.jpg",
       menuOptions: 2,
-      minGuests: 20,
-      maxGuests: 150,
     }).returning();
     
     // Menu items for Event 3
