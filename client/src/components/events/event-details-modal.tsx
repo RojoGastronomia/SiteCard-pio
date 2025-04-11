@@ -181,36 +181,104 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                   <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
                                     <div className="space-y-6">
                                       <div className="space-y-4">
-                                        <h3 className="font-medium text-gray-800">Entradas (Selecione 2)</h3>
+                                        <div className="flex justify-between items-center">
+                                          <h3 className="font-medium text-gray-800">Entradas</h3>
+                                          <span className="text-sm text-primary">Selecione 2 itens</span>
+                                        </div>
                                         <div className="grid grid-cols-2 gap-4">
-                                          {["Bruschetta", "Salada Caprese", "Carpaccio", "Ceviche"].map((item) => (
-                                            <div key={item} className="flex items-center space-x-2">
-                                              <input type="checkbox" className="rounded text-primary" />
-                                              <span className="text-sm text-gray-600">{item}</span>
+                                          {[
+                                            { name: "Bruschetta", img: "https://public.readdy.ai/ai/img_res/52df43839701833dcbd110152fb475a5.jpg", desc: "Pão italiano grelhado com tomate e manjericão" },
+                                            { name: "Salada Caprese", img: "https://public.readdy.ai/ai/img_res/af718d201988b5ac8c469609f522c959.jpg", desc: "Mussarela de búfala, tomate e manjericão" },
+                                            { name: "Carpaccio", img: "https://public.readdy.ai/ai/img_res/e3ffc524b6e6a25406bbc138eaca8c60.jpg", desc: "Finas fatias de carne com molho especial" },
+                                            { name: "Ceviche", img: "https://public.readdy.ai/ai/img_res/5d9928332f56a8facf90adeff2440d80.jpg", desc: "Peixe branco marinado com limão e temperos" }
+                                          ].map((item) => (
+                                            <div key={item.name} className="border rounded-lg overflow-hidden">
+                                              <img src={item.img} alt={item.name} className="w-full h-32 object-cover" />
+                                              <div className="p-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                  <span className="font-medium text-gray-800">{item.name}</span>
+                                                  <input 
+                                                    type="checkbox" 
+                                                    name="entradas"
+                                                    className="rounded text-primary"
+                                                    onChange={(e) => {
+                                                      const checked = document.querySelectorAll('input[name="entradas"]:checked');
+                                                      if (checked.length > 2) e.target.checked = false;
+                                                    }}
+                                                  />
+                                                </div>
+                                                <p className="text-sm text-gray-600">{item.desc}</p>
+                                              </div>
                                             </div>
                                           ))}
                                         </div>
                                       </div>
                                       
-                                      <div className="space-y-4">
-                                        <h3 className="font-medium text-gray-800">Pratos Principais (Selecione 3)</h3>
+                                      <div className="space-y-4 mt-8">
+                                        <div className="flex justify-between items-center">
+                                          <h3 className="font-medium text-gray-800">Pratos Principais</h3>
+                                          <span className="text-sm text-primary">Selecione 3 itens</span>
+                                        </div>
                                         <div className="grid grid-cols-2 gap-4">
-                                          {["Filé Mignon", "Salmão Grelhado", "Risoto de Cogumelos", "Ravioli", "Frango Supreme", "Cordeiro"].map((item) => (
-                                            <div key={item} className="flex items-center space-x-2">
-                                              <input type="checkbox" className="rounded text-primary" />
-                                              <span className="text-sm text-gray-600">{item}</span>
+                                          {[
+                                            { name: "Filé Mignon", img: "https://public.readdy.ai/ai/img_res/119bf86bc268349ebaa6bf748eff47a3.jpg", desc: "Filé ao molho madeira com cogumelos" },
+                                            { name: "Salmão Grelhado", img: "https://public.readdy.ai/ai/img_res/68a2ff7ee6f61f6c6b0f78ca78bc5f13.jpg", desc: "Salmão grelhado com ervas finas" },
+                                            { name: "Risoto de Cogumelos", img: "https://public.readdy.ai/ai/img_res/c1248e0f61daa1c21adcdc44e06db716.jpg", desc: "Risoto cremoso com mix de cogumelos" },
+                                            { name: "Ravioli", img: "https://public.readdy.ai/ai/img_res/6f8df1bd2a80878edaccbfb15a0a1a93.jpg", desc: "Ravioli recheado com queijo e espinafre" },
+                                            { name: "Frango Supreme", img: "https://public.readdy.ai/ai/img_res/52df43839701833dcbd110152fb475a5.jpg", desc: "Peito de frango recheado com queijo" },
+                                            { name: "Cordeiro", img: "https://public.readdy.ai/ai/img_res/af718d201988b5ac8c469609f522c959.jpg", desc: "Carré de cordeiro com crosta de ervas" }
+                                          ].map((item) => (
+                                            <div key={item.name} className="border rounded-lg overflow-hidden">
+                                              <img src={item.img} alt={item.name} className="w-full h-32 object-cover" />
+                                              <div className="p-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                  <span className="font-medium text-gray-800">{item.name}</span>
+                                                  <input 
+                                                    type="checkbox" 
+                                                    name="pratosPrincipais"
+                                                    className="rounded text-primary"
+                                                    onChange={(e) => {
+                                                      const checked = document.querySelectorAll('input[name="pratosPrincipais"]:checked');
+                                                      if (checked.length > 3) e.target.checked = false;
+                                                    }}
+                                                  />
+                                                </div>
+                                                <p className="text-sm text-gray-600">{item.desc}</p>
+                                              </div>
                                             </div>
                                           ))}
                                         </div>
                                       </div>
                                       
-                                      <div className="space-y-4">
-                                        <h3 className="font-medium text-gray-800">Sobremesas (Selecione 2)</h3>
+                                      <div className="space-y-4 mt-8">
+                                        <div className="flex justify-between items-center">
+                                          <h3 className="font-medium text-gray-800">Sobremesas</h3>
+                                          <span className="text-sm text-primary">Selecione 2 itens</span>
+                                        </div>
                                         <div className="grid grid-cols-2 gap-4">
-                                          {["Tiramisu", "Cheesecake", "Pudim", "Mousse de Chocolate"].map((item) => (
-                                            <div key={item} className="flex items-center space-x-2">
-                                              <input type="checkbox" className="rounded text-primary" />
-                                              <span className="text-sm text-gray-600">{item}</span>
+                                          {[
+                                            { name: "Tiramisu", img: "https://public.readdy.ai/ai/img_res/e3ffc524b6e6a25406bbc138eaca8c60.jpg", desc: "Clássica sobremesa italiana com café" },
+                                            { name: "Cheesecake", img: "https://public.readdy.ai/ai/img_res/5d9928332f56a8facf90adeff2440d80.jpg", desc: "Cheesecake com calda de frutas vermelhas" },
+                                            { name: "Pudim", img: "https://public.readdy.ai/ai/img_res/119bf86bc268349ebaa6bf748eff47a3.jpg", desc: "Pudim de leite com calda de caramelo" },
+                                            { name: "Mousse de Chocolate", img: "https://public.readdy.ai/ai/img_res/68a2ff7ee6f61f6c6b0f78ca78bc5f13.jpg", desc: "Mousse de chocolate belga" }
+                                          ].map((item) => (
+                                            <div key={item.name} className="border rounded-lg overflow-hidden">
+                                              <img src={item.img} alt={item.name} className="w-full h-32 object-cover" />
+                                              <div className="p-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                  <span className="font-medium text-gray-800">{item.name}</span>
+                                                  <input 
+                                                    type="checkbox" 
+                                                    name="sobremesas"
+                                                    className="rounded text-primary"
+                                                    onChange={(e) => {
+                                                      const checked = document.querySelectorAll('input[name="sobremesas"]:checked');
+                                                      if (checked.length > 2) e.target.checked = false;
+                                                    }}
+                                                  />
+                                                </div>
+                                                <p className="text-sm text-gray-600">{item.desc}</p>
+                                              </div>
                                             </div>
                                           ))}
                                         </div>
