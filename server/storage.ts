@@ -507,10 +507,7 @@ export class DatabaseStorage implements IStorage {
       { message: "Manutenção programada executada", timestamp: new Date(Date.now() - 7200000).toISOString() },
       { message: "Atualização de segurança aplicada", timestamp: new Date(Date.now() - 14400000).toISOString() }
     ];
-  }
-
-  async getOrderCount(): Promise<number> {
-    const result = await db.select({ count: sql<number>`count(*)` }).from(orders);
+  }rs);
     return result[0].count || 0;
   }
 
