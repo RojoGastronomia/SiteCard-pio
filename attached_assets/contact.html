@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Rojo Gastronomia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#107C10",
+                        secondary: "#E6F1E6",
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        .logo {
+            font-family: 'Pacifico', cursive;
+            color: #107C10;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="logo text-2xl">Rojo Gastronomia</a>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-600 hover:text-primary">
+                        <i class="ri-user-line text-xl"></i>
+                    </button>
+                    <button class="text-gray-600 hover:text-primary">
+                        <i class="ri-shopping-cart-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold text-center mb-8">Fale com um Consultor</h1>
+            
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <div class="text-center mb-8">
+                    <p class="text-gray-600 mb-4">
+                        Estamos prontos para ajudar você a planejar o casamento dos seus sonhos.
+                        Nossa equipe de consultores especializados está disponível para responder todas as suas dúvidas.
+                    </p>
+                    <p class="text-gray-600 mb-6">
+                        Clique no botão abaixo para iniciar uma conversa no WhatsApp:
+                    </p>
+                    <a href="https://wa.me/5511999130862?text=Olá! Gostaria de mais informações sobre casamentos! Podemos conversar?"
+                       target="_blank"
+                       class="inline-flex items-center bg-[#25D366] text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors">
+                        <i class="ri-whatsapp-line text-xl mr-2"></i>
+                        Conversar no WhatsApp
+                    </a>
+                </div>
+
+                <div class="border-t pt-8">
+                    <h2 class="text-xl font-semibold mb-4">Outras formas de contato:</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <i class="ri-phone-line text-xl text-primary mr-3"></i>
+                            <span>(11) 99913-0862</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-mail-line text-xl text-primary mr-3"></i>
+                            <span>contato@cardapioeventos.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-map-pin-line text-xl text-primary mr-3"></i>
+                            <span>Rua Dr. SÍlvio Dante Bertacchi, 263 - Vila Sonia, São Paulo - SP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html> 

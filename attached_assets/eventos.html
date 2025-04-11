@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eventos - Gestão de Eventos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#4F46E5',
+secondary: '#10B981'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.5);
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<nav class="bg-white shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center">
+<div class="font-['Pacifico'] text-2xl text-primary">Rojo Gastronomia</div>
+<div class="hidden md:ml-8 md:flex md:space-x-8">
+  <a href="index.html" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">
+    <i class="ri-home-line mr-1"></i>
+    Início
+  </a>
+  <a href="eventos.html" class="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-primary text-sm font-medium">
+    <i class="ri-calendar-line mr-1"></i>
+    Eventos
+  </a>
+  <a href="cardapio.html" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">
+    <i class="ri-restaurant-line mr-1"></i>
+    Cardápio
+  </a>
+
+  <a href="dashboard.html" class="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium">
+    <i class="ri-dashboard-line mr-1"></i>
+    Dashboard
+  </a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<input type="text" placeholder="Buscar eventos..." class="w-64 pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<button onclick="showNewEventModal()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 cursor-pointer whitespace-nowrap flex items-center">
+<i class="ri-add-line mr-2"></i>
+Novo Evento
+</button>
+</div>
+</div>
+</div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-sm z-50">
+<div class="flex items-center">
+<i class="ri-checkbox-circle-line mr-2"></i>
+<span></span>
+</div>
+</div>
+
+<div class="flex flex-col space-y-6">
+<div class="flex justify-between items-center">
+<h1 class="text-2xl font-semibold text-gray-900">Eventos Gastronômicos</h1>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-white p-4 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Total de Eventos</p>
+<h3 class="text-2xl font-semibold text-gray-900">24</h3>
+</div>
+<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+<i class="ri-calendar-line text-blue-600"></i>
+</div>
+</div>
+</div>
+
+<div class="bg-white p-4 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Eventos Ativos</p>
+<h3 class="text-2xl font-semibold text-gray-900">18</h3>
+</div>
+<div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+<i class="ri-calendar-check-line text-green-600"></i>
+</div>
+</div>
+</div>
+
+<div class="bg-white p-4 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Participantes</p>
+<h3 class="text-2xl font-semibold text-gray-900">342</h3>
+</div>
+<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+<i class="ri-team-line text-purple-600"></i>
+</div>
+</div>
+</div>
+
+<div class="bg-white p-4 rounded-lg shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm text-gray-500">Fornecedores</p>
+<h3 class="text-2xl font-semibold text-gray-900">56</h3>
+</div>
+<div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+<i class="ri-store-2-line text-orange-600"></i>
+</div>
+</div>
+</div>
+</div>
+
+<div class="flex flex-col md:flex-row gap-6">
+<div class="w-full md:w-2/3 bg-white rounded-lg shadow-sm p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-lg font-medium text-gray-900">Eventos por Mês</h2>
+<div class="flex space-x-2">
+<button onclick="updateChartData('month')" class="!rounded-button px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">Mês</button>
+<button onclick="updateChartData('quarter')" class="!rounded-button px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">Trimestre</button>
+<button onclick="updateChartData('year')" class="!rounded-button px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">Ano</button>
+</div>
+</div>
+<div id="eventsChart" class="w-full h-64"></div>
+</div>
+
+<div class="w-full md:w-1/3 bg-white rounded-lg shadow-sm p-6">
+<h2 class="text-lg font-medium text-gray-900 mb-6">Eventos por Tipo</h2>
+<div id="eventTypesChart" class="w-full h-64"></div>
+</div>
+</div>
+
+<div class="bg-white shadow-sm rounded-lg overflow-hidden">
+<div class="p-6 border-b border-gray-200">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div class="flex flex-wrap gap-4">
+<div class="relative">
+<input type="date" class="px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div class="relative">
+<button onclick="toggleCuisineFilter()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center">
+<i class="ri-restaurant-line mr-2"></i>
+Tipo de Culinária
+<i class="ri-arrow-down-s-line ml-2"></i>
+</button>
+<div id="cuisineFilterDropdown" class="hidden absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+<div class="py-1">
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Italiana</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Japonesa</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Brasileira</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Francesa</a>
+</div>
+</div>
+</div>
+<div class="relative">
+<button onclick="toggleStatusFilter()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center">
+<i class="ri-flag-line mr-2"></i>
+Status
+<i class="ri-arrow-down-s-line ml-2"></i>
+</button>
+<div id="statusFilterDropdown" class="hidden absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+<div class="py-1">
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Agendado</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Em Andamento</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Concluído</a>
+<a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cancelado</a>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<input type="text" placeholder="Buscar eventos..." class="w-full md:w-64 pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+</div>
+</div>
+
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome do Evento</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Local</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de Culinária</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participantes</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+<th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200" id="eventsTableBody">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+
+<div id="newEventModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+<div class="bg-white rounded-lg max-w-2xl w-full mx-4">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-medium text-gray-900">Novo Evento Gastronômico</h2>
+<button onclick="closeNewEventModal()" class="text-gray-400 hover:text-gray-500">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<form id="eventForm" class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Nome do Evento</label>
+<input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+<input type="date" name="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Local</label>
+<input type="text" name="location" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Culinária</label>
+<select name="cuisine" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+<option value="">Selecione o tipo</option>
+<option value="italiana">Italiana</option>
+<option value="japonesa">Japonesa</option>
+<option value="brasileira">Brasileira</option>
+<option value="francesa">Francesa</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Capacidade Máxima</label>
+<input type="number" name="capacity" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+<select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary">
+<option value="agendado">Agendado</option>
+<option value="em_andamento">Em Andamento</option>
+<option value="concluido">Concluído</option>
+<option value="cancelado">Cancelado</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+<textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary"></textarea>
+</div>
+</div>
+<div class="flex justify-end space-x-3">
+<button type="button" onclick="closeNewEventModal()" class="!rounded-button bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+<button type="submit" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Salvar</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<div id="manageParticipantsModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+<div class="bg-white rounded-lg max-w-4xl w-full mx-4">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-medium text-gray-900">Gerenciar Participantes</h2>
+<button onclick="closeManageParticipantsModal()" class="text-gray-400 hover:text-gray-500">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<div class="flex items-center justify-between mb-4">
+<div class="relative flex-1 max-w-sm">
+<input type="text" placeholder="Buscar participantes..." class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<span class="text-sm text-gray-500">15/50 participantes</span>
+</div>
+<div class="border rounded-lg overflow-hidden mb-6">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+<th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ação</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200" id="participantsModalTableBody">
+</tbody>
+</table>
+</div>
+<div class="flex justify-end">
+<button onclick="closeManageParticipantsModal()" class="!rounded-button bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90">Concluir</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const mockEvents = [
+{
+id: 1,
+name: "Festival de Gastronomia Italiana",
+date: "2025-04-15",
+location: "Centro de Convenções São Paulo",
+cuisine: "Italiana",
+participants: 45,
+maxParticipants: 100,
+status: "agendado"
+},
+{
+id: 2,
+name: "Workshop de Sushi",
+date: "2025-04-20",
+location: "Espaço Cultura Japonesa",
+cuisine: "Japonesa",
+participants: 25,
+maxParticipants: 30,
+status: "em_andamento"
+},
+{
+id: 3,
+name: "Feira de Comidas Regionais",
+date: "2025-05-01",
+location: "Parque Villa-Lobos",
+cuisine: "Brasileira",
+participants: 150,
+maxParticipants: 200,
+status: "agendado"
+},
+{
+id: 4,
+name: "Curso de Patisserie",
+date: "2025-05-10",
+location: "Le Cordon Bleu",
+cuisine: "Francesa",
+participants: 15,
+maxParticipants: 20,
+status: "concluido"
+}
+];
+
+const mockParticipants = [
+{
+id: 1,
+name: "Isabella Santos",
+type: "Chef",
+status: "confirmado"
+},
+{
+id: 2,
+name: "Restaurante Bella Italia",
+type: "Fornecedor",
+status: "confirmado"
+},
+{
+id: 3,
+name: "Carlos Oliveira",
+type: "Participante",
+status: "pendente"
+}
+];
+
+function renderEvents() {
+const tbody = document.getElementById('eventsTableBody');
+tbody.innerHTML = mockEvents.map(event => `
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-medium text-gray-900">${event.name}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900">${new Date(event.date).toLocaleDateString('pt-BR')}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900">${event.location}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900">${event.cuisine}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900">${event.participants}/${event.maxParticipants}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyle(event.status)}">
+${getStatusText(event.status)}
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+<button onclick="showEditEventModal(${event.id})" class="text-primary hover:text-primary/80">
+<i class="ri-edit-line"></i>
+</button>
+<button onclick="showManageParticipantsModal(${event.id})" class="text-gray-600 hover:text-gray-900">
+<i class="ri-team-line"></i>
+</button>
+<button onclick="deleteEvent(${event.id})" class="text-red-600 hover:text-red-900">
+<i class="ri-delete-bin-line"></i>
+</button>
+</td>
+</tr>
+`).join('');
+}
+
+function getStatusStyle(status) {
+switch(status) {
+case 'agendado': return 'bg-blue-100 text-blue-800';
+case 'em_andamento': return 'bg-yellow-100 text-yellow-800';
+case 'concluido': return 'bg-green-100 text-green-800';
+case 'cancelado': return 'bg-red-100 text-red-800';
+default: return 'bg-gray-100 text-gray-800';
+}
+}
+
+function getStatusText(status) {
+switch(status) {
+case 'agendado': return 'Agendado';
+case 'em_andamento': return 'Em Andamento';
+case 'concluido': return 'Concluído';
+case 'cancelado': return 'Cancelado';
+default: return status;
+}
+}
+
+function renderParticipantsModal() {
+const tbody = document.getElementById('participantsModalTableBody');
+tbody.innerHTML = mockParticipants.map(participant => `
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-medium text-gray-900">${participant.name}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900">${participant.type}</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${participant.status === 'confirmado' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+${participant.status.charAt(0).toUpperCase() + participant.status.slice(1)}
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button onclick="toggleParticipant(${participant.id})" class="text-primary hover:text-primary/80">
+${participant.status === 'confirmado' ? 'Remover' : 'Adicionar'}
+</button>
+</td>
+</tr>
+`).join('');
+}
+
+function showNewEventModal() {
+document.getElementById('newEventModal').classList.remove('hidden');
+document.getElementById('eventForm').reset();
+}
+
+function closeNewEventModal() {
+document.getElementById('newEventModal').classList.add('hidden');
+}
+
+function showManageParticipantsModal(eventId) {
+document.getElementById('manageParticipantsModal').classList.remove('hidden');
+renderParticipantsModal();
+}
+
+function closeManageParticipantsModal() {
+document.getElementById('manageParticipantsModal').classList.add('hidden');
+}
+
+function toggleCuisineFilter() {
+document.getElementById('cuisineFilterDropdown').classList.toggle('hidden');
+}
+
+function toggleStatusFilter() {
+document.getElementById('statusFilterDropdown').classList.toggle('hidden');
+}
+
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+e.preventDefault();
+const formData = new FormData(e.target);
+const eventData = {
+id: mockEvents.length + 1,
+name: formData.get('name'),
+date: formData.get('date'),
+location: formData.get('location'),
+cuisine: formData.get('cuisine'),
+participants: 0,
+maxParticipants: parseInt(formData.get('capacity')),
+status: formData.get('status')
+};
+
+mockEvents.push(eventData);
+renderEvents();
+closeNewEventModal();
+
+const successMessage = document.getElementById('successMessage');
+successMessage.querySelector('span').textContent = 'Evento criado com sucesso!';
+successMessage.classList.remove('hidden');
+setTimeout(() => {
+successMessage.classList.add('hidden');
+}, 3000);
+});
+
+document.addEventListener('click', function(event) {
+const cuisineDropdown = document.getElementById('cuisineFilterDropdown');
+const statusDropdown = document.getElementById('statusFilterDropdown');
+
+if (!event.target.closest('[onclick="toggleCuisineFilter()"]')) {
+cuisineDropdown.classList.add('hidden');
+}
+if (!event.target.closest('[onclick="toggleStatusFilter()"]')) {
+statusDropdown.classList.add('hidden');
+}
+});
+
+const eventsChart = echarts.init(document.getElementById('eventsChart'));
+const eventTypesChart = echarts.init(document.getElementById('eventTypesChart'));
+
+const eventsChartOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.9)',
+borderColor: '#e5e7eb',
+borderWidth: 1,
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+top: 10,
+right: 10,
+bottom: 20,
+left: 40
+},
+xAxis: {
+type: 'category',
+data: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+axisLine: {
+lineStyle: {
+color: '#e5e7eb'
+}
+},
+axisLabel: {
+color: '#1f2937'
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#e5e7eb'
+}
+},
+axisLabel: {
+color: '#1f2937'
+},
+splitLine: {
+lineStyle: {
+color: '#f3f4f6'
+}
+}
+},
+series: [{
+data: [8, 12, 15, 24, 18, 22],
+type: 'line',
+smooth: true,
+symbol: 'none',
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+offset: 0,
+color: 'rgba(87, 181, 231, 0.3)'
+}, {
+offset: 1,
+color: 'rgba(87, 181, 231, 0.1)'
+}])
+}
+}]
+};
+
+const eventTypesChartOption = {
+animation: false,
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.9)',
+borderColor: '#e5e7eb',
+borderWidth: 1,
+textStyle: {
+color: '#1f2937'
+}
+},
+series: [{
+type: 'pie',
+radius: ['40%', '70%'],
+avoidLabelOverlap: false,
+itemStyle: {
+borderRadius: 6,
+borderColor: '#fff',
+borderWidth: 2
+},
+label: {
+show: false
+}, 
+
+labelLine: {
+show: false
+},
+data: [
+{value: 35, name: 'Italiana', itemStyle: {color: '#4F46E5'}},
+{value: 25, name: 'Japonesa', itemStyle: {color: '#10B981'}},
+{value: 20, name: 'Brasileira', itemStyle: {color: '#F59E0B'}},
+{value: 20, name: 'Francesa', itemStyle: {color: '#EF4444'}}
+]
+}]
+};
+
+eventsChart.setOption(eventsChartOption);
+eventTypesChart.setOption(eventTypesChartOption);
+
+window.addEventListener('resize', function() {
+eventsChart.resize();
+eventTypesChart.resize();
+});
+
+function updateChartData(period) {
+let data;
+switch(period) {
+case 'month':
+data = [8, 12, 15, 24, 18, 22];
+break;
+case 'quarter':
+data = [35, 42, 38, 45];
+break;
+case 'year':
+data = [180, 220, 260, 310];
+break;
+}
+
+eventsChartOption.series[0].data = data;
+eventsChart.setOption(eventsChartOption);
+}
+
+function deleteEvent(id) {
+if (confirm('Tem certeza que deseja excluir este evento?')) {
+const index = mockEvents.findIndex(e => e.id === id);
+if (index !== -1) {
+mockEvents.splice(index, 1);
+renderEvents();
+
+const successMessage = document.getElementById('successMessage');
+successMessage.querySelector('span').textContent = 'Evento excluído com sucesso!';
+successMessage.classList.remove('hidden');
+setTimeout(() => {
+successMessage.classList.add('hidden');
+}, 3000);
+}
+}
+}
+
+function toggleParticipant(id) {
+const participant = mockParticipants.find(p => p.id === id);
+if (participant) {
+participant.status = participant.status === 'confirmado' ? 'pendente' : 'confirmado';
+renderParticipantsModal();
+}
+}
+
+renderEvents();
+</script>
+</body>
+</html>
