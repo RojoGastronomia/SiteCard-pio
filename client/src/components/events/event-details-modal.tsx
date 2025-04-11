@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/context/cart-context";
@@ -9,6 +8,8 @@ import {
   Dialog, 
   DialogContent,
   DialogHeader,
+  DialogTrigger,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
   const { toast } = useToast();
   const [eventDate, setEventDate] = useState("");
   const [guestCount, setGuestCount] = useState(20);
-  const [showMenuOptions, setShowMenuOptions] = useState(true);
+  const [showMenuOptions, setShowMenuOptions] = useState(false);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null);
   const [menuItemsLoading, setMenuItemsLoading] = useState(true);
@@ -120,12 +121,60 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                 </div>
               </div>
 
-              <Button 
-                className="mt-6 w-full relative bg-primary text-white hover:bg-opacity-90"
-                onClick={() => setShowMenuOptions(!showMenuOptions)}
-              >
-                Ver Opções do Menu
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="mt-6 w-full relative bg-primary text-white hover:bg-opacity-90"
+                  >
+                    Ver Opções do Menu
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] p-0 gap-0">
+                  <div className="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+                    <h2 className="text-xl font-semibold text-gray-800">Opções de Menu</h2>
+                    <DialogClose className="text-gray-500 hover:text-gray-700">
+                      <X className="h-5 w-5" />
+                    </DialogClose>
+                  </div>
+                  <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {menuItems.map((menuItem) => (
+                        <div key={menuItem.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden card-shadow">
+                          <div className="h-48 overflow-hidden">
+                            <img 
+                              src={menuItem.imageUrl || "https://public.readdy.ai/ai/img_res/c1248e0f61daa1c21adcdc44e06db716.jpg"} 
+                              alt={menuItem.name} 
+                              className="w-full h-full object-cover object-top"
+                            />
+                          </div>
+                          <div className="p-5">
+                            <div className="flex justify-between items-center mb-4">
+                              <h3 className="text-lg font-semibold text-gray-800">{menuItem.name}</h3>
+                              <span className="bg-primary bg-opacity-10 text-primary text-xs px-3 py-1 rounded-full">
+                                {formatCurrency(menuItem.price)}/pessoa
+                              </span>
+                            </div>
+                            <div className="space-y-3 mb-4">
+                              <div className="flex items-start">
+                                <div className="text-gray-600 text-sm">{menuItem.description}</div>
+                              </div>
+                            </div>
+                            <Button 
+                              className="w-full bg-primary text-white"
+                              onClick={() => {
+                                setSelectedMenuItem(menuItem);
+                                setShowMenuOptions(false);
+                              }}
+                            >
+                              Selecionar este Menu
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="md:w-1/2 space-y-6">
