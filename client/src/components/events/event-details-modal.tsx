@@ -173,13 +173,14 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                               <Dialog open={showMenuOptions} onOpenChange={() => setShowMenuOptions(false)}>
                                 <DialogContent className="max-w-4xl max-h-[90vh] p-0 gap-0">
                                   <div className="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-                                    <h2 className="text-xl font-semibold text-gray-800">Selecione os Itens do Menu</h2>
+                                    <h2 className="text-xl font-semibold text-gray-800">{menuItem.name}</h2>
+                                    <p className="text-sm text-gray-500">Selecione os itens de cada categoria</p>
                                     <DialogClose className="text-gray-500 hover:text-gray-700">
                                       <X className="h-5 w-5" />
                                     </DialogClose>
                                   </div>
                                   <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-                                    <div className="space-y-6">
+                                    <div className="space-y-8">
                                       <div className="space-y-4">
                                         <div className="flex justify-between items-center">
                                           <h3 className="font-medium text-gray-800">Entradas</h3>
@@ -306,7 +307,15 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                       </div>
                                     </div>
                                     
-                                    <div className="mt-6 flex justify-end">
+                                    <div className="sticky bottom-0 p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+                                      <Button 
+                                        variant="outline"
+                                        onClick={() => {
+                                          setShowMenuOptions(false);
+                                        }}
+                                      >
+                                        Cancelar
+                                      </Button>
                                       <Button 
                                         className="bg-primary text-white"
                                         onClick={() => {
