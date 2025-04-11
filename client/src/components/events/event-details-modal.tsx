@@ -6,21 +6,12 @@ import { Event, MenuItem } from "@shared/schema";
 import { formatCurrency } from "@/lib/utils";
 import { 
   Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogFooter,
+  DialogContent,
+  DialogHeader,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { Calendar, Users, Clock, FileText, X } from "lucide-react";
+import { X, Menu, Clock } from "lucide-react";
 
 interface EventDetailsModalProps {
   event: Event;
@@ -33,24 +24,18 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
   const { toast } = useToast();
   const [eventDate, setEventDate] = useState("");
   const [guestCount, setGuestCount] = useState(20);
-  const [selectedMenuId, setSelectedMenuId] = useState("");
-  const [showMenuOptions, setShowMenuOptions] = useState(true); // Começamos com o menu visível
+  const [showMenuOptions, setShowMenuOptions] = useState(true);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null);
   const [menuItemsLoading, setMenuItemsLoading] = useState(true);
 
-  // Fetch menu items
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
         setMenuItemsLoading(true);
         const response = await fetch(`/api/events/${event.id}/menu-items`);
-        
-        if (!response.ok) {
-          throw new Error(`Erro: ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`Erro: ${response.status}`);
         const data = await response.json();
-        console.log("Menu items carregados:", data);
         setMenuItems(data);
       } catch (error) {
         console.error("Erro ao carregar itens do menu:", error);
@@ -67,28 +52,21 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
     fetchMenuItems();
   }, [event.id, toast]);
 
-  // Get the selected menu item
-  const selectedMenuItem = menuItems?.find(item => item.id.toString() === selectedMenuId);
-
-  // Calculate total
   const calculateTotal = () => {
     if (!selectedMenuItem || !guestCount) return 0;
     return selectedMenuItem.price * guestCount;
   };
 
-  // Set min date to tomorrow
   const getMinDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Handle form validation
   const isFormValid = () => {
-    return eventDate && guestCount > 0 && selectedMenuId;
+    return eventDate && guestCount > 0 && selectedMenuItem;
   };
 
-  // Handle add to cart
   const handleAddToCart = () => {
     if (!user) {
       toast({
@@ -102,7 +80,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
     }
 
     if (!selectedMenuItem || !eventDate) return;
-    
+
     const cartItem = {
       id: Date.now(),
       eventId: event.id,
@@ -114,28 +92,28 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
       price: calculateTotal(),
       quantity: 1
     };
-    
+
     addToCart(cartItem);
-    
+
     toast({
       title: "Adicionado ao carrinho",
       description: `${event.title} foi adicionado ao seu carrinho.`,
     });
-    
+
     onClose();
   };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh]">
-        <DialogHeader className="flex justify-between items-center flex-row">
-          <DialogTitle>{event.title}</DialogTitle>
+      <DialogContent className="max-w-3xl max-h-[90vh] p-0 gap-0">
+        <DialogHeader className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">{event.title}</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X />
           </Button>
         </DialogHeader>
-        
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="md:w-1/2">
               <img 
@@ -143,28 +121,31 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                 alt={event.title} 
                 className="w-full h-64 object-cover object-top rounded"
               />
-              <p className="text-gray-600 mt-4">
-                {event.description}
-              </p>
-              
+              <p className="text-gray-600 mt-4">{event.description}</p>
+
               <div className="mt-6 space-y-4">
                 <div className="flex items-center text-gray-700">
-                  <FileText className="mr-3 w-6 h-6 flex items-center justify-center" />
-                  <span>{event.menuOptions} opções de menu disponíveis</span>
+                  <Menu className="mr-3 w-6 h-6" />
+                  <span>{menuItems.length} opções de menu disponíveis</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <Clock className="mr-3 w-6 h-6 flex items-center justify-center" />
+                  <Clock className="mr-3 w-6 h-6" />
                   <span>Disponível para agendamento</span>
                 </div>
               </div>
-              
+
               <Button 
-                className="mt-6 w-full"
+                className="mt-6 w-full relative"
                 onClick={() => setShowMenuOptions(!showMenuOptions)}
               >
                 {showMenuOptions ? "Esconder Opções do Menu" : "Ver Opções do Menu"}
+                {!selectedMenuItem && (
+                  <span className="absolute -top-2 -right-2 bg-white text-primary text-xs px-2 py-0.5 rounded-full shadow-md animate-pulse">
+                    Obrigatório
+                  </span>
+                )}
               </Button>
-              
+
               {showMenuOptions && (
                 <div className="mt-4 space-y-4">
                   {menuItemsLoading ? (
@@ -174,15 +155,17 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                       <div 
                         key={item.id} 
                         className={`p-4 border rounded-lg cursor-pointer ${
-                          selectedMenuId === item.id.toString() 
+                          selectedMenuItem?.id === item.id 
                             ? 'border-primary bg-primary/5' 
                             : 'border-gray-200 hover:bg-gray-50'
                         }`}
-                        onClick={() => setSelectedMenuId(item.id.toString())}
+                        onClick={() => setSelectedMenuItem(item)}
                       >
                         <div className="flex justify-between">
                           <h4 className="font-medium">{item.name}</h4>
-                          <span className="font-medium text-primary">{formatCurrency(item.price)}/pessoa</span>
+                          <span className="font-medium text-primary">
+                            {formatCurrency(item.price)}/pessoa
+                          </span>
                         </div>
                         <p className="text-gray-600 text-sm mt-1">{item.description}</p>
                       </div>
@@ -193,22 +176,25 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                 </div>
               )}
             </div>
-            
+
             <div className="md:w-1/2 space-y-6">
               <div>
-                <label htmlFor="eventDate" className="block text-gray-700 font-medium mb-2">Data do Evento</label>
+                <label htmlFor="eventDate" className="block text-gray-700 font-medium mb-2">
+                  Data do Evento
+                </label>
                 <Input
                   id="eventDate"
                   type="date"
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
                   min={getMinDate()}
-                  className="w-full"
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="guestCount" className="block text-gray-700 font-medium mb-2">Número de Convidados</label>
+                <label htmlFor="guestCount" className="block text-gray-700 font-medium mb-2">
+                  Número de Convidados
+                </label>
                 <Input
                   id="guestCount"
                   type="number"
@@ -216,56 +202,20 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                   onChange={(e) => setGuestCount(parseInt(e.target.value) || 0)}
                   placeholder="Digite o número de convidados"
                   min="1"
-                  className="w-full"
                 />
               </div>
-              
-              <div>
-                <label htmlFor="menuSelection" className="block text-gray-700 font-medium mb-2">Selecione o Menu</label>
-                <Select
-                  value={selectedMenuId}
-                  onValueChange={setSelectedMenuId}
-                >
-                  <SelectTrigger id="menuSelection">
-                    <SelectValue placeholder="Selecione uma opção" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {menuItems?.map((item) => (
-                      <SelectItem key={item.id} value={item.id.toString()}>
-                        {item.name} - {formatCurrency(item.price)}/pessoa
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600">Preço por pessoa</span>
-                  <span className="font-medium">{selectedMenuItem ? formatCurrency(selectedMenuItem.price) : '-'}</span>
-                </div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600">Número de convidados</span>
-                  <span className="font-medium">{guestCount}</span>
-                </div>
-                <div className="flex justify-between text-sm font-medium mt-3 pt-3 border-t border-gray-200">
-                  <span>Total estimado</span>
-                  <span className="text-primary">{formatCurrency(calculateTotal())}</span>
-                </div>
-              </div>
+
+              <Button 
+                className="w-full mt-8"
+                onClick={handleAddToCart}
+                disabled={!isFormValid()}
+                variant={isFormValid() ? "default" : "secondary"}
+              >
+                Adicionar ao carrinho
+              </Button>
             </div>
           </div>
         </div>
-        
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button 
-            onClick={handleAddToCart} 
-            disabled={!isFormValid()}
-          >
-            Adicionar ao carrinho
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
