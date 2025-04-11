@@ -1,26 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { Event } from "@shared/schema";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import EventCard from "@/components/events/event-card";
+import EventDetailsModal from "@/components/events/event-details-modal";
 import { useLocation } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { getQueryFn } from "@/lib/queryClient";
 
 export default function HomePage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const { data: events, isLoading } = useQuery<Event[]>({
     queryKey: ["/api/events"],
-    onError: (error: Error) => {
-      toast({
-        title: "Error loading events",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
+    queryFn: getQueryFn({ on401: "throw" }),
+    gcTime: 0,
+    staleTime: 0,
+    retry: 1,
   });
+  
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
 
   return (
     <>
@@ -76,12 +85,24 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events?.map((event) => (
-              <EventCard key={event.id} event={event} />
+            {events && events.map((event: Event) => (
+              <EventCard 
+                key={event.id} 
+                event={event} 
+                onClick={() => handleEventClick(event)}
+              />
             ))}
           </div>
         )}
       </main>
+      
+      {selectedEvent && (
+        <EventDetailsModal
+          event={selectedEvent}
+          onClose={handleCloseModal}
+        />
+      )}
+      
       <Footer />
     </>
   );
