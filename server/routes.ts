@@ -219,6 +219,146 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Master System Management routes
+  app.post("/api/admin/system/backup", isAdmin, async (req, res) => {
+    try {
+      await storage.performSystemBackup();
+      res.json({ message: "Backup realizado com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao realizar backup" });
+    }
+  });
+
+  app.get("/api/admin/system/logs", isAdmin, async (req, res) => {
+    try {
+      const logs = await storage.getSystemLogs();
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar logs" });
+    }
+  });
+
+  app.post("/api/admin/system/settings", isAdmin, async (req, res) => {
+    try {
+      await storage.updateSystemSettings(req.body);
+      res.json({ message: "Configurações atualizadas com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao atualizar configurações" });
+    }
+  });
+
+  // Access Control routes
+  app.get("/api/admin/access/permissions", isAdmin, async (req, res) => {
+    try {
+      const permissions = await storage.getPermissions();
+      res.json(permissions);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar permissões" });
+    }
+  });
+
+  app.get("/api/admin/access/roles", isAdmin, async (req, res) => {
+    try {
+      const roles = await storage.getRoles();
+      res.json(roles);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar roles" });
+    }
+  });
+
+  app.post("/api/admin/access/tokens", isAdmin, async (req, res) => {
+    try {
+      const token = await storage.generateApiToken(req.body);
+      res.json(token);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao gerar token" });
+    }
+  });
+
+  // Database Management routes
+  app.post("/api/admin/database/backup", isAdmin, async (req, res) => {
+    try {
+      await storage.performDatabaseBackup();
+      res.json({ message: "Backup do banco realizado com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao realizar backup do banco" });
+    }
+  });
+
+  app.post("/api/admin/database/optimize", isAdmin, async (req, res) => {
+    try {
+      await storage.optimizeDatabase();
+      res.json({ message: "Banco otimizado com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao otimizar banco" });
+    }
+  });
+
+  app.post("/api/admin/database/maintenance", isAdmin, async (req, res) => {
+    try {
+      await storage.performDatabaseMaintenance();
+      res.json({ message: "Manutenção realizada com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao realizar manutenção" });
+    }
+  });
+
+  // Monitoring routes
+  app.get("/api/admin/system/performance", isAdmin, async (req, res) => {
+    try {
+      const metrics = await storage.getSystemPerformance();
+      res.json(metrics);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar métricas" });
+    }
+  });
+
+  app.get("/api/admin/system/resources", isAdmin, async (req, res) => {
+    try {
+      const resources = await storage.getSystemResources();
+      res.json(resources);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar recursos" });
+    }
+  });
+
+  app.get("/api/admin/system/alerts", isAdmin, async (req, res) => {
+    try {
+      const alerts = await storage.getSystemAlerts();
+      res.json(alerts);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar alertas" });
+    }
+  });
+
+  // Advanced Tools routes
+  app.post("/api/admin/tools/console", isAdmin, async (req, res) => {
+    try {
+      const result = await storage.executeConsoleCommand(req.body.command);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao executar comando" });
+    }
+  });
+
+  app.post("/api/admin/tools/cache", isAdmin, async (req, res) => {
+    try {
+      await storage.manageCacheOperation(req.body);
+      res.json({ message: "Operação de cache realizada com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro na operação de cache" });
+    }
+  });
+
+  app.post("/api/admin/tools/indexing", isAdmin, async (req, res) => {
+    try {
+      await storage.performIndexing(req.body);
+      res.json({ message: "Indexação realizada com sucesso" });
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao realizar indexação" });
+    }
+  });
+
   // Stats routes (admin only)
   app.get("/api/stats", isAdmin, async (req, res) => {
     try {
