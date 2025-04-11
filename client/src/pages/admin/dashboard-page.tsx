@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import StatsCard from "@/components/admin/stats-card";
+import AdminNavbar from "@/components/admin/admin-navbar";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Calendar, 
@@ -54,18 +54,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Navbar />
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex overflow-x-auto py-3 gap-2">
-            <Button className="rounded-full">Dashboard</Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/events"}>Eventos</Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/users"}>Usuários</Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/menus"}>Cardápios</Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/orders"}>Pedidos</Button>
-          </div>
-        </div>
-      </div>
+      <AdminNavbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>

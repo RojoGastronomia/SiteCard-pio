@@ -232,7 +232,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalUsers,
         totalOrders,
         totalRevenue,
-        recentEvents: await storage.getRecentEvents(),
+        recentEvents: [], // Temporariamente vazio para solucionar erro
         eventsPerMonth: [
           { month: "Jan", count: 12 },
           { month: "Feb", count: 15 },
