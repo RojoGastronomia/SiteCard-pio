@@ -120,47 +120,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                 </div>
               </div>
 
-              <Button 
-                className="mt-6 w-full relative bg-primary text-white hover:bg-opacity-90"
-                onClick={() => setShowMenuOptions(!showMenuOptions)}
-              >
-                {showMenuOptions ? "Esconder Opções do Menu" : "Ver Opções do Menu"}
-                {!selectedMenuItem && (
-                  <span className="absolute -top-2 -right-2 bg-white text-primary text-xs px-2 py-0.5 rounded-full shadow-md animate-pulse">
-                    Obrigatório
-                  </span>
-                )}
-              </Button>
-
-              {showMenuOptions && (
-                <div className="mt-4 space-y-4">
-                  {menuItemsLoading ? (
-                    <p>Carregando opções de menu...</p>
-                  ) : menuItems && menuItems.length > 0 ? (
-                    menuItems.map(item => (
-                      <div 
-                        key={item.id} 
-                        className={`p-4 border rounded-lg cursor-pointer ${
-                          selectedMenuItem?.id === item.id 
-                            ? 'border-primary bg-primary/5' 
-                            : 'border-gray-200 hover:bg-gray-50'
-                        }`}
-                        onClick={() => setSelectedMenuItem(item)}
-                      >
-                        <div className="flex justify-between">
-                          <h4 className="font-medium">{item.name}</h4>
-                          <span className="font-medium text-primary">
-                            {formatCurrency(item.price)}/pessoa
-                          </span>
-                        </div>
-                        <p className="text-gray-600 text-sm mt-1">{item.description}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>Não há opções de menu disponíveis.</p>
-                  )}
-                </div>
-              )}
+              
             </div>
 
             <div className="md:w-1/2 space-y-6">
