@@ -196,19 +196,22 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                               <input 
                                                 type="checkbox" 
                                                 name="entradas"
-                                                className="sr-only"
+                                                className="peer sr-only"
                                                 onChange={(e) => {
                                                   const checked = document.querySelectorAll('input[name="entradas"]:checked');
-                                                  if (checked.length > 2) e.target.checked = false;
+                                                  if (checked.length > 2) {
+                                                    e.preventDefault();
+                                                    e.target.checked = false;
+                                                  }
                                                 }}
                                               />
-                                              <div className="relative">
+                                              <div className="relative group">
                                                 <img src={item.img} alt={item.name} className="w-full h-32 object-cover" />
                                                 <div className="p-3">
                                                   <div className="flex items-center justify-between mb-2">
                                                     <span className="font-medium text-gray-800">{item.name}</span>
                                                     <div className="w-5 h-5 border-2 rounded border-primary flex items-center justify-center">
-                                                      <div className="w-3 h-3 bg-primary rounded peer-checked:block hidden"></div>
+                                                      <div className="w-3 h-3 bg-primary rounded hidden peer-checked:block group-has-[input:checked]:block"></div>
                                                     </div>
                                                   </div>
                                                   <p className="text-sm text-gray-600">{item.desc}</p>
