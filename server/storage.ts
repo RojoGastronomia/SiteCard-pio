@@ -13,7 +13,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   getUserCount(): Promise<number>;
-  
+
   // Event operations
   getEvent(id: number): Promise<Event | undefined>;
   getAllEvents(): Promise<Event[]>;
@@ -22,14 +22,14 @@ export interface IStorage {
   deleteEvent(id: number): Promise<void>;
   getEventCount(): Promise<number>;
   getRecentEvents(): Promise<Event[]>;
-  
+
   // Menu item operations
   getMenuItem(id: number): Promise<MenuItem | undefined>;
   getMenuItemsByEventId(eventId: number): Promise<MenuItem[]>;
   createMenuItem(menuItem: InsertMenuItem): Promise<MenuItem>;
   updateMenuItem(id: number, menuItem: InsertMenuItem): Promise<MenuItem | undefined>;
   deleteMenuItem(id: number): Promise<void>;
-  
+
   // Order operations
   getOrder(id: number): Promise<Order | undefined>;
   getAllOrders(): Promise<Order[]>;
@@ -38,319 +38,71 @@ export interface IStorage {
   updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
   getOrderCount(): Promise<number>;
   getTotalRevenue(): Promise<number>;
-  
+
   // Session store
   sessionStore: session.SessionStore;
 }
 
-const MemoryStore = createMemoryStore(session);
+import { Event, MenuItem, User } from "@shared/schema";
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
+export class Storage {
   private events: Map<number, Event>;
   private menuItems: Map<number, MenuItem>;
-  private orders: Map<number, Order>;
-  private userIdCounter: number;
+  private users: Map<number, User>;
   private eventIdCounter: number;
   private menuItemIdCounter: number;
-  private orderIdCounter: number;
-  sessionStore: session.SessionStore;
+  private userIdCounter: number;
 
   constructor() {
-    this.users = new Map();
     this.events = new Map();
     this.menuItems = new Map();
-    this.orders = new Map();
-    this.userIdCounter = 1;
+    this.users = new Map();
     this.eventIdCounter = 1;
     this.menuItemIdCounter = 1;
-    this.orderIdCounter = 1;
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000,
-    });
-    
-    // Seed data
-    this.seedEvents();
+    this.userIdCounter = 1;
   }
 
-  private async seedEvents() {
-    // Event 1
-    const event1: Event = {
-      id: this.eventIdCounter++,
-      title: "Pacote Almoço Corporativo",
-      description: "Serviço completo de catering para almoços corporativos. Inclui opções de menu, serviço de garçom e montagem.",
-      status: "available",
-      category: "corporate",
-      imageUrl: "https://public.readdy.ai/ai/img_res/68a2ff7ee6f61f6c6b0f78ca78bc5f13.jpg",
-      menuOptions: 2,
-      minGuests: 10,
-      maxGuests: 100,
-      createdAt: new Date(),
-    };
-    this.events.set(event1.id, event1);
-    
-    // Menu items for Event 1
-    const menuItem1: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Executivo",
-      description: "Menu completo com entrada, prato principal e sobremesa. Opções de carne, frango e vegetariano.",
-      price: 80,
-      category: "executive",
-      eventId: event1.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Executivo",
-      createdAt: new Date(),
-    };
-    
-    const menuItem2: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Premium",
-      description: "Menu premium com entrada, prato principal gourmet, sobremesa e bebidas inclusas. Diversas opções disponíveis.",
-      price: 120,
-      category: "premium",
-      eventId: event1.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Premium",
-      createdAt: new Date(),
-    };
-    
-    this.menuItems.set(menuItem1.id, menuItem1);
-    this.menuItems.set(menuItem2.id, menuItem2);
-    
-    // Event 2
-    const event2: Event = {
-      id: this.eventIdCounter++,
-      title: "Casamento",
-      description: "Serviço de catering completo para casamentos. Inclui coquetel de entrada, jantar, sobremesa e open bar.",
-      status: "available",
-      category: "wedding",
-      imageUrl: "https://public.readdy.ai/ai/img_res/6f8df1bd2a80878edaccbfb15a0a1a93.jpg",
-      menuOptions: 3,
-      minGuests: 50,
-      maxGuests: 300,
-      createdAt: new Date(),
-    };
-    this.events.set(event2.id, event2);
-    
-    // Menu items for Event 2
-    const menuItem3: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Clássico",
-      description: "Menu tradicional com entrada, prato principal e sobremesa. Opções de carne, frango e peixe.",
-      price: 150,
-      category: "classic",
-      eventId: event2.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Classico",
-      createdAt: new Date(),
-    };
-    
-    const menuItem4: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Gourmet",
-      description: "Menu gourmet com 5 tempos: entrada fria, entrada quente, prato principal, pre-sobremesa e sobremesa.",
-      price: 250,
-      category: "gourmet",
-      eventId: event2.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Gourmet",
-      createdAt: new Date(),
-    };
-    
-    const menuItem5: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Internacional",
-      description: "Menu exclusivo com pratos da gastronomia internacional, produtos premium e open bar completo.",
-      price: 350,
-      category: "international",
-      eventId: event2.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Internacional",
-      createdAt: new Date(),
-    };
-    
-    this.menuItems.set(menuItem3.id, menuItem3);
-    this.menuItems.set(menuItem4.id, menuItem4);
-    this.menuItems.set(menuItem5.id, menuItem5);
-    
-    // Event 3
-    const event3: Event = {
-      id: this.eventIdCounter++,
-      title: "Aniversário",
-      description: "Buffet completo para festas de aniversário. Diversas opções de cardápio e temas.",
-      status: "available",
-      category: "birthday",
-      imageUrl: "https://public.readdy.ai/ai/img_res/73f50ccacb2c3c2fba36fe1f8ea8f96c.jpg",
-      menuOptions: 2,
-      minGuests: 20,
-      maxGuests: 150,
-      createdAt: new Date(),
-    };
-    this.events.set(event3.id, event3);
-    
-    // Menu items for Event 3
-    const menuItem6: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Festa",
-      description: "Buffet completo com finger foods, mini-porções, mesa de doces e bolo personalizado.",
-      price: 100,
-      category: "party",
-      eventId: event3.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Festa",
-      createdAt: new Date(),
-    };
-    
-    const menuItem7: MenuItem = {
-      id: this.menuItemIdCounter++,
-      name: "Menu Premium Celebration",
-      description: "Menu premium com estações gastronômicas, carnes nobres, doces finos e bebidas premium.",
-      price: 180,
-      category: "premium",
-      eventId: event3.id,
-      imageUrl: "https://via.placeholder.com/300x200?text=Menu+Premium+Celebration",
-      createdAt: new Date(),
-    };
-    
-    this.menuItems.set(menuItem6.id, menuItem6);
-    this.menuItems.set(menuItem7.id, menuItem7);
-  }
-
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username
-    );
-  }
-
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email === email
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const now = new Date();
-    const user: User = { ...insertUser, id, createdAt: now };
-    this.users.set(id, user);
-    return user;
-  }
-
-  async getAllUsers(): Promise<User[]> {
-    return Array.from(this.users.values());
-  }
-
-  async getUserCount(): Promise<number> {
-    return this.users.size;
-  }
-
-  async getEvent(id: number): Promise<Event | undefined> {
-    return this.events.get(id);
-  }
-
-  async getAllEvents(): Promise<Event[]> {
+  // Events
+  getEvents(): Event[] {
     return Array.from(this.events.values());
   }
 
-  async createEvent(insertEvent: InsertEvent): Promise<Event> {
-    const id = this.eventIdCounter++;
-    const now = new Date();
-    const event: Event = { ...insertEvent, id, createdAt: now };
-    this.events.set(id, event);
-    return event;
+  getEvent(id: number): Event | undefined {
+    return this.events.get(id);
   }
 
-  async updateEvent(id: number, eventData: InsertEvent): Promise<Event | undefined> {
-    const event = this.events.get(id);
-    if (!event) return undefined;
-    
-    const updatedEvent: Event = { ...event, ...eventData, id };
-    this.events.set(id, updatedEvent);
-    return updatedEvent;
+  addEvent(event: Omit<Event, "id">): Event {
+    const newEvent = { ...event, id: this.eventIdCounter++ };
+    this.events.set(newEvent.id, newEvent);
+    return newEvent;
   }
 
-  async deleteEvent(id: number): Promise<void> {
-    this.events.delete(id);
-  }
-
-  async getEventCount(): Promise<number> {
-    return this.events.size;
-  }
-
-  async getRecentEvents(): Promise<Event[]> {
-    return Array.from(this.events.values())
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, 5);
-  }
-
-  async getMenuItem(id: number): Promise<MenuItem | undefined> {
-    return this.menuItems.get(id);
-  }
-
-  async getMenuItemsByEventId(eventId: number): Promise<MenuItem[]> {
+  // Menu Items
+  getMenuItems(eventId: number): MenuItem[] {
     return Array.from(this.menuItems.values()).filter(
-      (menuItem) => menuItem.eventId === eventId
+      (item) => item.eventId === eventId
     );
   }
 
-  async createMenuItem(insertMenuItem: InsertMenuItem): Promise<MenuItem> {
-    const id = this.menuItemIdCounter++;
-    const now = new Date();
-    const menuItem: MenuItem = { ...insertMenuItem, id, createdAt: now };
-    this.menuItems.set(id, menuItem);
-    return menuItem;
+  addMenuItem(menuItem: Omit<MenuItem, "id">): MenuItem {
+    const newMenuItem = { ...menuItem, id: this.menuItemIdCounter++ };
+    this.menuItems.set(newMenuItem.id, newMenuItem);
+    return newMenuItem;
   }
 
-  async updateMenuItem(id: number, menuItemData: InsertMenuItem): Promise<MenuItem | undefined> {
-    const menuItem = this.menuItems.get(id);
-    if (!menuItem) return undefined;
-    
-    const updatedMenuItem: MenuItem = { ...menuItem, ...menuItemData, id };
-    this.menuItems.set(id, updatedMenuItem);
-    return updatedMenuItem;
+  // Users
+  getUsers(): User[] {
+    return Array.from(this.users.values());
   }
 
-  async deleteMenuItem(id: number): Promise<void> {
-    this.menuItems.delete(id);
+  getUser(id: number): User | undefined {
+    return this.users.get(id);
   }
 
-  async getOrder(id: number): Promise<Order | undefined> {
-    return this.orders.get(id);
-  }
-
-  async getAllOrders(): Promise<Order[]> {
-    return Array.from(this.orders.values());
-  }
-
-  async getOrdersByUserId(userId: number): Promise<Order[]> {
-    return Array.from(this.orders.values()).filter(
-      (order) => order.userId === userId
-    );
-  }
-
-  async createOrder(insertOrder: InsertOrder): Promise<Order> {
-    const id = this.orderIdCounter++;
-    const now = new Date();
-    const order: Order = { ...insertOrder, id, createdAt: now };
-    this.orders.set(id, order);
-    return order;
-  }
-
-  async updateOrderStatus(id: number, status: string): Promise<Order | undefined> {
-    const order = this.orders.get(id);
-    if (!order) return undefined;
-    
-    const updatedOrder: Order = { ...order, status };
-    this.orders.set(id, updatedOrder);
-    return updatedOrder;
-  }
-
-  async getOrderCount(): Promise<number> {
-    return this.orders.size;
-  }
-
-  async getTotalRevenue(): Promise<number> {
-    return Array.from(this.orders.values())
-      .filter((order) => order.status === "completed")
-      .reduce((sum, order) => sum + order.total, 0);
+  addUser(user: Omit<User, "id">): User {
+    const newUser = { ...user, id: this.userIdCounter++ };
+    this.users.set(newUser.id, newUser);
+    return newUser;
   }
 }
 
@@ -361,9 +113,9 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.SessionStore;
 
   constructor() {
-    this.sessionStore = new PostgresSessionStore({ 
-      pool, 
-      createTableIfMissing: true 
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+      createTableIfMissing: true,
     });
   }
 
@@ -510,7 +262,7 @@ export class DatabaseStorage implements IStorage {
   // System Management
   async performSystemBackup(): Promise<void> {
     // Simulação de backup
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   async getSystemLogs(): Promise<any[]> {
@@ -523,7 +275,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateSystemSettings(settings: any): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
   // Access Control
@@ -549,15 +301,15 @@ export class DatabaseStorage implements IStorage {
 
   // Database Management
   async performDatabaseBackup(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   async optimizeDatabase(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   async performDatabaseMaintenance(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   // Monitoring
@@ -591,11 +343,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async manageCacheOperation(operation: any): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
   async performIndexing(config: any): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }
 

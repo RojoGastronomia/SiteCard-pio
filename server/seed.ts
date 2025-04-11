@@ -1,13 +1,34 @@
 import { db } from "./db";
-import { events, menuItems } from "@shared/schema";
+import { events, menuItems, users } from "./schema";
+import { hash } from "bcryptjs";
 
 async function seed() {
+  // Create admin user if doesn't exist
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (adminEmail && adminPassword) {
+    const existingAdmin = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, adminEmail),
+    });
+
+    if (!existingAdmin) {
+      const hashedPassword = await hash(adminPassword, 10);
+      await db.insert(users).values({
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+      });
+      console.log("Admin user created successfully");
+    }
+  }
+
   console.log("Seeding database...");
 
   // Limpar dados existentes (opcional)
   // await db.delete(menuItems);
   // await db.delete(events);
-  
+
   try {
     // Verificar se já existem eventos no banco
     const existingEvents = await db.select().from(events);
@@ -25,7 +46,7 @@ async function seed() {
       imageUrl: "https://public.readdy.ai/ai/img_res/68a2ff7ee6f61f6c6b0f78ca78bc5f13.jpg",
       menuOptions: 2,
     }).returning();
-    
+
     // Menu items for Event 1
     await db.insert(menuItems).values([
       {
@@ -45,7 +66,7 @@ async function seed() {
         imageUrl: "https://via.placeholder.com/300x200?text=Menu+Premium",
       }
     ]);
-    
+
     // Event 2
     const [event2] = await db.insert(events).values({
       title: "Casamento",
@@ -55,7 +76,7 @@ async function seed() {
       imageUrl: "https://public.readdy.ai/ai/img_res/6f8df1bd2a80878edaccbfb15a0a1a93.jpg",
       menuOptions: 3,
     }).returning();
-    
+
     // Menu items for Event 2
     await db.insert(menuItems).values([
       {
@@ -83,7 +104,7 @@ async function seed() {
         imageUrl: "https://via.placeholder.com/300x200?text=Menu+Internacional",
       }
     ]);
-    
+
     // Event 3
     const [event3] = await db.insert(events).values({
       title: "Aniversário",
@@ -93,7 +114,7 @@ async function seed() {
       imageUrl: "https://public.readdy.ai/ai/img_res/73f50ccacb2c3c2fba36fe1f8ea8f96c.jpg",
       menuOptions: 2,
     }).returning();
-    
+
     // Menu items for Event 3
     await db.insert(menuItems).values([
       {
