@@ -496,18 +496,6 @@ export class DatabaseStorage implements IStorage {
 
   async getOrderCount(): Promise<number> {
     const result = await db.select({ count: sql<number>`count(*)` }).from(orders);
-    return result[0].count;
-  }
-
-  async getSystemLogs(): Promise<any[]> {
-    // Simulated logs for demonstration
-    return [
-      { message: "Sistema iniciado com sucesso", timestamp: new Date().toISOString() },
-      { message: "Backup automático realizado", timestamp: new Date(Date.now() - 3600000).toISOString() },
-      { message: "Manutenção programada executada", timestamp: new Date(Date.now() - 7200000).toISOString() },
-      { message: "Atualização de segurança aplicada", timestamp: new Date(Date.now() - 14400000).toISOString() }
-    ];
-  }rs);
     return result[0].count || 0;
   }
 

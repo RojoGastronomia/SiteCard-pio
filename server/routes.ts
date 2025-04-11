@@ -219,51 +219,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Master admin routes
-  app.post("/api/admin/system/backup", isAdmin, async (req, res) => {
-    try {
-      // Simulate backup process
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      res.json({ message: "Backup realizado com sucesso" });
-    } catch (error) {
-      res.status(500).json({ message: "Erro ao realizar backup" });
-    }
-  });
-
-  app.get("/api/admin/system/logs", isAdmin, async (req, res) => {
-    try {
-      const logs = await storage.getSystemLogs();
-      res.json(logs);
-    } catch (error) {
-      res.status(500).json({ message: "Erro ao buscar logs" });
-    }
-  });
-
-  app.post("/api/admin/system/maintenance", isAdmin, async (req, res) => {
-    try {
-      // Simulate maintenance tasks
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      res.json({ message: "Manutenção realizada com sucesso" });
-    } catch (error) {
-      res.status(500).json({ message: "Erro ao realizar manutenção" });
-    }
-  });
-
-  app.get("/api/admin/system/performance", isAdmin, async (req, res) => {
-    try {
-      const metrics = {
-        cpuUsage: Math.random() * 100,
-        memoryUsage: Math.random() * 100,
-        diskUsage: Math.random() * 100,
-        activeUsers: Math.floor(Math.random() * 1000),
-        responseTime: Math.random() * 500
-      };
-      res.json(metrics);
-    } catch (error) {
-      res.status(500).json({ message: "Erro ao buscar métricas" });
-    }
-  });
-
   // Stats routes (admin only)
   app.get("/api/stats", isAdmin, async (req, res) => {
     try {
