@@ -163,11 +163,74 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                               className="w-full bg-primary text-white"
                               onClick={() => {
                                 setSelectedMenuItem(menuItem);
-                                setShowMenuOptions(false);
+                                setShowMenuOptions(true);
                               }}
                             >
                               Selecionar este Menu
                             </Button>
+                            
+                            {showMenuOptions && (
+                              <Dialog open={showMenuOptions} onOpenChange={() => setShowMenuOptions(false)}>
+                                <DialogContent className="max-w-4xl max-h-[90vh] p-0 gap-0">
+                                  <div className="flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+                                    <h2 className="text-xl font-semibold text-gray-800">Selecione os Itens do Menu</h2>
+                                    <DialogClose className="text-gray-500 hover:text-gray-700">
+                                      <X className="h-5 w-5" />
+                                    </DialogClose>
+                                  </div>
+                                  <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                                    <div className="space-y-6">
+                                      <div className="space-y-4">
+                                        <h3 className="font-medium text-gray-800">Entradas (Selecione 2)</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                          {["Bruschetta", "Salada Caprese", "Carpaccio", "Ceviche"].map((item) => (
+                                            <div key={item} className="flex items-center space-x-2">
+                                              <input type="checkbox" className="rounded text-primary" />
+                                              <span className="text-sm text-gray-600">{item}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="space-y-4">
+                                        <h3 className="font-medium text-gray-800">Pratos Principais (Selecione 3)</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                          {["Filé Mignon", "Salmão Grelhado", "Risoto de Cogumelos", "Ravioli", "Frango Supreme", "Cordeiro"].map((item) => (
+                                            <div key={item} className="flex items-center space-x-2">
+                                              <input type="checkbox" className="rounded text-primary" />
+                                              <span className="text-sm text-gray-600">{item}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="space-y-4">
+                                        <h3 className="font-medium text-gray-800">Sobremesas (Selecione 2)</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                          {["Tiramisu", "Cheesecake", "Pudim", "Mousse de Chocolate"].map((item) => (
+                                            <div key={item} className="flex items-center space-x-2">
+                                              <input type="checkbox" className="rounded text-primary" />
+                                              <span className="text-sm text-gray-600">{item}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="mt-6 flex justify-end">
+                                      <Button 
+                                        className="bg-primary text-white"
+                                        onClick={() => {
+                                          setShowMenuOptions(false);
+                                        }}
+                                      >
+                                        Confirmar Seleção
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            )}
                           </div>
                         </div>
                       ))}
