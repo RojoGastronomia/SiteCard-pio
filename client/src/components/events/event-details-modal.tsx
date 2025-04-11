@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/context/cart-context";
@@ -36,6 +37,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
         const response = await fetch(`/api/events/${event.id}/menu-items`);
         if (!response.ok) throw new Error(`Erro: ${response.status}`);
         const data = await response.json();
+        console.log("Menu items carregados:", data);
         setMenuItems(data);
       } catch (error) {
         console.error("Erro ao carregar itens do menu:", error);
@@ -52,21 +54,6 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
     fetchMenuItems();
   }, [event.id, toast]);
 
-  const calculateTotal = () => {
-    if (!selectedMenuItem || !guestCount) return 0;
-    return selectedMenuItem.price * guestCount;
-  };
-
-  const getMinDate = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-  };
-
-  const isFormValid = () => {
-    return eventDate && guestCount > 0 && selectedMenuItem;
-  };
-
   const handleAddToCart = () => {
     if (!user) {
       toast({
@@ -75,7 +62,6 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
         variant: "destructive",
       });
       onClose();
-      window.location.href = "/auth";
       return;
     }
 
@@ -89,19 +75,19 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
       date: eventDate,
       guestCount,
       menuSelection: selectedMenuItem.name,
-      price: calculateTotal(),
+      price: selectedMenuItem.price * guestCount,
       quantity: 1
     };
 
     addToCart(cartItem);
-
     toast({
       title: "Adicionado ao carrinho",
       description: `${event.title} foi adicionado ao seu carrinho.`,
     });
-
     onClose();
   };
+
+  const isFormValid = () => eventDate && guestCount > 0 && selectedMenuItem;
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -135,7 +121,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
               </div>
 
               <Button 
-                className="mt-6 w-full relative"
+                className="mt-6 w-full relative bg-primary text-white hover:bg-opacity-90"
                 onClick={() => setShowMenuOptions(!showMenuOptions)}
               >
                 {showMenuOptions ? "Esconder Opções do Menu" : "Ver Opções do Menu"}
@@ -182,12 +168,12 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                 <label htmlFor="eventDate" className="block text-gray-700 font-medium mb-2">
                   Data do Evento
                 </label>
-                <Input
-                  id="eventDate"
+                <input
                   type="date"
+                  id="eventDate"
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
-                  min={getMinDate()}
+                  className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
@@ -195,24 +181,27 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                 <label htmlFor="guestCount" className="block text-gray-700 font-medium mb-2">
                   Número de Convidados
                 </label>
-                <Input
-                  id="guestCount"
+                <input
                   type="number"
+                  id="guestCount"
                   value={guestCount}
                   onChange={(e) => setGuestCount(parseInt(e.target.value) || 0)}
                   placeholder="Digite o número de convidados"
-                  min="1"
+                  className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
-              <Button 
-                className="w-full mt-8"
+              <button
                 onClick={handleAddToCart}
                 disabled={!isFormValid()}
-                variant={isFormValid() ? "default" : "secondary"}
+                className={`w-full py-3 rounded !rounded-button font-medium transition-colors mt-8 whitespace-nowrap ${
+                  isFormValid() 
+                    ? 'bg-primary text-white hover:bg-opacity-90' 
+                    : 'bg-gray-400 text-white cursor-not-allowed'
+                }`}
               >
                 Adicionar ao carrinho
-              </Button>
+              </button>
             </div>
           </div>
         </div>
