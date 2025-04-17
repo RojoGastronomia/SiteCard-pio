@@ -9,7 +9,9 @@
     "dev": "tsx server/index.ts",
     "build": "cd client && npm install && npm run build",
     "start": "tsx server/index.ts",
-    "postinstall": "cd client && npm install"
+    "postinstall": "cd client && npm install",
+    "vercel-build": "npm run build",
+    "vercel-dev": "npm run dev"
   },
   "dependencies": {
     "express": "^4.18.2",
