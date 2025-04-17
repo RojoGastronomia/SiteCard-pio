@@ -24,10 +24,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Events routes
   app.get("/api/events", async (req, res) => {
+    console.log("[API] GET /api/events - Request received");
+    console.log("[API] User authenticated:", req.isAuthenticated());
+    if (req.user) {
+      console.log("[API] User role:", req.user.role);
+    }
     try {
       const events = await storage.getAllEvents();
+      console.log(`[API] GET /api/events - Found ${events.length} events:`, events);
       res.json(events);
     } catch (error) {
+      console.error("[API] GET /api/events - Error:", error);
       res.status(500).json({ message: "Error fetching events" });
     }
   });

@@ -133,7 +133,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllEvents(): Promise<Event[]> {
-    return await db.select().from(events);
+    console.log("[Storage] getAllEvents - Starting query");
+    try {
+      const result = await db.select().from(events);
+      console.log(`[Storage] getAllEvents - Found ${result.length} events`);
+      return result;
+    } catch (error) {
+      console.error("[Storage] getAllEvents - Error:", error);
+      throw error;
+    }
   }
 
   async createEvent(insertEvent: InsertEvent): Promise<Event> {
