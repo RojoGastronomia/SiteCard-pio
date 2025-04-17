@@ -120,7 +120,6 @@ export default function EventDetailsPage() {
   return (
     <main className="container mx-auto px-4 py-8">
       <Button 
-        variant="outline" 
         onClick={() => navigate("/events")}
         className="mb-6"
       >
@@ -189,6 +188,7 @@ export default function EventDetailsPage() {
                   >
                     <div className="flex justify-between">
                       <h4 className="font-medium">{item.name}</h4>
+                      <span className="text-primary font-medium">{formatCurrency(item.price)}</span>
                     </div>
                     <p className="text-gray-600 text-sm mt-1">{item.description}</p>
                   </div>
@@ -217,8 +217,6 @@ export default function EventDetailsPage() {
               <label className="block text-gray-700 font-medium mb-2">Número de Convidados</label>
               <div className="flex items-center">
                 <Button
-                  variant="outline"
-                  size="icon"
                   onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
                 >
                   -
@@ -231,8 +229,6 @@ export default function EventDetailsPage() {
                   className="mx-2 text-center"
                 />
                 <Button
-                  variant="outline"
-                  size="icon"
                   onClick={() => setGuestCount(guestCount + 1)}
                 >
                   +
@@ -240,57 +236,40 @@ export default function EventDetailsPage() {
               </div>
             </div>
             
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">Selecione o Menu</label>
-              <Select
-                value={selectedMenuId}
-                onValueChange={setSelectedMenuId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione uma opção" />
-                </SelectTrigger>
-                <SelectContent>
-                  {menuItems?.map((item) => (
-                    <SelectItem key={item.id} value={item.id.toString()}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Preço por pessoa</span>
-                <span className="font-medium">{selectedMenuItem ? formatCurrency(selectedMenuItem.price) : '-'}</span>
+            {selectedMenuItem && (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-medium text-gray-800 mb-2">Resumo do Pedido</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Menu selecionado:</span>
+                    <span className="font-medium">{selectedMenuItem.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Preço por pessoa:</span>
+                    <span className="font-medium">{formatCurrency(selectedMenuItem.price)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Número de convidados:</span>
+                    <span className="font-medium">{guestCount}</span>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold text-primary mt-4">
+                    <span>Total:</span>
+                    <span>{formatCurrency(calculateTotal())}</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Número de convidados</span>
-                <span className="font-medium">{guestCount}</span>
-              </div>
-              <div className="flex justify-between text-sm font-medium mt-3 pt-3 border-t border-gray-200">
-                <span>Total estimado</span>
-                <span className="text-primary">{formatCurrency(calculateTotal())}</span>
-              </div>
-            </div>
+            )}
             
             <Button
               className="w-full"
               disabled={!isFormValid()}
               onClick={handleAddToCart}
             >
-              Adicionar ao carrinho
+              Adicionar ao Carrinho
             </Button>
           </div>
         </div>
-      ) : (
-        <div className="text-center py-12">
-          <h3 className="text-xl font-medium text-gray-700">Evento não encontrado</h3>
-          <Button onClick={() => navigate("/events")} className="mt-4">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para a lista de eventos
-          </Button>
-        </div>
-      )}
+      ) : null}
     </main>
   );
 }
