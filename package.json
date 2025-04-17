@@ -8,8 +8,8 @@
   "scripts": {
     "dev": "tsx server/index.ts",
     "build": "cd client && npm install && npm run build",
-    "start": "tsx server/index.ts",
-    "postinstall": "cd client && npm install",
+    "start": "npx tsx server/index.ts",
+    "postinstall": "cd client && npm install && npm run build",
     "vercel-build": "npm install && cd client && npm install && npm run build",
     "vercel-dev": "npm run dev"
   },
