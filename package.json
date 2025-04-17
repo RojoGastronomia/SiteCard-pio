@@ -10,7 +10,7 @@
     "build": "cd client && npm install && npm run build",
     "start": "tsx server/index.ts",
     "postinstall": "cd client && npm install",
-    "vercel-build": "npm run build",
+    "vercel-build": "npm install && npm run build",
     "vercel-dev": "npm run dev"
   },
   "dependencies": {

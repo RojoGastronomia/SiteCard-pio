@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "client/dist",
   "builds": [
     {
@@ -35,6 +35,6 @@
   "regions": ["gru1"],
   "framework": "vite",
   "installCommand": "npm install",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "client/dist"
 } 
