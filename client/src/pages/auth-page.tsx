@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
@@ -32,11 +32,15 @@ export default function AuthPage() {
   const { loginMutation, registerMutation, user } = useAuth();
   const [, navigate] = useLocation();
 
-  // Redirect if already logged in
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      if (user.role === "Administrador") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [user, navigate]);
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -61,8 +65,12 @@ export default function AuthPage() {
 
   const onLoginSubmit = (values: LoginFormValues) => {
     loginMutation.mutate(values, {
-      onSuccess: () => {
-        navigate("/");
+      onSuccess: (user) => {
+        if (user.role === "Administrador") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
       },
     });
   };

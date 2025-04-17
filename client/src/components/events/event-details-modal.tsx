@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/context/cart-context";
 import { useToast } from "@/hooks/use-toast";
-import { Event, MenuItem } from "@shared/schema";
+import { Event, Menu } from "@shared/schema";
 import { formatCurrency } from "@/lib/utils";
 import { 
   Dialog, 
@@ -13,7 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X, Menu, Clock } from "lucide-react";
+import { X, Menu as MenuIcon, Clock } from "lucide-react";
+
+interface MenuSelection {
+  entradas: string[];
+  pratosPrincipais: string[];
+  sobremesas: string[];
+}
 
 interface EventDetailsModalProps {
   event: Event;
@@ -27,15 +33,20 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
   const [eventDate, setEventDate] = useState("");
   const [guestCount, setGuestCount] = useState(20);
   const [showMenuOptions, setShowMenuOptions] = useState(false);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null);
+  const [menuItems, setMenuItems] = useState<Menu[]>([]);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<Menu | null>(null);
   const [menuItemsLoading, setMenuItemsLoading] = useState(true);
+  const [menuSelections, setMenuSelections] = useState<MenuSelection>({
+    entradas: [],
+    pratosPrincipais: [],
+    sobremesas: []
+  });
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
         setMenuItemsLoading(true);
-        const response = await fetch(`/api/events/${event.id}/menu-items`);
+        const response = await fetch(`/api/events/${event.id}/menus`);
         if (!response.ok) throw new Error(`Erro: ${response.status}`);
         const data = await response.json();
         console.log("Menu items carregados:", data);
@@ -76,6 +87,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
       date: eventDate,
       guestCount,
       menuSelection: selectedMenuItem.name,
+      menuItems: menuSelections,
       price: selectedMenuItem.price * guestCount,
       quantity: 1
     };
@@ -88,6 +100,18 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
     onClose();
   };
 
+  const handleItemSelection = (category: keyof MenuSelection, item: string, checked: boolean) => {
+    setMenuSelections(prev => {
+      const newSelections = { ...prev };
+      if (checked) {
+        newSelections[category] = [...prev[category], item];
+      } else {
+        newSelections[category] = prev[category].filter(i => i !== item);
+      }
+      return newSelections;
+    });
+  };
+
   const isFormValid = () => eventDate && guestCount > 0 && selectedMenuItem;
 
   return (
@@ -95,9 +119,9 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
       <DialogContent className="max-w-3xl max-h-[90vh] p-0 gap-0">
         <DialogHeader className="flex justify-between items-center p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800">{event.title}</h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X />
-          </Button>
+          <DialogClose className="text-gray-500 hover:text-gray-700">
+            <X className="h-5 w-5" />
+          </DialogClose>
         </DialogHeader>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
@@ -112,7 +136,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
 
               <div className="mt-6 space-y-4">
                 <div className="flex items-center text-gray-700">
-                  <Menu className="mr-3 w-6 h-6" />
+                  <MenuIcon className="mr-3 w-6 h-6" />
                   <span>{menuItems.length} opções de menu disponíveis</span>
                 </div>
                 <div className="flex items-center text-gray-700">
@@ -142,7 +166,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                         <div key={menuItem.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden card-shadow">
                           <div className="h-48 overflow-hidden">
                             <img 
-                              src={menuItem.imageUrl || "https://public.readdy.ai/ai/img_res/c1248e0f61daa1c21adcdc44e06db716.jpg"} 
+                              src={"https://public.readdy.ai/ai/img_res/c1248e0f61daa1c21adcdc44e06db716.jpg"} 
                               alt={menuItem.name} 
                               className="w-full h-full object-cover object-top"
                             />
@@ -203,7 +227,9 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                                   if (checked.length > 2) {
                                                     e.preventDefault();
                                                     e.target.checked = false;
+                                                    return;
                                                   }
+                                                  handleItemSelection('entradas', item.name, e.target.checked);
                                                 }}
                                               />
                                               <div className="relative group">
@@ -244,7 +270,11 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                                 className="sr-only"
                                                 onChange={(e) => {
                                                   const checked = document.querySelectorAll('input[name="pratosPrincipais"]:checked');
-                                                  if (checked.length > 3) e.target.checked = false;
+                                                  if (checked.length > 3) {
+                                                    e.target.checked = false;
+                                                    return;
+                                                  }
+                                                  handleItemSelection('pratosPrincipais', item.name, e.target.checked);
                                                 }}
                                               />
                                               <div className="relative">
@@ -287,6 +317,7 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                                     e.target.checked = false;
                                                     return;
                                                   }
+                                                  handleItemSelection('sobremesas', item.name, e.target.checked);
                                                 }}
                                               />
                                               <div className="relative">
@@ -319,7 +350,19 @@ export default function EventDetailsModal({ event, onClose }: EventDetailsModalP
                                       <Button 
                                         className="bg-primary text-white"
                                         onClick={() => {
-                                          setShowMenuOptions(false);
+                                          if (
+                                            menuSelections.entradas.length === 2 &&
+                                            menuSelections.pratosPrincipais.length === 3 &&
+                                            menuSelections.sobremesas.length === 2
+                                          ) {
+                                            setShowMenuOptions(false);
+                                          } else {
+                                            toast({
+                                              title: "Seleção incompleta",
+                                              description: "Por favor, selecione todos os itens necessários",
+                                              variant: "destructive",
+                                            });
+                                          }
                                         }}
                                       >
                                         Confirmar Seleção

@@ -1,14 +1,25 @@
-
-import { type Event } from "@shared/schema";
+import { type Event, type Menu } from "@shared/schema";
 import { Card } from "@/components/ui/card";
-import { Menu } from "lucide-react";
+import { Menu as MenuIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { getQueryFn } from "@/lib/queryClient";
 
 interface EventCardProps {
   event: Event;
   onClick?: () => void;
+  onMenuOptionsClick?: (e: React.MouseEvent, event: Event) => void;
 }
 
-export default function EventCard({ event, onClick }: EventCardProps) {
+export default function EventCard({ event, onClick, onMenuOptionsClick }: EventCardProps) {
+  const { toast } = useToast();
+
+  const { data: menuItems = [] } = useQuery<Menu[]>({
+    queryKey: ["/api/events", event.id, "menus"],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!event.id,
+  });
+
   return (
     <Card 
       className="overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group bg-white rounded-lg"
@@ -32,9 +43,12 @@ export default function EventCard({ event, onClick }: EventCardProps) {
         </p>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center text-sm text-gray-500">
-            <Menu className="w-4 h-4 mr-2" />
-            <span>{event.menuOptions || 2} opções de menu</span>
+          <div 
+            className="flex items-center text-sm text-gray-500 cursor-pointer"
+            onClick={(e) => onMenuOptionsClick?.(e, event)}
+          >
+            <MenuIcon className="w-4 h-4 mr-2" />
+            <span>{menuItems.length} opções de menu</span>
           </div>
 
           <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">

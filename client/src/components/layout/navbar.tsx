@@ -9,16 +9,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, Settings } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 
 export function Navbar() {
   const [location] = useLocation();
-  const { user, logoutMutation } = useAuth();
+  const { user, logoutMutation, role } = useAuth();
   const { cartItems, openCart } = useCart();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const { toast } = useToast();
 
   // Determine if the user is admin
   const isAdmin = user?.role === "admin";
@@ -36,8 +40,9 @@ export function Navbar() {
     { name: "Dashboard", path: "/admin/dashboard" },
     { name: "Eventos", path: "/admin/events" },
     { name: "Usuários", path: "/admin/users" },
-    { name: "Cardápios", path: "/admin/menus" },
+    { name: "Cardápios", path: "/admin/menus-crud" },
     { name: "Pedidos", path: "/admin/orders" },
+    { name: "Master", path: "/admin/master" },
   ];
 
   // Client navigation links
@@ -49,8 +54,22 @@ export function Navbar() {
 
   const links = isAdminPage ? adminLinks : clientLinks;
 
-  const handleLogout = () => {
-    logoutMutation.mutate();
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutate();
+      queryClient.clear();
+      toast({
+        title: "Logout realizado com sucesso",
+        description: "Você foi desconectado do sistema",
+      });
+      window.location.href = "/auth";
+    } catch (error) {
+      toast({
+        title: "Erro ao realizar logout",
+        description: "Ocorreu um erro ao tentar desconectar do sistema",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -78,16 +97,6 @@ export function Navbar() {
 
             {/* Right Side Controls */}
             <div className="flex items-center gap-4">
-              {/* Search Box - Hidden on mobile */}
-              <div className="relative hidden md:flex">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <Input
-                  type="text"
-                  placeholder="Buscar..."
-                  className="w-64 pl-10 pr-4 py-2"
-                />
-              </div>
-
               {/* Conditional rendering based on auth state and user role */}
               {!isAdminPage && (
                 <button 
@@ -112,22 +121,33 @@ export function Navbar() {
                       <ChevronDown size={16} />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {isAdmin && !isAdminPage && (
-                      <DropdownMenuItem onClick={() => window.location.href = "/admin/dashboard"}>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Admin Dashboard</span>
-                      </DropdownMenuItem>
-                    )}
-                    {!isAdmin && (
-                      <DropdownMenuItem onClick={() => window.location.href = "/orders"}>
-                        <span>Meus Pedidos</span>
-                      </DropdownMenuItem>
-                    )}
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Sair</span>
+                    {role !== "client" && role !== "Cliente" && (
+                      <>
+                        <Link href="/">
+                          <DropdownMenuItem className="cursor-pointer">
+                            Página Inicial
+                          </DropdownMenuItem>
+                        </Link>
+                      </>
+                    )}
+                    {role === "Administrador" && (
+                      <>
+                        <Link href="/admin/dashboard">
+                          <DropdownMenuItem className="cursor-pointer">
+                            Painel Administrativo
+                          </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-red-600 cursor-pointer"
+                    >
+                      Sair
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

@@ -1,0 +1,20 @@
+-- Insert menus
+INSERT INTO menus (name, description, price) VALUES
+('COFFEE BREAK PREMIUM', 'Serviço de coffee break com opções premium', 50.00),
+('COFFEE BREAK STANDARD', 'Serviço de coffee break padrão', 35.00),
+('COFFEE BREAK BÁSICO', 'Serviço de coffee break básico', 25.00),
+('COFFEE BREAK VIP', 'Serviço de coffee break VIP', 65.00),
+('CAFÉ DA MANHÃ STANDARD', 'Serviço de café da manhã padrão', 40.00),
+('CAFÉ DA MANHÃ PREMIUM', 'Serviço de café da manhã premium', 55.00),
+('ALMOÇO BUFFET STANDARD', 'Serviço de almoço buffet padrão', 60.00),
+('ALMOÇO BUFFET VIP', 'Serviço de almoço buffet VIP', 85.00),
+('ALMOÇO BUFFET PREMIUM', 'Serviço de almoço buffet premium', 100.00),
+('ALMOÇO EMPRATADO 3 TEMPOS', 'Serviço de almoço empratado com 3 tempos', 75.00),
+('ALMOÇO EMPRATADO 4 TEMPOS', 'Serviço de almoço empratado com 4 tempos', 90.00),
+('BRUNCH PREMIUM', 'Serviço de brunch premium', 70.00),
+('BRUNCH LIGHT', 'Serviço de brunch light', 45.00),
+('ILHA GASTRONÔMICA STANDARD', 'Serviço de ilha gastronômica padrão', 80.00),
+('ILHA GASTRONÔMICA VIP', 'Serviço de ilha gastronômica VIP', 110.00),
+('COQUETEL STANDARD', 'Serviço de coquetel padrão', 65.00),
+('COQUETEL VIP', 'Serviço de coquetel VIP', 95.00),
+('SERVIÇOS ADICIONAIS', 'Serviços adicionais diversos', 0.00); 

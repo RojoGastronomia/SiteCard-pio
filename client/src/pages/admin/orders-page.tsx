@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Order, Event, User } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -58,40 +56,45 @@ export default function AdminOrdersPage() {
   const [orderStatusValue, setOrderStatusValue] = useState<string>("");
 
   // Fetch orders
-  const { data: orders, isLoading: ordersLoading } = useQuery<Order[]>({
+  const { 
+    data: orders, 
+    isLoading: ordersLoading, 
+    isError: ordersError, 
+    error: ordersFetchError 
+  } = useQuery<Order[]>({
     queryKey: ["/api/orders"],
-    onError: (error: Error) => {
-      toast({
-        title: "Error loading orders",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
   });
-
-  // Fetch events for reference
-  const { data: events } = useQuery<Event[]>({
+  
+  // Fetch events
+  const { 
+    data: events, 
+    isError: eventsError, 
+    error: eventsFetchError 
+  } = useQuery<Event[]>({
     queryKey: ["/api/events"],
-    onError: (error: Error) => {
-      toast({
-        title: "Error loading events",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
+  });
+  
+  // Fetch users
+  const { 
+    data: users, 
+    isError: usersError, 
+    error: usersFetchError 
+  } = useQuery<User[]>({
+    queryKey: ["/api/users"],
   });
 
-  // Fetch users for reference
-  const { data: users } = useQuery<User[]>({
-    queryKey: ["/api/users"],
-    onError: (error: Error) => {
-      toast({
-        title: "Error loading users",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  // Handle query errors
+  useEffect(() => {
+    if (ordersError) {
+      toast({ title: "Error loading orders", description: ordersFetchError?.message, variant: "destructive" });
+    }
+    if (eventsError) {
+      toast({ title: "Error loading events", description: eventsFetchError?.message, variant: "destructive" });
+    }
+    if (usersError) {
+      toast({ title: "Error loading users", description: usersFetchError?.message, variant: "destructive" });
+    }
+  }, [ordersError, eventsError, usersError, ordersFetchError, eventsFetchError, usersFetchError, toast]);
 
   // Update order status mutation
   const updateOrderStatusMutation = useMutation({
@@ -118,13 +121,13 @@ export default function AdminOrdersPage() {
 
   // Helper to get event title by ID
   const getEventTitle = (eventId: number) => {
-    const event = events?.find(e => e.id === eventId);
+    const event = events?.find((e: Event) => e.id === eventId);
     return event ? event.title : `ID #${eventId}`;
   };
 
   // Helper to get user name by ID
   const getUserName = (userId: number) => {
-    const user = users?.find(u => u.id === userId);
+    const user = users?.find((u: User) => u.id === userId);
     return user ? user.name : `ID #${userId}`;
   };
 
@@ -162,7 +165,7 @@ export default function AdminOrdersPage() {
   };
 
   // Filter orders based on search, status, and date
-  const filteredOrders = orders?.filter((order) => {
+  const filteredOrders = orders?.filter((order: Order) => {
     const eventTitle = getEventTitle(order.eventId);
     const userName = getUserName(order.userId);
     
@@ -195,251 +198,228 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex overflow-x-auto py-3 gap-2">
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/dashboard"}>
-              Dashboard
-            </Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/events"}>
-              Eventos
-            </Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/users"}>
-              Usuários
-            </Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/menus"}>
-              Cardápios
-            </Button>
-            <Button className="rounded-full">Pedidos</Button>
-          </div>
-        </div>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Gerenciamento de Pedidos</h1>
       </div>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Gerenciamento de Pedidos</h1>
-        </div>
 
-        {/* Status Tabs */}
-        <Tabs defaultValue="all" className="mb-6">
-          <TabsList>
-            <TabsTrigger value="all" onClick={() => setStatusFilter(null)}>Todos</TabsTrigger>
-            <TabsTrigger value="pending" onClick={() => setStatusFilter("pending")}>Pendentes</TabsTrigger>
-            <TabsTrigger value="confirmed" onClick={() => setStatusFilter("confirmed")}>Confirmados</TabsTrigger>
-            <TabsTrigger value="completed" onClick={() => setStatusFilter("completed")}>Concluídos</TabsTrigger>
-            <TabsTrigger value="cancelled" onClick={() => setStatusFilter("cancelled")}>Cancelados</TabsTrigger>
-          </TabsList>
-        </Tabs>
+      {/* Status Tabs */}
+      <Tabs defaultValue="all" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="all" onClick={() => setStatusFilter(null)}>Todos</TabsTrigger>
+          <TabsTrigger value="pending" onClick={() => setStatusFilter("pending")}>Pendentes</TabsTrigger>
+          <TabsTrigger value="confirmed" onClick={() => setStatusFilter("confirmed")}>Confirmados</TabsTrigger>
+          <TabsTrigger value="completed" onClick={() => setStatusFilter("completed")}>Concluídos</TabsTrigger>
+          <TabsTrigger value="cancelled" onClick={() => setStatusFilter("cancelled")}>Cancelados</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-        {/* Filter Controls */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="flex flex-wrap gap-4">
-                <Input
-                  type="date"
-                  value={dateFilter || ""}
-                  onChange={(e) => setDateFilter(e.target.value || null)}
-                  className="w-full md:w-auto"
-                />
+      {/* Filter Controls */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-wrap gap-4">
+              <Input
+                type="date"
+                value={dateFilter || ""}
+                onChange={(e) => setDateFilter(e.target.value || null)}
+                className="w-full md:w-auto"
+              />
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Filter size={16} />
+                    {statusFilter ? statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1) : "Status"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setStatusFilter(null)}>
+                    Todos
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("pending")}>
+                    Pendente
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("confirmed")}>
+                    Confirmado
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("completed")}>
+                    Concluído
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("cancelled")}>
+                    Cancelado
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <Input
+                type="text"
+                placeholder="Buscar pedidos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full md:w-64 pl-10"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Orders Table */}
+      <Card>
+        <CardContent className="p-0">
+          {ordersLoading ? (
+            <div className="p-4">
+              <Skeleton className="h-8 w-full mb-4" />
+              <Skeleton className="h-20 w-full mb-2" />
+              <Skeleton className="h-20 w-full mb-2" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          ) : filteredOrders && filteredOrders.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Evento</TableHead>
+                  <TableHead>Data do Evento</TableHead>
+                  <TableHead>N° Convidados</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredOrders.map((order) => (
+                  <TableRow key={order.id} className="hover:bg-gray-50">
+                    <TableCell>#{order.id}</TableCell>
+                    <TableCell>{getUserName(order.userId)}</TableCell>
+                    <TableCell>{getEventTitle(order.eventId)}</TableCell>
+                    <TableCell>{formatDate(order.date)}</TableCell>
+                    <TableCell>{order.guestCount}</TableCell>
+                    <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
+                    <TableCell>{getStatusBadge(order.status)}</TableCell>
+                    <TableCell className="text-right">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => handleViewOrderDetails(order)}
+                      >
+                        <Eye className="h-4 w-4 text-primary" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Nenhum pedido encontrado.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Order Details Dialog */}
+      {selectedOrder && (
+        <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Detalhes do Pedido #{selectedOrder.id}</DialogTitle>
+            </DialogHeader>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Cliente</h3>
+                  <div className="mt-1 flex items-center">
+                    <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
+                    <p className="text-gray-900">{getUserName(selectedOrder.userId)}</p>
+                  </div>
+                </div>
                 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      <Filter size={16} />
-                      {statusFilter ? statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1) : "Status"}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setStatusFilter(null)}>
-                      Todos
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter("pending")}>
-                      Pendente
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter("confirmed")}>
-                      Confirmado
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter("completed")}>
-                      Concluído
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter("cancelled")}>
-                      Cancelado
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Evento</h3>
+                  <p className="mt-1 text-gray-900">{getEventTitle(selectedOrder.eventId)}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Data do Evento</h3>
+                  <div className="mt-1 flex items-center">
+                    <Calendar className="h-5 w-5 text-gray-400 mr-2" />
+                    <p className="text-gray-900">{formatDate(selectedOrder.date)}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Menu Selecionado</h3>
+                  <p className="mt-1 text-gray-900">{selectedOrder.menuSelection || "N/A"}</p>
+                </div>
               </div>
               
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <Input
-                  type="text"
-                  placeholder="Buscar pedidos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full md:w-64 pl-10"
-                />
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Número de Convidados</h3>
+                  <p className="mt-1 text-gray-900">{selectedOrder.guestCount}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Valor Total</h3>
+                  <p className="mt-1 text-gray-900 font-medium text-primary">
+                    {formatCurrency(selectedOrder.totalAmount)}
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Data do Pedido</h3>
+                  <p className="mt-1 text-gray-900">{formatDate(selectedOrder.createdAt)}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Status do Pedido</h3>
+                  <div className="mt-1">
+                    <Select
+                      value={orderStatusValue}
+                      onValueChange={setOrderStatusValue}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pendente</SelectItem>
+                        <SelectItem value="confirmed">Confirmado</SelectItem>
+                        <SelectItem value="completed">Concluído</SelectItem>
+                        <SelectItem value="cancelled">Cancelado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Orders Table */}
-        <Card>
-          <CardContent className="p-0">
-            {ordersLoading ? (
-              <div className="p-4">
-                <Skeleton className="h-8 w-full mb-4" />
-                <Skeleton className="h-20 w-full mb-2" />
-                <Skeleton className="h-20 w-full mb-2" />
-                <Skeleton className="h-20 w-full" />
-              </div>
-            ) : filteredOrders && filteredOrders.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Evento</TableHead>
-                    <TableHead>Data do Evento</TableHead>
-                    <TableHead>N° Convidados</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredOrders.map((order) => (
-                    <TableRow key={order.id} className="hover:bg-gray-50">
-                      <TableCell>#{order.id}</TableCell>
-                      <TableCell>{getUserName(order.userId)}</TableCell>
-                      <TableCell>{getEventTitle(order.eventId)}</TableCell>
-                      <TableCell>{formatDate(order.date)}</TableCell>
-                      <TableCell>{order.guestCount}</TableCell>
-                      <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
-                      <TableCell>{getStatusBadge(order.status)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => handleViewOrderDetails(order)}
-                        >
-                          <Eye className="h-4 w-4 text-primary" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">Nenhum pedido encontrado.</p>
+            
+            {selectedOrder.additionalInfo && (
+              <div className="mt-4">
+                <h3 className="text-sm font-medium text-gray-500">Informações Adicionais</h3>
+                <p className="mt-1 text-gray-900">{selectedOrder.additionalInfo}</p>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        {/* Order Details Dialog */}
-        {selectedOrder && (
-          <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Detalhes do Pedido #{selectedOrder.id}</DialogTitle>
-              </DialogHeader>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Cliente</h3>
-                    <div className="mt-1 flex items-center">
-                      <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
-                      <p className="text-gray-900">{getUserName(selectedOrder.userId)}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Evento</h3>
-                    <p className="mt-1 text-gray-900">{getEventTitle(selectedOrder.eventId)}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Data do Evento</h3>
-                    <div className="mt-1 flex items-center">
-                      <Calendar className="h-5 w-5 text-gray-400 mr-2" />
-                      <p className="text-gray-900">{formatDate(selectedOrder.date)}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Menu Selecionado</h3>
-                    <p className="mt-1 text-gray-900">{selectedOrder.menuSelection || "N/A"}</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Número de Convidados</h3>
-                    <p className="mt-1 text-gray-900">{selectedOrder.guestCount}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Valor Total</h3>
-                    <p className="mt-1 text-gray-900 font-medium text-primary">
-                      {formatCurrency(selectedOrder.totalAmount)}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Data do Pedido</h3>
-                    <p className="mt-1 text-gray-900">{formatDate(selectedOrder.createdAt)}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Status do Pedido</h3>
-                    <div className="mt-1">
-                      <Select
-                        value={orderStatusValue}
-                        onValueChange={setOrderStatusValue}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione um status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pendente</SelectItem>
-                          <SelectItem value="confirmed">Confirmado</SelectItem>
-                          <SelectItem value="completed">Concluído</SelectItem>
-                          <SelectItem value="cancelled">Cancelado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {selectedOrder.additionalInfo && (
-                <div className="mt-4">
-                  <h3 className="text-sm font-medium text-gray-500">Informações Adicionais</h3>
-                  <p className="mt-1 text-gray-900">{selectedOrder.additionalInfo}</p>
-                </div>
-              )}
-              
-              <DialogFooter className="mt-6">
-                <DialogClose asChild>
-                  <Button variant="outline">Fechar</Button>
-                </DialogClose>
-                <Button 
-                  onClick={handleStatusUpdate}
-                  disabled={selectedOrder.status === orderStatusValue || updateOrderStatusMutation.isPending}
-                >
-                  {updateOrderStatusMutation.isPending ? "Atualizando..." : "Atualizar Status"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </main>
-      <Footer />
-    </>
+            
+            <DialogFooter className="mt-6">
+              <DialogClose asChild>
+                <Button variant="outline">Fechar</Button>
+              </DialogClose>
+              <Button 
+                onClick={handleStatusUpdate}
+                disabled={selectedOrder.status === orderStatusValue || updateOrderStatusMutation.isPending}
+              >
+                {updateOrderStatusMutation.isPending ? "Atualizando..." : "Atualizar Status"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </main>
   );
 }

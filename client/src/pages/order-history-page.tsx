@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { Order, Event } from "@shared/schema";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
@@ -91,129 +89,125 @@ export default function OrderHistoryPage() {
   };
 
   return (
-    <>
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">Meus Pedidos</h1>
+    <main className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-800 mb-8">Meus Pedidos</h1>
 
-        {ordersLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[...Array(2)].map((_, i) => (
-              <Card key={i} className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <Skeleton className="h-6 w-32 mb-1" />
-                    <Skeleton className="h-4 w-40" />
-                  </div>
-                  <Skeleton className="h-6 w-24 rounded-full" />
+      {ordersLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(2)].map((_, i) => (
+            <Card key={i} className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <Skeleton className="h-6 w-32 mb-1" />
+                  <Skeleton className="h-4 w-40" />
                 </div>
-                <div className="space-y-2 mb-4">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
+              <div className="space-y-2 mb-4">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+              <Skeleton className="h-px w-full my-4" />
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
-                <Skeleton className="h-px w-full my-4" />
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-4 w-24" />
-                  </div>
-                  <div className="flex justify-between">
-                    <Skeleton className="h-4 w-36" />
-                    <Skeleton className="h-4 w-24" />
-                  </div>
-                  <div className="flex justify-between">
-                    <Skeleton className="h-5 w-16" />
-                    <Skeleton className="h-5 w-28" />
-                  </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
-                <div className="flex justify-end mt-4 space-x-3">
-                  <Skeleton className="h-10 w-24" />
-                  <Skeleton className="h-10 w-32" />
+                <div className="flex justify-between">
+                  <Skeleton className="h-5 w-16" />
+                  <Skeleton className="h-5 w-28" />
+                </div>
+              </div>
+              <div className="flex justify-end mt-4 space-x-3">
+                <Skeleton className="h-10 w-24" />
+                <Skeleton className="h-10 w-32" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : orders && orders.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {orders.map((order) => {
+            const eventDetails = getEventDetails(order.eventId);
+            return (
+              <Card key={order.id} className="overflow-hidden hover:shadow-md transition-all">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Pedido #{order.id}</h3>
+                      <p className="text-sm text-gray-500">Realizado em {formatDate(order.createdAt)}</p>
+                    </div>
+                    {getStatusBadge(order.status)}
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex items-center text-sm text-gray-600 mb-2">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      <span>Evento: {eventDetails?.title || `ID #${order.eventId}`}</span>
+                    </div>
+                    {eventDetails?.location && (
+                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                        <MapPin className="mr-2 h-4 w-4" />
+                        <span>Local: {eventDetails.location}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Clock className="mr-2 h-4 w-4" />
+                      <span>Data: {formatDate(order.date)}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-gray-200 pt-4">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-600">Tipo de menu</span>
+                      <span className="font-medium">{order.menuSelection}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-600">Número de convidados</span>
+                      <span className="font-medium">{order.guestCount}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-medium mt-3">
+                      <span>Total</span>
+                      <span className="text-primary">{formatCurrency(order.totalAmount)}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end mt-4 space-x-3">
+                    <Button variant="outline">
+                      Detalhes
+                    </Button>
+                    {order.status === "pending" ? (
+                      <Button>
+                        Efetuar Pagamento
+                      </Button>
+                    ) : (
+                      <Button>
+                        Acompanhar
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </Card>
-            ))}
-          </div>
-        ) : orders && orders.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {orders.map((order) => {
-              const eventDetails = getEventDetails(order.eventId);
-              return (
-                <Card key={order.id} className="overflow-hidden hover:shadow-md transition-all">
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Pedido #{order.id}</h3>
-                        <p className="text-sm text-gray-500">Realizado em {formatDate(order.createdAt)}</p>
-                      </div>
-                      {getStatusBadge(order.status)}
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="flex items-center text-sm text-gray-600 mb-2">
-                        <Calendar className="mr-2 h-4 w-4" />
-                        <span>Evento: {eventDetails?.title || `ID #${order.eventId}`}</span>
-                      </div>
-                      {eventDetails?.location && (
-                        <div className="flex items-center text-sm text-gray-600 mb-2">
-                          <MapPin className="mr-2 h-4 w-4" />
-                          <span>Local: {eventDetails.location}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Clock className="mr-2 h-4 w-4" />
-                        <span>Data: {formatDate(order.date)}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Tipo de menu</span>
-                        <span className="font-medium">{order.menuSelection}</span>
-                      </div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Número de convidados</span>
-                        <span className="font-medium">{order.guestCount}</span>
-                      </div>
-                      <div className="flex justify-between text-sm font-medium mt-3">
-                        <span>Total</span>
-                        <span className="text-primary">{formatCurrency(order.totalAmount)}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end mt-4 space-x-3">
-                      <Button variant="outline">
-                        Detalhes
-                      </Button>
-                      {order.status === "pending" ? (
-                        <Button>
-                          Efetuar Pagamento
-                        </Button>
-                      ) : (
-                        <Button>
-                          Acompanhar
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <ShoppingBag className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-xl font-medium text-gray-700 mb-2">Nenhum pedido encontrado</h3>
-            <p className="text-gray-500 mb-6">
-              Você ainda não fez nenhum pedido.
-            </p>
-            <Button onClick={() => window.location.href = "/events"}>
-              Ver Eventos Disponíveis <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        )}
-      </main>
-      <Footer />
-    </>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+          <ShoppingBag className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <h3 className="text-xl font-medium text-gray-700 mb-2">Nenhum pedido encontrado</h3>
+          <p className="text-gray-500 mb-6">
+            Você ainda não fez nenhum pedido.
+          </p>
+          <Button onClick={() => window.location.href = "/events"}>
+            Ver Eventos Disponíveis <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )}
+    </main>
   );
 }

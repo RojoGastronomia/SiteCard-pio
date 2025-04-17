@@ -1,8 +1,13 @@
-import { type Event, type MenuItem, type Order, type User, type InsertEvent, type InsertMenuItem, type InsertOrder, type InsertUser, users, events, menuItems, orders } from "@shared/schema";
+import { 
+  type Event, type Order, type User, 
+  type InsertEvent, type InsertOrder, type InsertUser, 
+  type Menu, type Dish, type InsertMenu, type InsertDish,
+  users, events, menus, dishes, orders, eventMenus
+} from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { db, pool } from "./db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 
 export interface IStorage {
@@ -22,13 +27,24 @@ export interface IStorage {
   deleteEvent(id: number): Promise<void>;
   getEventCount(): Promise<number>;
   getRecentEvents(): Promise<Event[]>;
+  getMenusByEventId(eventId: number): Promise<Menu[]>;
+  associateMenuToEvent(eventId: number, menuId: number): Promise<void>;
+  dissociateMenuFromEvent(eventId: number, menuId: number): Promise<void>;
 
-  // Menu item operations
-  getMenuItem(id: number): Promise<MenuItem | undefined>;
-  getMenuItemsByEventId(eventId: number): Promise<MenuItem[]>;
-  createMenuItem(menuItem: InsertMenuItem): Promise<MenuItem>;
-  updateMenuItem(id: number, menuItem: InsertMenuItem): Promise<MenuItem | undefined>;
-  deleteMenuItem(id: number): Promise<void>;
+  // Menu operations
+  getMenu(id: number): Promise<Menu | undefined>;
+  getAllMenus(): Promise<Menu[]>;
+  createMenu(menu: InsertMenu): Promise<Menu>;
+  updateMenu(id: number, menu: InsertMenu): Promise<Menu | undefined>;
+  deleteMenu(id: number): Promise<void>;
+
+  // Dish operations
+  getDish(id: number): Promise<Dish | undefined>;
+  getAllDishes(): Promise<Dish[]>;
+  getDishesByMenuId(menuId: number): Promise<Dish[]>;
+  createDish(dish: InsertDish, menuId: number): Promise<Dish>;
+  updateDish(id: number, dish: InsertDish): Promise<Dish | undefined>;
+  deleteDish(id: number): Promise<void>;
 
   // Order operations
   getOrder(id: number): Promise<Order | undefined>;
@@ -40,77 +56,31 @@ export interface IStorage {
   getTotalRevenue(): Promise<number>;
 
   // Session store
-  sessionStore: session.SessionStore;
-}
+  sessionStore: session.Store;
 
-import { Event, MenuItem, User } from "@shared/schema";
-
-export class Storage {
-  private events: Map<number, Event>;
-  private menuItems: Map<number, MenuItem>;
-  private users: Map<number, User>;
-  private eventIdCounter: number;
-  private menuItemIdCounter: number;
-  private userIdCounter: number;
-
-  constructor() {
-    this.events = new Map();
-    this.menuItems = new Map();
-    this.users = new Map();
-    this.eventIdCounter = 1;
-    this.menuItemIdCounter = 1;
-    this.userIdCounter = 1;
-  }
-
-  // Events
-  getEvents(): Event[] {
-    return Array.from(this.events.values());
-  }
-
-  getEvent(id: number): Event | undefined {
-    return this.events.get(id);
-  }
-
-  addEvent(event: Omit<Event, "id">): Event {
-    const newEvent = { ...event, id: this.eventIdCounter++ };
-    this.events.set(newEvent.id, newEvent);
-    return newEvent;
-  }
-
-  // Menu Items
-  getMenuItems(eventId: number): MenuItem[] {
-    return Array.from(this.menuItems.values()).filter(
-      (item) => item.eventId === eventId
-    );
-  }
-
-  addMenuItem(menuItem: Omit<MenuItem, "id">): MenuItem {
-    const newMenuItem = { ...menuItem, id: this.menuItemIdCounter++ };
-    this.menuItems.set(newMenuItem.id, newMenuItem);
-    return newMenuItem;
-  }
-
-  // Users
-  getUsers(): User[] {
-    return Array.from(this.users.values());
-  }
-
-  getUser(id: number): User | undefined {
-    return this.users.get(id);
-  }
-
-  addUser(user: Omit<User, "id">): User {
-    const newUser = { ...user, id: this.userIdCounter++ };
-    this.users.set(newUser.id, newUser);
-    return newUser;
-  }
+  // System/Master operations
+  performSystemBackup(): Promise<void>;
+  getSystemLogs(): Promise<any[]>;
+  updateSystemSettings(settings: any): Promise<void>;
+  getPermissions(): Promise<any[]>;
+  getRoles(): Promise<any[]>;
+  generateApiToken(data: any): Promise<any>;
+  performDatabaseBackup(): Promise<void>;
+  optimizeDatabase(): Promise<void>;
+  performDatabaseMaintenance(): Promise<void>;
+  getSystemPerformance(): Promise<any>;
+  getSystemResources(): Promise<any>;
+  getSystemAlerts(): Promise<any[]>;
+  executeConsoleCommand(command: string): Promise<any>;
+  manageCacheOperation(operation: any): Promise<void>;
+  performIndexing(config: any): Promise<void>;
 }
 
 const PostgresSessionStore = connectPg(session);
 
 // Implementação do DatabaseStorage
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({
@@ -121,8 +91,15 @@ export class DatabaseStorage implements IStorage {
 
   // Implementação de métodos de usuário
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    console.log(`[Storage] getUser called with ID: ${id}`); // Log entry
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      console.log(`[Storage] getUser query returned: ${user ? user.username : 'undefined'}`); // Log result
+      return user;
+    } catch (error) {
+      console.error(`[Storage] Error in getUser for ID ${id}:`, error); // Log error
+      throw error; // Re-throw the error to be caught by auth
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -190,35 +167,87 @@ export class DatabaseStorage implements IStorage {
       .limit(5);
   }
 
-  // Implementação de métodos de item de menu
-  async getMenuItem(id: number): Promise<MenuItem | undefined> {
-    const [menuItem] = await db.select().from(menuItems).where(eq(menuItems.id, id));
-    return menuItem;
+  async getMenusByEventId(eventId: number): Promise<Menu[]> {
+    const results = await db.select({ menu: menus })
+                           .from(eventMenus)
+                           .innerJoin(menus, eq(eventMenus.menuId, menus.id))
+                           .where(eq(eventMenus.eventId, eventId));
+    return results.map(r => r.menu);
   }
 
-  async getMenuItemsByEventId(eventId: number): Promise<MenuItem[]> {
-    return await db.select().from(menuItems).where(eq(menuItems.eventId, eventId));
+  async associateMenuToEvent(eventId: number, menuId: number): Promise<void> {
+    await db.insert(eventMenus).values({ eventId, menuId }).onConflictDoNothing();
   }
 
-  async createMenuItem(insertMenuItem: InsertMenuItem): Promise<MenuItem> {
-    const [menuItem] = await db.insert(menuItems).values(insertMenuItem).returning();
-    return menuItem;
+  async dissociateMenuFromEvent(eventId: number, menuId: number): Promise<void> {
+    await db.delete(eventMenus).where(and(eq(eventMenus.eventId, eventId), eq(eventMenus.menuId, menuId)));
   }
 
-  async updateMenuItem(id: number, menuItemData: InsertMenuItem): Promise<MenuItem | undefined> {
-    const [updatedMenuItem] = await db
-      .update(menuItems)
-      .set(menuItemData)
-      .where(eq(menuItems.id, id))
-      .returning();
-    return updatedMenuItem;
+  // Menu operations
+  async getMenu(id: number): Promise<Menu | undefined> {
+    const [menu] = await db.select().from(menus).where(eq(menus.id, id));
+    return menu;
   }
 
-  async deleteMenuItem(id: number): Promise<void> {
-    await db.delete(menuItems).where(eq(menuItems.id, id));
+  async getAllMenus(): Promise<Menu[]> {
+    return await db.select().from(menus);
   }
 
-  // Implementação de métodos de pedido
+  async createMenu(insertMenu: InsertMenu): Promise<Menu> {
+    const [menu] = await db.insert(menus).values(insertMenu).returning();
+    return menu;
+  }
+
+  async updateMenu(id: number, menuData: InsertMenu): Promise<Menu | undefined> {
+    const [updatedMenu] = await db.update(menus).set(menuData).where(eq(menus.id, id)).returning();
+    return updatedMenu;
+  }
+
+  async deleteMenu(id: number): Promise<void> {
+    await db.delete(menus).where(eq(menus.id, id));
+  }
+
+  // Dish operations
+  async getDish(id: number): Promise<Dish | undefined> {
+    const [dish] = await db.select().from(dishes).where(eq(dishes.id, id));
+    return dish;
+  }
+
+  async getAllDishes(): Promise<Dish[]> {
+    return await db.select().from(dishes);
+  }
+
+  async getDishesByMenuId(menuId: number): Promise<Dish[]> {
+    console.log(`[Storage] getDishesByMenuId called with menuId: ${menuId}`);
+    try {
+        const dishResults = await db
+            .select()
+            .from(dishes)
+            .where(eq(dishes.menuId, menuId))
+            .orderBy(dishes.category, dishes.name);
+        console.log(`[Storage] getDishesByMenuId found ${dishResults.length} dishes:`, dishResults);
+        return dishResults;
+    } catch (error) {
+        console.error(`[Storage] Error in getDishesByMenuId for menuId ${menuId}:`, error);
+        throw error;
+    }
+  }
+
+  async createDish(insertDish: InsertDish, menuId: number): Promise<Dish> {
+    const [dish] = await db.insert(dishes).values({ ...insertDish, menuId }).returning();
+    return dish;
+  }
+
+  async updateDish(id: number, dishData: InsertDish): Promise<Dish | undefined> {
+    const [updatedDish] = await db.update(dishes).set(dishData).where(eq(dishes.id, id)).returning();
+    return updatedDish;
+  }
+
+  async deleteDish(id: number): Promise<void> {
+    await db.delete(dishes).where(eq(dishes.id, id));
+  }
+
+  // Order operations
   async getOrder(id: number): Promise<Order | undefined> {
     const [order] = await db.select().from(orders).where(eq(orders.id, id));
     return order;
@@ -351,5 +380,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Use DatabaseStorage em vez de MemStorage
+// Export an instance of DatabaseStorage
 export const storage = new DatabaseStorage();

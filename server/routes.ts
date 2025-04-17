@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { z } from "zod";
-import { insertEventSchema, insertMenuItemSchema, insertOrderSchema } from "@shared/schema";
+import { insertEventSchema, insertDishSchema, insertOrderSchema, insertMenuSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
@@ -15,7 +15,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "Not authenticated" });
     }
     
-    if (req.user.role !== "admin") {
+    if (req.user.role !== "Administrador") {
       return res.status(403).json({ message: "Not authorized" });
     }
     
@@ -83,50 +83,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Menu items routes
-  app.get("/api/events/:eventId/menu-items", async (req, res) => {
+  // --- NEW: Routes for Event <-> Menu association ---
+  app.get("/api/events/:eventId/menus", async (req, res) => {
     try {
       const eventId = parseInt(req.params.eventId);
-      const menuItems = await storage.getMenuItemsByEventId(eventId);
-      res.json(menuItems);
+      const menus = await storage.getMenusByEventId(eventId);
+      res.json(menus);
     } catch (error) {
-      res.status(500).json({ message: "Error fetching menu items" });
+      res.status(500).json({ message: "Error fetching menus for event" });
     }
   });
 
-  app.post("/api/menu-items", isAdmin, async (req, res) => {
+  app.post("/api/events/:eventId/menus/:menuId", isAdmin, async (req, res) => {
     try {
-      const menuItemData = insertMenuItemSchema.parse(req.body);
-      const menuItem = await storage.createMenuItem(menuItemData);
-      res.status(201).json(menuItem);
+      const eventId = parseInt(req.params.eventId);
+      const menuId = parseInt(req.params.menuId);
+      await storage.associateMenuToEvent(eventId, menuId);
+      res.status(201).send();
     } catch (error) {
-      res.status(400).json({ message: "Invalid menu item data" });
+      res.status(500).json({ message: "Error associating menu to event" });
     }
   });
-
-  app.put("/api/menu-items/:id", isAdmin, async (req, res) => {
+  
+  app.delete("/api/events/:eventId/menus/:menuId", isAdmin, async (req, res) => {
     try {
-      const menuItemId = parseInt(req.params.id);
-      const menuItemData = insertMenuItemSchema.parse(req.body);
-      const updatedMenuItem = await storage.updateMenuItem(menuItemId, menuItemData);
-      
-      if (!updatedMenuItem) {
-        return res.status(404).json({ message: "Menu item not found" });
-      }
-      
-      res.json(updatedMenuItem);
-    } catch (error) {
-      res.status(400).json({ message: "Invalid menu item data" });
-    }
-  });
-
-  app.delete("/api/menu-items/:id", isAdmin, async (req, res) => {
-    try {
-      const menuItemId = parseInt(req.params.id);
-      await storage.deleteMenuItem(menuItemId);
+      const eventId = parseInt(req.params.eventId);
+      const menuId = parseInt(req.params.menuId);
+      await storage.dissociateMenuFromEvent(eventId, menuId);
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ message: "Error deleting menu item" });
+      res.status(500).json({ message: "Error dissociating menu from event" });
+    }
+  });
+
+  // --- NEW: Menu CRUD routes ---
+  app.get("/api/menus", isAdmin, async (req, res) => {
+    try {
+      const menus = await storage.getAllMenus();
+      res.json(menus);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching menus" });
+    }
+  });
+
+  app.post("/api/menus", isAdmin, async (req, res) => {
+    try {
+      const menuData = insertMenuSchema.parse(req.body);
+      const menu = await storage.createMenu(menuData);
+      res.status(201).json(menu);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid menu data" });
+    }
+  });
+
+  app.put("/api/menus/:id", isAdmin, async (req, res) => {
+    try {
+      const menuId = parseInt(req.params.id);
+      const menuData = insertMenuSchema.parse(req.body);
+      const updatedMenu = await storage.updateMenu(menuId, menuData);
+      if (!updatedMenu) return res.status(404).json({ message: "Menu not found" });
+      res.json(updatedMenu);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid menu data" });
+    }
+  });
+
+  app.delete("/api/menus/:id", isAdmin, async (req, res) => {
+    try {
+      const menuId = parseInt(req.params.id);
+      await storage.deleteMenu(menuId);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting menu" });
+    }
+  });
+
+  // --- UPDATED: Dish (formerly MenuItem) routes ---
+  app.get("/api/dishes", isAdmin, async (req, res) => {
+    try {
+      const allDishes = await storage.getAllDishes();
+      res.json(allDishes);
+    } catch (error) {
+      console.error("Error fetching all dishes:", error);
+      res.status(500).json({ message: "Error fetching dishes" });
+    }
+  });
+  
+  // Route to get dishes for a specific menu
+  app.get("/api/menus/:menuId/dishes", async (req, res) => {
+    try {
+      const menuId = parseInt(req.params.menuId);
+      const dishes = await storage.getDishesByMenuId(menuId);
+      res.json(dishes);
+    } catch (error) {
+      console.error("Error fetching dishes for menu:", error);
+      res.status(500).json({ message: "Error fetching dishes for menu" });
+    }
+  });
+  
+  app.post("/api/menus/:menuId/dishes", isAdmin, async (req, res) => {
+    try {
+      const menuId = parseInt(req.params.menuId);
+      const dishData = insertDishSchema.parse(req.body);
+      const dish = await storage.createDish(dishData, menuId);
+      res.status(201).json(dish);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid dish data" });
+    }
+  });
+
+  app.put("/api/dishes/:id", isAdmin, async (req, res) => {
+    try {
+      const dishId = parseInt(req.params.id);
+      const dishData = insertDishSchema.parse(req.body);
+      const updatedDish = await storage.updateDish(dishId, dishData);
+      if (!updatedDish) return res.status(404).json({ message: "Dish not found" });
+      res.json(updatedDish);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid dish data" });
+    }
+  });
+
+  app.delete("/api/dishes/:id", isAdmin, async (req, res) => {
+    try {
+      const dishId = parseInt(req.params.id);
+      await storage.deleteDish(dishId);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting dish" });
     }
   });
 
@@ -139,7 +223,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let orders;
       
-      if (req.user.role === "admin") {
+      if (req.user.role === "Administrador") {
         orders = await storage.getAllOrders();
       } else {
         orders = await storage.getOrdersByUserId(req.user.id);
@@ -165,7 +249,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if user is admin or if the order belongs to the user
-      if (req.user.role !== "admin" && order.userId !== req.user.id) {
+      if (req.user.role !== "Administrador" && order.userId !== req.user.id) {
         return res.status(403).json({ message: "Not authorized" });
       }
       
@@ -402,7 +486,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
-
-  return httpServer;
+  const server = createServer(app);
+  return server;
 }

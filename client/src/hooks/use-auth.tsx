@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type AuthContextType = {
   user: SelectUser | null;
+  role: string | null;
   isLoading: boolean;
   error: Error | null;
   loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
@@ -87,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Logout successful",
         description: "You have been logged out successfully.",
       });
+      window.location.href = "/auth";
     },
     onError: (error: Error) => {
       toast({
@@ -101,6 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user: user ?? null,
+        role: user?.role ?? null,
         isLoading,
         error,
         loginMutation,

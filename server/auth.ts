@@ -24,10 +24,30 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
-  const [hashed, salt] = stored.split(".");
-  const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-  return timingSafeEqual(hashedBuf, suppliedBuf);
+  console.log(`[Compare] Comparing passwords. Stored value: ${stored ? stored.substring(0, 20) + '...' : 'undefined'}`);
+  try {
+    const [hashed, salt] = stored.split(".");
+    if (!hashed || !salt) {
+      console.error(`[Compare] Invalid stored password format for user.`);
+      throw new Error("Invalid stored password format.");
+    }
+    const hashedBuf = Buffer.from(hashed, "hex");
+    const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+    
+    console.log(`[Compare] Hashed buffer length (stored): ${hashedBuf.length}`);
+    console.log(`[Compare] Supplied buffer length (generated): ${suppliedBuf.length}`);
+    
+    if (hashedBuf.length !== suppliedBuf.length) {
+       console.error(`[Compare] Buffer length mismatch! Cannot compare.`);
+       return false; 
+    }
+    
+    console.log("[Compare] Buffer lengths match. Performing timingSafeEqual.");
+    return timingSafeEqual(hashedBuf, suppliedBuf);
+  } catch (error) {
+     console.error("[Compare] Error during password comparison:", error);
+     throw error;
+  }
 }
 
 export function setupAuth(app: Express) {
@@ -67,10 +87,18 @@ export function setupAuth(app: Express) {
 
   passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
+    console.log(`[Auth] Attempting to deserialize user with ID: ${id}`);
     try {
       const user = await storage.getUser(id);
-      done(null, user);
+      if (user) {
+        console.log(`[Auth] Successfully deserialized user: ${user.username}`);
+        done(null, user);
+      } else {
+        console.error(`[Auth] User not found for ID: ${id}`);
+        done(new Error(`User not found for ID: ${id}`), null);
+      }
     } catch (error) {
+      console.error('[Auth] Error during deserialization:', error);
       done(error);
     }
   });

@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { useToast } from "@/hooks/use-toast";
 import { Event, insertEventSchema } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -52,6 +50,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import AdminNavbar from "@/components/admin/admin-navbar";
 
 // Form schema
 const eventFormSchema = z.object({
@@ -228,353 +227,330 @@ export default function AdminEventsPage() {
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex overflow-x-auto py-3 gap-2">
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/dashboard"}>
-              Dashboard
-            </Button>
-            <Button className="rounded-full">Eventos</Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/users"}>
-              Usuários
-            </Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/menus"}>
-              Cardápios
-            </Button>
-            <Button variant="outline" className="rounded-full" onClick={() => window.location.href = "/admin/orders"}>
-              Pedidos
-            </Button>
-          </div>
-        </div>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Eventos Gastronômicos</h1>
+        <Button 
+          onClick={() => {
+            setIsEditing(false);
+            setSelectedEvent(null);
+            form.reset();
+            setShowAddDialog(true);
+          }}
+          className="gap-2"
+        >
+          <PencilLine size={16} />
+          Criar Novo Evento
+        </Button>
       </div>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Eventos Gastronômicos</h1>
-          <Button 
-            onClick={() => {
-              setIsEditing(false);
-              setSelectedEvent(null);
-              form.reset();
-              setShowAddDialog(true);
-            }}
-            className="gap-2"
-          >
-            <PencilLine size={16} />
-            Criar Novo Evento
-          </Button>
-        </div>
 
-        {/* Filter Controls */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="flex flex-wrap gap-4">
-                <div className="relative">
-                  <Input
-                    type="date"
-                    className="px-4 py-2"
-                  />
-                </div>
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      <Filter size={16} />
-                      {typeFilter ? getEventTypeDisplay(typeFilter) : "Tipo de Evento"}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setTypeFilter(null)}>
-                      Todos os tipos
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTypeFilter("corporate")}>
-                      Corporativo
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTypeFilter("wedding")}>
-                      Casamento
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTypeFilter("birthday")}>
-                      Aniversário
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTypeFilter("kids")}>
-                      Infantil
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTypeFilter("coffee")}>
-                      Coffee Break
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      <Filter size={16} />
-                      {statusFilter || "Status"}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setStatusFilter(null)}>
-                      Todos
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter("available")}>
-                      Disponível
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter("unavailable")}>
-                      Indisponível
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              
+      {/* Filter Controls */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-wrap gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 <Input
-                  type="text"
-                  placeholder="Buscar eventos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full md:w-64 pl-10"
+                  type="date"
+                  className="px-4 py-2"
                 />
               </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Filter size={16} />
+                    {typeFilter ? getEventTypeDisplay(typeFilter) : "Tipo de Evento"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setTypeFilter(null)}>
+                    Todos os tipos
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTypeFilter("corporate")}>
+                    Corporativo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTypeFilter("wedding")}>
+                    Casamento
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTypeFilter("birthday")}>
+                    Aniversário
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTypeFilter("kids")}>
+                    Infantil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTypeFilter("coffee")}>
+                    Coffee Break
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Filter size={16} />
+                    {statusFilter || "Status"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setStatusFilter(null)}>
+                    Todos
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("available")}>
+                    Disponível
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("unavailable")}>
+                    Indisponível
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </CardContent>
-        </Card>
+            
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <Input
+                type="text"
+                placeholder="Buscar eventos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full md:w-64 pl-10"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Events Table */}
-        <Card>
-          <CardContent className="p-0">
-            {isLoading ? (
-              <div className="p-4">
-                <Skeleton className="h-8 w-full mb-4" />
-                <Skeleton className="h-20 w-full mb-2" />
-                <Skeleton className="h-20 w-full mb-2" />
-                <Skeleton className="h-20 w-full" />
-              </div>
-            ) : filteredEvents && filteredEvents.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome do Evento</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Local</TableHead>
-                    <TableHead>Opções de Menu</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEvents.map((event) => (
-                    <TableRow key={event.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">{event.title}</TableCell>
-                      <TableCell>{getEventTypeDisplay(event.eventType)}</TableCell>
-                      <TableCell>{event.location || "N/A"}</TableCell>
-                      <TableCell>{event.menuOptions}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          event.status === "available" 
-                            ? "bg-green-100 text-green-800" 
-                            : "bg-red-100 text-red-800"
-                        }`}>
-                          {event.status === "available" ? "Disponível" : "Indisponível"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Button variant="ghost" size="icon">
-                            <Eye className="h-4 w-4 text-primary" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => handleEditEvent(event)}
-                          >
-                            <PencilLine className="h-4 w-4 text-gray-500" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => {
-                              if (window.confirm('Are you sure you want to delete this event?')) {
-                                deleteEventMutation.mutate(event.id);
-                              }
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">Nenhum evento encontrado.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Add/Edit Event Dialog */}
-        <Dialog open={showAddDialog} onOpenChange={handleCloseDialog}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{isEditing ? "Editar Evento" : "Criar Novo Evento"}</DialogTitle>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nome do Evento</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="eventType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tipo de Evento</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
+      {/* Events Table */}
+      <Card>
+        <CardContent className="p-0">
+          {isLoading ? (
+            <div className="p-4">
+              <Skeleton className="h-8 w-full mb-4" />
+              <Skeleton className="h-20 w-full mb-2" />
+              <Skeleton className="h-20 w-full mb-2" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          ) : filteredEvents && filteredEvents.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome do Evento</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Local</TableHead>
+                  <TableHead>Opções de Menu</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredEvents.map((event) => (
+                  <TableRow key={event.id} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">{event.title}</TableCell>
+                    <TableCell>{getEventTypeDisplay(event.eventType)}</TableCell>
+                    <TableCell>{event.location || "N/A"}</TableCell>
+                    <TableCell>{event.menuOptions}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        event.status === "available" 
+                          ? "bg-green-100 text-green-800" 
+                          : "bg-red-100 text-red-800"
+                      }`}>
+                        {event.status === "available" ? "Disponível" : "Indisponível"}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="ghost" size="icon">
+                          <Eye className="h-4 w-4 text-primary" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => handleEditEvent(event)}
                         >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione um tipo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="corporate">Corporativo</SelectItem>
-                            <SelectItem value="wedding">Casamento</SelectItem>
-                            <SelectItem value="birthday">Aniversário</SelectItem>
-                            <SelectItem value="kids">Infantil</SelectItem>
-                            <SelectItem value="coffee">Coffee Break</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
+                          <PencilLine className="h-4 w-4 text-gray-500" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this event?')) {
+                              deleteEventMutation.mutate(event.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Nenhum evento encontrado.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Add/Edit Event Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={handleCloseDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? "Editar Evento" : "Criar Novo Evento"}</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Descrição</FormLabel>
+                      <FormLabel>Nome do Evento</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="eventType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Evento</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="corporate">Corporativo</SelectItem>
+                          <SelectItem value="wedding">Casamento</SelectItem>
+                          <SelectItem value="birthday">Aniversário</SelectItem>
+                          <SelectItem value="kids">Infantil</SelectItem>
+                          <SelectItem value="coffee">Coffee Break</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        rows={4}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Local</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>URL da Imagem</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="menuOptions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Opções de Menu</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min={1} 
                           {...field} 
-                          rows={4}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Local</FormLabel>
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input {...field} />
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um status" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="imageUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>URL da Imagem</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="menuOptions"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Opções de Menu</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            min={1} 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Status</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione um status" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="available">Disponível</SelectItem>
-                            <SelectItem value="unavailable">Indisponível</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline" type="button">Cancelar</Button>
-                  </DialogClose>
-                  <Button 
-                    type="submit"
-                    disabled={addEventMutation.isPending || updateEventMutation.isPending}
-                  >
-                    {isEditing ? "Atualizar" : "Criar"} Evento
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </main>
-      <Footer />
-    </>
+                        <SelectContent>
+                          <SelectItem value="available">Disponível</SelectItem>
+                          <SelectItem value="unavailable">Indisponível</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">Cancelar</Button>
+                </DialogClose>
+                <Button 
+                  type="submit"
+                  disabled={addEventMutation.isPending || updateEventMutation.isPending}
+                >
+                  {isEditing ? "Atualizar" : "Criar"} Evento
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </main>
   );
 }
